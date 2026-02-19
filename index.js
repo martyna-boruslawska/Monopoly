@@ -6,4 +6,4 @@ const board = createBoard();
 
 let players = createPlayers(["Martyna", "Jarek"]);
 
-let theGame = playTheTurns(players, board, 10);
+let theGame = playTheTurns(players, board, 10); // Set how many turns to play (e.g., 10 turns)

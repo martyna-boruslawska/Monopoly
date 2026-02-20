@@ -4,9 +4,9 @@ import { playTheTurns } from "./game/playTheTurns.js";
 
 const board = createBoard();
 
-let players = createPlayers(["Martyna Boruslawska", "Jarek Obrzut"]);
+let players = createPlayers(["Martyna", "Jarek"]);
 
-console.log(`Players in the game: ${players.map(player => player.name).join(", ")}\n
+console.log(`Players in the game: ${players.map(player => player.name).join(", ")}.\n
 =================================\n
 🎲 MONOPOLY GAME STARTED! 🎲\n
 =================================\n\n`);

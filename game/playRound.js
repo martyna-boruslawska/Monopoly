@@ -3,16 +3,16 @@ import { movePlayer } from "./movePlayer.js";
 
 export function playRound(players, board) {
   for (const player of players) {
-    executePlayerTurn(player, board);
+    executePlayerTurn(player, board, players);
   }
 }
 
-function executePlayerTurn(player, board) {
+function executePlayerTurn(player, board, players) {
   let doublesCount = 0;
   let hasDouble = true;
   while (hasDouble && doublesCount < 3) {
     const roll = rollDice();
-    movePlayer(player, roll.total, board);
+    movePlayer(player, roll.total, board, players);
     hasDouble = roll.isDouble;
     if (hasDouble) {
       console.log(

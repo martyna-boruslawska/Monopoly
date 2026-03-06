@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { movePlayer } from "./movePlayer.js";
+import { movePlayer } from "../game/movePlayer.js";
 
 const board = [
   { name: "Start" },

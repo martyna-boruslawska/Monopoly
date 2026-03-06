@@ -9,7 +9,7 @@ function createPlayer(name, id) {
     name,
     position: 0,
     money: 1500,
-    properties: [],
+    propertyIds: [],
     isBankrupt: false
   };
 }

@@ -3,25 +3,24 @@ import assert from "node:assert/strict";
 import { showSummary } from "../game/showSummary.js";
 
 test("displays player summary correctly", (context) => {
+  // Arrange
   const players = [
-    {name: "Martyna", money: 1500, properties: []},
-    {name: "Jarek", money: 1200, properties: [{id: 1}, {id: 2}, {id: 3}]},
-    {name: "Ola Olaszewska", money: -200, properties: [{id: 4}]}
+    {name: "Martyna", money: 1500, propertyIds: []},
+    {name: "Jarek", money: 1200, propertyIds: [1, 2, 3]},
+    {name: "Ola Olaszewska", money: -200, propertyIds: [4]}
   ];
-
   context.mock.method(console, "log", (message) => {}); // mock console.log to capture output
-  showSummary(players); // call the function being tested
-  assert.equal(console.log.mock.calls.length, 4); // 1 for header, 3 for players
-  
-  const call1 = console.log.mock.calls[1]; // check the first player's summary (Martyna)
-  assert.equal(call1.arguments.length, 1); // should log one message
-  assert.equal(call1.arguments[0], "🏆  Martyna:         $1500 | 🏠  properties (0): []"); // check the message content
 
-  const call2 = console.log.mock.calls[2]; // check the second player's summary (Jarek)
-  assert.equal(call2.arguments.length, 1); // should log one message
-  assert.equal(call2.arguments[0], "💰  Jarek:           $1200 | 🏠  properties (3): [1, 2, 3]"); // check the message content
+  // Act
+  showSummary(players);
 
-  const call3 = console.log.mock.calls[3]; // check the third player's summary (Ola Olaszewska)
-  assert.equal(call3.arguments.length, 1); // should log one message
-  assert.equal(call3.arguments[0], "💀  Ola Olaszewska:  -$200 | 🏠  properties (1): [4]"); // check the message content
+  // Assert
+  const logs = console.log.mock.calls.map(call => call.arguments.map(arg => arg.toString()).join("|"));
+
+  assert.equal(logs.length, 7);
+  assert.equal(logs[1], "🏁  Game Summary 🏁");
+  assert.equal(logs[3], "");
+  assert.equal(logs[4], "🏆  Martyna:         $1500 | 🏠  properties (0): []");
+  assert.equal(logs[5], "💰  Jarek:           $1200 | 🏠  properties (3): [1, 2, 3]");
+  assert.equal(logs[6], "💀  Ola Olaszewska:  -$200 | 🏠  properties (1): [4]");
 });

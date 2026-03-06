@@ -5,6 +5,6 @@ export function buyProperty(player, tile) {
   }
   player.money -= tile.price;
   tile.owner = player.id;
-  player.properties.push(tile);
+  player.propertyIds.push(tile.id);
   console.log(`${player.name} bought ${tile.name} for $${tile.price}.`);
 }  

@@ -1,47 +1,59 @@
+/**
+ * Handles the rules for landing on different types of locations on the board, 
+ * such as paying rent, buying properties, and handling income tax.
+ */
 export const locationRules = {
+  /**
+   * Handles the actions that occur when a player lands on a tile, including: 
+   * paying rent, buying properties, and handling income tax.
+   * @param {Array<Object>} players - The list of all players in the game
+   * @param {Object} tile - The tile that the player landed on
+   * @param {Object} currentPlayer - The player who landed on the tile
+   */
   handle(players, tile, currentPlayer) {
-
-    this._handleIncomeTax(currentPlayer, tile);
+    this._handleTaxLocations(currentPlayer, tile);
     this._handleBuyProperty(currentPlayer, tile);
     this._handlePayRent(currentPlayer, tile, players);
   },
 
   _handlePayRent(player, tile, players) {
-    if (tile.ownerId !== player.id) {
-      const rent = tile.rent || 0;
-      if (tile.ownerId == null) return;
+    const isRentPaymentRequired = tile && tile.rent && tile.ownerId != null && tile.ownerId !== player.id;
+    if (!isRentPaymentRequired) return;
 
-      const owner = players.find((p) => p.id === tile.ownerId);
-      if (!owner) return;
+    const owner = players.find((p) => p.id === tile.ownerId);
+    if (!owner) return;
 
-      player.money -= rent;
-      owner.money += rent;
-      console.log(`${player.name} pays $${rent} rent to ${owner.name}`);
-    }
+    const rent = tile.rent;
+
+    player.money -= rent;
+    owner.money += rent;
+    console.log(`${player.name} pays $${rent} rent to ${owner.name}`);
   },
 
   _handleBuyProperty(player, tile) {
-    if (tile.ownerId === null) {
-      const hasPrice = !tile || !tile.price;
-      if (hasPrice && tile.ownerId === null) {
-        console.log(`${tile.name} is available for $${tile.price}`);
-      }
-
-      if (tile.price <= player.money) {
-        player.money -= tile.price;
-        tile.ownerId = player.id;
-        player.properties = player.properties || [];
-        player.properties.push(tile.id);
-        console.log(`${player.name} bought ${tile.name} for $${tile.price}.`);
-      }
+    const isLocationAvailableForPurchase = tile && tile.ownerId === null && tile.price;
+    if (!isLocationAvailableForPurchase) {
+      return;
     }
+
+    console.log(`${tile.name} is available for $${tile.price}`);
+
+    if (tile.price > player.money) {
+      return;
+    }
+
+    player.money -= tile.price;
+    tile.ownerId = player.id;
+    player.propertyIds = player.propertyIds || [];
+    player.propertyIds.push(tile.id);
+    console.log(`${player.name} bought ${tile.name} for $${tile.price}.`);
   },
 
-  _handleIncomeTax(player, tile) {
+  _handleTaxLocations(player, tile) {
     if (tile.type === "tax") {
       player.money -= tile.amount; // Deduct tax amount from player's money
       console.log(
-        `${player.name} landed on Income Tax and lost $${tile.amount}`,
+        `${player.name} landed on ${tile.name} and lost $${tile.amount}`,
       );
     }
   },

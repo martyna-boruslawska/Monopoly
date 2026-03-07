@@ -30,7 +30,7 @@ const board = [
   { id: 9, name: "Connecticut Avenue", type: "property", color: "light-blue", price: 120, rent: 8 },
   { id: 10, name: "Jail", type: "jail" },
   { id: 11, name: "St. Charles Place", type: "property", color: "purple", price: 140, rent: 10 },
-  { id: 12, name: "Electric Company", type: "utility", price: 150, rent: 15 },
+  { id: 12, name: "Electric Company", type: "utility", price: 150 },
   { id: 13, name: "States Avenue", type: "property", color: "purple", price: 140, rent: 10 },
   { id: 14, name: "Virginia Avenue", type: "property", color: "purple", price: 160, rent: 12 },
   { id: 15, name: "Pennsylvania Railroad", type: "railroad", price: 200, rent: 25 },
@@ -46,7 +46,7 @@ const board = [
   { id: 25, name: "B & O Railroad", type: "railroad", price: 200, rent: 25},
   { id: 26, name: "Atlantic Avenue", type: "property", color: "yellow", price: 260, rent: 22},
   { id: 27, name: "Ventnor Avenue", type: "property", color: "yellow", price: 260, rent: 22},
-  { id: 28, name: "Waterworks", type: "utility", price: 150, rent: 15},
+  { id: 28, name: "Waterworks", type: "utility", price: 150},
   { id: 29, name: "Marvin Gardens", type: "property", color: "yellow", price: 280, rent: 24},
   { id: 30, name: "Go To Jail", type: "go-to-jail"},
   { id: 31, name: "Pacific Avenue", type: "property", color: "green", price: 300, rent: 26},
@@ -56,7 +56,7 @@ const board = [
   { id: 35, name: "Short Line", type: "railroad", price: 200, rent: 25},
   { id: 36, name: "Chance", type: "chance"},
   { id: 37, name: "Park Place", type: "property", color: "dark-blue", price: 350, rent: 35},
-  { id: 38, name: "Luxury Tax", type: "luxury-tax", amount: 100},
+  { id: 38, name: "Luxury Tax", type: "tax", amount: 100},
   { id: 39, name: "Boardwalk", type: "property", color: "dark-blue", price: 400, rent: 50},
 ];
 
@@ -65,19 +65,21 @@ export function createBoard() {
 }
 
 function createLocation(locationDef) {
-  if (locationDef.type === "property") {
-    return {
+  if (locationDef.price) {
+    const location = {
       ...locationDef,
       ownerId: null,
-      houses: 0,
-      hasHotel: false
     };
-  }
-  if (locationDef.type === "railroad") {
-    return {
-      ...locationDef, 
-      ownerId: null,
-    };
+
+    if (locationDef.type === "property") {
+      return {
+        ...location,
+        houses: 0,
+        hasHotel: false,
+      };
+    }
+
+    return location;
   }
 
   return { ...locationDef };

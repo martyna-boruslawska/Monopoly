@@ -3,6 +3,10 @@ import { movePlayer } from "./movePlayer.js";
 
 export function playRound(players, board) {
   for (const player of players) {
+    if (player.isBankrupt) {
+      continue;
+    }
+
     executePlayerTurn(player, board, players);
   }
 }
@@ -10,7 +14,7 @@ export function playRound(players, board) {
 function executePlayerTurn(player, board, players) {
   let doublesCount = 0;
   let hasDouble = true;
-  while (hasDouble && doublesCount < 3) {
+  while (hasDouble && doublesCount < 3 && !player.isBankrupt) {
     const roll = rollDice();
     movePlayer(player, roll.total, board, players);
     hasDouble = roll.isDouble;

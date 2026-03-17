@@ -14,5 +14,5 @@ export function movePlayer(player, steps, board, players) {
     console.log(`${player.name} passes Start and collects $200`);
   }
 
-  locationRules.handle(players, currentSquare, player);
+  locationRules.handle(players, board, currentSquare, player);
 }

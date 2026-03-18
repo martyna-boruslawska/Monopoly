@@ -4,7 +4,8 @@ import { locationRules } from "../game/rules/locationRules.js";
 import { createBoard } from "../game/createBoard.js";
 import { createPlayers } from "../game/createPlayers.js";
 
-test("buys unowned property when player has enough funds", () => {
+test("buys unowned property when player has enough funds", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
   const board = createBoard();
   const players = createPlayers(["Martyna", "Jarek"]);
   const player = players[0];
@@ -17,7 +18,8 @@ test("buys unowned property when player has enough funds", () => {
   assert.deepEqual(player.propertyIds, [tile.id]);
 });
 
-test("skips purchase when funds are insufficient", () => {
+test("skips purchase when funds are insufficient", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
   const board = createBoard();
   const players = createPlayers(["Martyna", "Jarek"]);
   const player = players[0];
@@ -31,7 +33,37 @@ test("skips purchase when funds are insufficient", () => {
   assert.deepEqual(player.propertyIds, []);
 });
 
-test("pays rent to another player", () => {
+test("buys unowned railroad when player has enough funds", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+  const board = createBoard();
+  const players = createPlayers(["Martyna", "Jarek"]);
+  const player = players[0];
+  const tile = board[5]; // Reading Railroad: price 200
+
+  locationRules.handle(players, board, tile, player);
+
+  assert.equal(tile.ownerId, player.id);
+  assert.equal(player.money, 1500 - tile.price);
+  assert.deepEqual(player.propertyIds, [tile.id]);
+});
+
+test("skips railroad purchase when funds are insufficient", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+  const board = createBoard();
+  const players = createPlayers(["Martyna", "Jarek"]);
+  const player = players[0];
+  const tile = board[5];
+  player.money = 150;
+
+  locationRules.handle(players, board, tile, player);
+
+  assert.equal(tile.ownerId, null);
+  assert.equal(player.money, 150);
+  assert.deepEqual(player.propertyIds, []);
+});
+
+test("pays rent to another player", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
   const board = createBoard();
   const players = createPlayers(["Martyna", "Jarek"]);
   const currentPlayer = players[0];
@@ -45,7 +77,23 @@ test("pays rent to another player", () => {
   assert.equal(owner.money, 1500 + tile.rent);
 });
 
-test("does not pay rent on self-owned properties", () => {
+test("pays railroad rent to another player", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+  const board = createBoard();
+  const players = createPlayers(["Martyna", "Jarek"]);
+  const currentPlayer = players[0];
+  const owner = players[1];
+  const tile = board[5]; // Reading Railroad, rent 25
+  tile.ownerId = owner.id;
+
+  locationRules.handle(players, board, tile, currentPlayer);
+
+  assert.equal(currentPlayer.money, 1500 - tile.rent);
+  assert.equal(owner.money, 1500 + tile.rent);
+});
+
+test("does not pay rent on self-owned properties", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
   const board = createBoard();
   const players = createPlayers(["Martyna", "Jarek"]);
   const currentPlayer = players[0];
@@ -58,7 +106,8 @@ test("does not pay rent on self-owned properties", () => {
   assert.equal(players[1].money, 1500);
 });
 
-test("handles missing owner safely when ownerId does not match any player", () => {
+test("handles missing owner safely when ownerId does not match any player", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
   const board = createBoard();
   const players = createPlayers(["Martyna", "Jarek"]);
   const currentPlayer = players[0];
@@ -70,7 +119,8 @@ test("handles missing owner safely when ownerId does not match any player", () =
   assert.ok(!currentPlayer.propertyIds.includes(tile.id));
 });
 
-test("applies income tax deduction", () => {
+test("applies income tax deduction", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
   const board = createBoard();
   const players = createPlayers(["Martyna", "Jarek"]);
   const player = players[0];
@@ -81,7 +131,22 @@ test("applies income tax deduction", () => {
   assert.equal(player.money, 1500 - tile.amount);
 });
 
-test("applies luxury tax deduction", () => {
+test("applies income tax down to zero without marking player bankrupt", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+  const board = createBoard();
+  const players = createPlayers(["Martyna", "Jarek"]);
+  const player = players[0];
+  const tile = board[4];
+  player.money = tile.amount;
+
+  locationRules.handle(players, board, tile, player);
+
+  assert.equal(player.money, 0);
+  assert.equal(player.isBankrupt, false);
+});
+
+test("applies luxury tax deduction", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
   const board = createBoard();
   const players = createPlayers(["Martyna", "Jarek"]);
   const player = players[0];
@@ -92,7 +157,8 @@ test("applies luxury tax deduction", () => {
   assert.equal(player.money, 1500 - tile.amount);
 });
 
-test("marks player bankrupt and releases owned properties when money drops below zero", () => {
+test("marks player bankrupt and releases owned properties when money drops below zero", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
   const board = createBoard();
   const players = createPlayers(["Martyna", "Jarek"]);
   const player = players[0];
@@ -112,7 +178,8 @@ test("marks player bankrupt and releases owned properties when money drops below
   assert.deepEqual(player.propertyIds, []);
 });
 
-test("marks player bankrupt after paying rent and releases owned properties", () => {
+test("marks player bankrupt after paying rent and releases owned properties", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
   const board = createBoard();
   const players = createPlayers(["Martyna", "Jarek"]);
   const tenant = players[0];

@@ -1,18 +1,15 @@
-import { createPlayers } from "./game/createPlayers.js";
-import { createBoard } from "./game/createBoard.js";
 import { playRound } from "./game/playRound.js";
 import { showSummary } from "./game/showSummary.js";
 import { showIntro } from "./game/showIntro.js";
+import { createGame } from "./game/createGame.js";
 
-const board = createBoard();
+const game = createGame(["Martyna", "Jarek"]);
 
-let players = createPlayers(["Martyna", "Jarek"]);
-
-showIntro(players);
+showIntro(game.players);
 
 const numberOfTurns = 10; // You can adjust the number of turns as needed
 for (let turn = 0; turn < numberOfTurns; turn++) {
-  playRound(players, board);
+  playRound(game);
 }
 
-showSummary(players);
+showSummary(game.players);

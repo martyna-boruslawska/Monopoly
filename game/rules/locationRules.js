@@ -10,54 +10,58 @@ export const locationRules = {
    * @param {Object} tile - The tile that the player landed on
    * @param {Object} currentPlayer - The player who landed on the tile
    */
-  handle(players, board, tile, currentPlayer) {
-    this._handleTaxLocations(currentPlayer, tile);
-    this._markBankruptIfNeeded(currentPlayer, board);
-    if (currentPlayer.isBankrupt) return;
 
-    this._handleBuyProperty(currentPlayer, tile);
-    this._markBankruptIfNeeded(currentPlayer, board);
-    if (currentPlayer.isBankrupt) return;
+  handle(game) {
+      
+    this._handleTaxLocations(game);
+    this._markBankruptIfNeeded(game);
+    if (game.currentPlayer().isBankrupt) return;
 
-    this._handlePayRent(currentPlayer, tile, players);
-    this._markBankruptIfNeeded(currentPlayer, board);
+    this._handleBuyProperty(game);
+    this._markBankruptIfNeeded(game);
+    if (game.currentPlayer().isBankrupt) return;
+
+    this._handlePayRent(game);
+    this._markBankruptIfNeeded(game);
   },
 
-  _markBankruptIfNeeded(player, board) {
-    if (player.isBankrupt || player.money >= 0) {
+  _markBankruptIfNeeded(game) {
+    if (game.currentPlayer().isBankrupt || game.currentPlayer().money >= 0) {
       return;
     }
 
-    player.isBankrupt = true;
-    this._releasePlayerProperties(player, board);
-    console.log(`${player.name} is bankrupt and out of the game.`);
+    game.currentPlayer().isBankrupt = true;
+    this._releasePlayerProperties(game);
+    console.log(`${game.currentPlayer().name} is bankrupt and out of the game.`);
   },
 
-  _releasePlayerProperties(player, board) {
-    for (const tile of board) {
-      if (tile.ownerId === player.id) {
+  _releasePlayerProperties(game) {
+    for (const tile of game.board) {
+      if (tile.ownerId === game.currentPlayer().id) {
         tile.ownerId = null;
       }
     }
 
-    player.propertyIds = [];
+    game.currentPlayer().propertyIds = [];
   },
 
-  _handlePayRent(player, tile, players) {
-    const isRentPaymentRequired = tile && tile.rent && tile.ownerId != null && tile.ownerId !== player.id;
+  _handlePayRent(game) {
+    const tile = game.board[game.currentPlayer().position];
+    const isRentPaymentRequired = tile && tile.rent && tile.ownerId != null && tile.ownerId !== game.currentPlayer().id;
     if (!isRentPaymentRequired) return;
 
-    const owner = players.find((p) => p.id === tile.ownerId);
+    const owner = game.players.find((p) => p.id === tile.ownerId);
     if (!owner) return;
 
     const rent = tile.rent;
 
-    player.money -= rent;
+    game.currentPlayer().money -= rent;
     owner.money += rent;
-    console.log(`${player.name} pays $${rent} rent to ${owner.name}`);
+    console.log(`${game.currentPlayer().name} pays $${rent} rent to ${owner.name}`);
   },
 
-  _handleBuyProperty(player, tile) {
+  _handleBuyProperty(game) {
+    const tile = game.board[game.currentPlayer().position];
     const isLocationAvailableForPurchase = tile && tile.ownerId === null && tile.price;
     if (!isLocationAvailableForPurchase) {
       return;
@@ -65,22 +69,23 @@ export const locationRules = {
 
     console.log(`${tile.name} is available for $${tile.price}`);
 
-    if (tile.price > player.money) {
+    if (tile.price > game.currentPlayer().money) {
       return;
     }
 
-    player.money -= tile.price;
-    tile.ownerId = player.id;
-    player.propertyIds = player.propertyIds || [];
-    player.propertyIds.push(tile.id);
-    console.log(`${player.name} bought ${tile.name} for $${tile.price}.`);
+    game.currentPlayer().money -= tile.price;
+    tile.ownerId = game.currentPlayer().id;
+    game.currentPlayer().propertyIds = game.currentPlayer().propertyIds || [];
+    game.currentPlayer().propertyIds.push(tile.id);
+    console.log(`${game.currentPlayer().name} bought ${tile.name} for $${tile.price}.`);
   },
 
-  _handleTaxLocations(player, tile) {
-    if (tile.type === "tax") {
-      player.money -= tile.amount; // Deduct tax amount from player's money
+  _handleTaxLocations(game) {
+    const tile = game.board[game.currentPlayer().position];
+    if (tile && tile.type === "tax") {
+      game.currentPlayer().money -= tile.amount; // Deduct tax amount from player's money
       console.log(
-        `${player.name} landed on ${tile.name} and lost $${tile.amount}`,
+        `${game.currentPlayer().name} landed on ${tile.name} and lost $${tile.amount}`,
       );
     }
   },

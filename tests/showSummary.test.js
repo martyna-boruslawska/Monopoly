@@ -17,10 +17,10 @@ test("displays player summary correctly", (context) => {
   // Assert
   const logs = console.log.mock.calls.map(call => call.arguments.map(arg => arg.toString()).join("|"));
 
-  assert.equal(logs.length, 7);
-  assert.equal(logs[1], "🏁  Game Summary 🏁");
-  assert.equal(logs[3], "");
-  assert.equal(logs[4], "🏆  Martyna:         $1500 | 🏠  properties (0): []");
-  assert.equal(logs[5], "💰  Jarek:           $1200 | 🏠  properties (3): [1, 2, 3]");
-  assert.equal(logs[6], "💀  Ola Olaszewska:  -$200 | 🏠  properties (1): [4]");
+  assert.strictEqual(logs.length, 7);
+  assert.strictEqual(logs[1], "🏁  Game Summary 🏁");
+  assert.strictEqual(logs[3], "");
+  assert.strictEqual(logs[4], "🏆  Martyna:         $1500 | 🏠  properties (0): []");
+  assert.strictEqual(logs[5], "💰  Jarek:           $1200 | 🏠  properties (3): [1, 2, 3]");
+  assert.strictEqual(logs[6], "💀  Ola Olaszewska:  -$200 | 🏠  properties (1): [4]");
 });

@@ -43,4 +43,3 @@ function createPlayer(name, id) {
     isBankrupt: false
   };
 }
- 

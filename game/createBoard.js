@@ -84,4 +84,3 @@ function createLocation(locationDef) {
 
   return { ...locationDef };
 }
- 

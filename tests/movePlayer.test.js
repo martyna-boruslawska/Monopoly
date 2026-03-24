@@ -1,70 +1,69 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { movePlayer } from "../game/movePlayer.js";
-import { createBoard } from "../game/createBoard.js";
-import { createPlayers } from "../game/createPlayers.js";
+import { createGame } from "../game/createGame.js";
 
 test("moves player forward by steps without passing Start", (ctx) => {
   ctx.mock.method(console, "log", () => {});
-  const board = createBoard();
-  const players = createPlayers(["Luke Skywalker", "Leia"]);
-  const player = players[0];
-  player.position = 1;
+  
+  const game = createGame(["Luke Skywalker", "Leia"]);
+  game.currentPlayerId = game.players[0].id;
+  game.players[0].position = 1;
+  
+  movePlayer(game, 2);
 
-  movePlayer(player, 2, board, players);
-
-  assert.equal(player.position, 3);
-  assert.equal(player.money, 1500 - 60); // Baltic Avenue's price is 60
+  assert.strictEqual(game.players[0].position, 3);
+  assert.strictEqual(game.players[0].money, 1500 - 60); // Baltic Avenue's price is 60
 });
 
 test("complete move at Start gives $200", (ctx) => {
   ctx.mock.method(console, "log", () => {});
-  const board = createBoard();
-  const players = createPlayers(["Yoda", "Mace Windu"]);
-  const player = players[0];
-  player.position = 31;
-
-  movePlayer(player, 9, board, players);
-
-  assert.equal(player.position, 0);
-  assert.equal(player.money, 1700);
+  
+  const game = createGame(["Yoda", "Mace Windu"]);
+  game.currentPlayerId = game.players[0].id;
+  game.players[0].position = 31;
+  
+  movePlayer(game, 9);
+  
+  assert.strictEqual(game.players[0].position, 0);
+  assert.strictEqual(game.players[0].money, 1700);
 });
 
 test("wraps around board and gives $200 when passing Start", (ctx) => {
   ctx.mock.method(console, "log", () => {});
-  const board = createBoard();
-  const players = createPlayers(["Obi-Wan", "Anakin"]);
-  const player = players[0];
-  player.position = 31;
+  
+  const game = createGame(["Obi-Wan", "Anakin"]);
+  game.currentPlayerId = game.players[0].id;
+  game.players[0].position = 31;
 
-  movePlayer(player, 10, board, players);
+  movePlayer(game, 10);
 
-  assert.equal(player.position, 1);
-  assert.equal(player.money, 1700 - 60); // Passed Start and landed on Mediterranean Avenue, price is $60
+  assert.strictEqual(game.players[0].position, 1);
+  assert.strictEqual(game.players[0].money, 1700 - 60); // Passed Start and landed on Mediterranean Avenue, price is $60
 });
 
 test("lands on the last board tile without wrapping", (ctx) => {
   ctx.mock.method(console, "log", () => {});
-  const board = createBoard();
-  const players = createPlayers(["Luke Skywalker", "Leia"]);
-  const player = players[0];
-  player.position = 37;
+  
+  const game = createGame(["Luke Skywalker", "Leia"]);
+  game.currentPlayerId = game.players[0].id;
+  game.players[0].position = 37;
 
-  movePlayer(player, 2, board, players);
+  movePlayer(game, 2);
 
-  assert.equal(player.position, 39);
-  assert.equal(player.money, 1500 - 400);
+  assert.strictEqual(game.players[0].position, 39);
+  assert.strictEqual(game.players[0].money, 1500 - 400);
 });
 
 test("moving from Start does not collect $200", (ctx) => {
   ctx.mock.method(console, "log", () => {});
-  const board = createBoard();
-  const players = createPlayers(["Luke Skywalker", "Leia"]);
-  const player = players[0];
-  player.position = 0;
+  
+  const game = createGame(["Luke Skywalker", "Leia"]);
+  game.currentPlayerId = game.players[0].id;
+  game.players[0].position = 0;
 
-  movePlayer(player, 3, board, players);
+  movePlayer(game, 3);
 
-  assert.equal(player.position, 3);
-  assert.equal(player.money, 1500 - 60);
+  assert.strictEqual(game.players[0].position, 3);
+  assert.strictEqual(game.players[0].money, 1500 - 60);
 });

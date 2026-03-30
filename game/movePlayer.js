@@ -1,6 +1,10 @@
 import { locationRules } from "./rules/locationRules.js";
 
-export function movePlayer(player, steps, board, players) {
+export function movePlayer(game, steps) {
+  const player = game.currentPlayer();
+  const board = game.board;
+  const players = game.players;
+
   const passStart = (player.position+steps) >= board.length; 
 
   // Move player position
@@ -14,5 +18,5 @@ export function movePlayer(player, steps, board, players) {
     console.log(`${player.name} passes Start and collects $200`);
   }
 
-  locationRules.handle(players, board, currentSquare, player);
+  locationRules.handle(game, currentSquare);
 }

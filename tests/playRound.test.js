@@ -1,88 +1,99 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { playRound } from "../game/playRound.js";
-import { createBoard } from "../game/createBoard.js";
-import { createPlayers } from "../game/createPlayers.js";
+import { createGame } from "../game/createGame.js";
 
 test("skips players who are already bankrupt", (context) => {
+  // Arrange
   context.mock.method(console, "log", () => {});
-  const board = createBoard();
-  const players = createPlayers(["Martyna", "Jarek"]);
+  const game = createGame(["Martyna", "Jarek"]);
 
-  players[0].isBankrupt = true;
-  players[0].position = 5;
+  game.players[0].isBankrupt = true;
+  game.players[0].position = 5;
+  game.currentPlayerId = game.players[0].id; // Set current player to Jarek for the test
 
   const randomValues = [0, 0.2]; // dice: 1 and 2
   let index = 0;
   context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
 
-  playRound(players, board);
+  // Act
+  playRound(game);
 
-  assert.equal(players[0].position, 5);
-  assert.equal(players[1].position, 3);
+  // Assert
+  assert.equal(game.players[0].position, 5);
+  assert.equal(game.players[1].position, 3);
 });
 
 test("plays one turn for a non-bankrupt player", (context) => {
+  // Arrange
   context.mock.method(console, "log", () => {});
-  const board = createBoard();
-  const players = createPlayers(["Luke"]);
+  const game = createGame(["Luke"]);
+  game.currentPlayerId = game.players[0].id; // Set current player to Luke for the test
 
   const randomValues = [0, 0.2];
   let index = 0;
   context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
 
-  playRound(players, board);
+  // Act
+  playRound(game);
 
-  assert.equal(players[0].position, 3);
+  // Assert
+  assert.equal(game.players[0].position, 3);
 });
 
 test("gives another turn after rolling doubles", (context) => {
+  // Arrange
   context.mock.method(console, "log", () => {});
-  const board = createBoard();
-  const players = createPlayers(["Luke"]);
+  const game = createGame(["Luke"]);
+  game.currentPlayerId = game.players[0].id; // Set current player to Luke for the test
 
   const randomValues = [0, 0, 0.2, 0.4];
   let index = 0;
   context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
 
-  playRound(players, board);
+  // Act
+  playRound(game);
 
-  assert.equal(players[0].position, 7);
+  // Assert
+  assert.equal(game.players[0].position, 7);
 });
 
 test("stops after three doubles", (context) => {
+  // Arrange
   context.mock.method(console, "log", () => {});
-  const board = createBoard();
-  const players = createPlayers(["Luke"]);
+  const game = createGame(["Luke"]);
+  game.currentPlayerId = game.players[0].id; // Set current player to Luke for the test
 
   const randomValues = [0, 0, 0, 0, 0, 0, 0, 0];
   let index = 0;
   context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
 
-  playRound(players, board);
+  // Act
+  playRound(game);
 
-  assert.equal(players[0].position, 6);
+  // Assert
+  assert.equal(game.players[0].position, 6);
   assert.equal(index, 6);
 });
 
 test("stops extra turns when player becomes bankrupt after a double", (context) => {
+  // Arrange
   context.mock.method(console, "log", () => {});
-  const board = createBoard();
-  const players = createPlayers(["Luke"]);
-  const player = players[0];
-
-  player.position = 36;
-  player.money = 50;
+  const game = createGame(["Luke"]);
+  game.currentPlayerId = game.players[0].id; // Set current player to Luke for the test
+  game.players[0].position = 36;
+  game.players[0].money = 50;
 
   const randomValues = [0, 0, 0, 0];
   let index = 0;
   context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
 
-  playRound(players, board);
+  // Act
+  playRound(game);
 
-  assert.equal(player.position, 38);
-  assert.equal(player.money, -50);
-  assert.equal(player.isBankrupt, true);
+  // Assert
+  assert.equal(game.players[0].position, 38);
+  assert.equal(game.players[0].money, -50);
+  assert.equal(game.players[0].isBankrupt, true);
   assert.equal(index, 2);
 });
-

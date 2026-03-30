@@ -1,22 +1,21 @@
 import { rollDice } from "./rollDice.js";
 import { movePlayer } from "./movePlayer.js";
 
-export function playRound(players, board) {
-  for (const player of players) {
-    if (player.isBankrupt) {
-      continue;
-    }
+export function playRound(game) {
+  const activePlayers = game.getActivePlayers();  
 
-    executePlayerTurn(player, board, players);
+  for (const player of activePlayers) {
+    game.currentPlayerId = player.id; // Set current player for the turn
+    executePlayerTurn(player, game);
   }
 }
 
-function executePlayerTurn(player, board, players) {
+function executePlayerTurn(player, game) {
   let doublesCount = 0;
   let hasDouble = true;
   while (hasDouble && doublesCount < 3 && !player.isBankrupt) {
     const roll = rollDice();
-    movePlayer(player, roll.total, board, players);
+    movePlayer(game, roll.total);
     hasDouble = roll.isDouble;
     if (hasDouble) {
       console.log(

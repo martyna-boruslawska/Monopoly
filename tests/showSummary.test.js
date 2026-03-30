@@ -1,14 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { showSummary } from "../game/showSummary.js";
+import { createGame } from "../game/createGame.js";
 
 test("displays player summary correctly", (context) => {
   // Arrange
-  const players = [
-    {name: "Martyna", money: 1500, propertyIds: []},
-    {name: "Jarek", money: 1200, propertyIds: [1, 2, 3]},
-    {name: "Ola Olaszewska", money: -200, propertyIds: [4]}
-  ];
+  const game = createGame(["Martyna", "Jarek", "Ola Olaszewska"]);
+  const players = game.players;
+  players[0].money = 1500;
+  players[1].money = 1200;
+  players[1].propertyIds = [1, 2, 3];
+  players[2].money = -200;
+  players[2].propertyIds = [4];
   context.mock.method(console, "log", (message) => {}); // mock console.log to capture output
 
   // Act

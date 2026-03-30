@@ -1,10 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createPlayers } from "../game/createPlayers.js";
+import { createGame } from "../game/createGame.js";
 
 test("created players use expected object shape and defaults", () => {
-  const players = createPlayers(["Martyna", "Jarek"]);
+  // Arrange
+  const game = createGame(["Martyna", "Jarek"]);
+  const players = game.players;
 
+  // Assert
   assert.equal(players.length, 2);
 
   assert.deepEqual(players[0], {
@@ -27,18 +31,24 @@ test("created players use expected object shape and defaults", () => {
 });
 
 test("returns an empty list when no player names are provided", () => {
-  const players = createPlayers([]);
+  // Arrange
+  const game = createGame([]);
+  const players = game.players;
 
+  // Assert
   assert.deepEqual(players, []);
 });
 
 test("creates independent player objects and property lists", () => {
-  const players = createPlayers(["Martyna", "Jarek"]);
+  // Arrange
+  const game = createGame(["Martyna", "Jarek"]);
+  const players = game.players;
 
   players[0].propertyIds.push(99);
   players[0].money = 1200;
   players[0].position = 7;
 
+  // Assert
   assert.deepEqual(players[0].propertyIds, [99]);
   assert.deepEqual(players[1].propertyIds, []);
   assert.equal(players[0].money, 1200);
@@ -48,8 +58,11 @@ test("creates independent player objects and property lists", () => {
 });
 
 test("preserves input order and assigns sequential ids", () => {
-  const players = createPlayers(["Leia", "Luke", "Han"]);
+  // Arrange
+  const game = createGame(["Leia", "Luke", "Han"]);
+  const players = game.players;
 
+  // Assert
   assert.equal(players[0].name, "Leia");
   assert.equal(players[0].id, 1);
   assert.equal(players[1].name, "Luke");
@@ -59,10 +72,12 @@ test("preserves input order and assigns sequential ids", () => {
 });
 
 test("keeps provided names unchanged", () => {
-  const players = createPlayers(["", "  Leia  ", "R2-D2"]);
+  // Arrange
+  const game = createGame(["", "  Leia  ", "R2-D2"]);
+  const players = game.players;
 
+  // Assert
   assert.equal(players[0].name, "");
   assert.equal(players[1].name, "  Leia  ");
   assert.equal(players[2].name, "R2-D2");
 });
-

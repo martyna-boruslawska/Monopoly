@@ -10,18 +10,21 @@ export const locationRules = {
    * @param {Object} tile - The tile that the player landed on
    * @param {Object} currentPlayer - The player who landed on the tile
    */
-  handle(players, board, tile, currentPlayer) {
+
+  handle(game, tile) {
+    const currentPlayer = game.currentPlayer();
     this._handleTaxLocations(currentPlayer, tile);
-    this._markBankruptIfNeeded(currentPlayer, board);
+    this._markBankruptIfNeeded(currentPlayer, game.board);
     if (currentPlayer.isBankrupt) return;
 
     this._handleBuyProperty(currentPlayer, tile);
-    this._markBankruptIfNeeded(currentPlayer, board);
+    this._markBankruptIfNeeded(currentPlayer, game.board);
     if (currentPlayer.isBankrupt) return;
 
-    this._handlePayRent(currentPlayer, tile, players);
-    this._markBankruptIfNeeded(currentPlayer, board);
+    this._handlePayRent(currentPlayer, tile, game.players);
+    this._markBankruptIfNeeded(currentPlayer, game.board);
   },
+  
 
   _markBankruptIfNeeded(player, board) {
     if (player.isBankrupt || player.money >= 0) {

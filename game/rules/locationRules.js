@@ -1,3 +1,5 @@
+import { jailRules, sendCurrentPlayerToJail } from "./jailRules.js";
+
 /**
  * Handles the rules for landing on different types of locations on the board, 
  * such as paying rent, buying properties, and handling income tax.
@@ -12,6 +14,9 @@ export const locationRules = {
    */
 
   handle(game) {
+    if (this._handleGoToJail(game)) {
+      return;
+    }
       
     this._handleTaxLocations(game);
     this._markBankruptIfNeeded(game);
@@ -53,6 +58,11 @@ export const locationRules = {
     const owner = game.players.find((p) => p.id === tile.ownerId);
     if (!owner) return;
 
+    if (owner.isInJail) {
+      console.log(`${owner.name} is in jail and cannot collect rent from ${game.currentPlayer().name}.`);
+      return;
+    }
+
     const rent = tile.rent;
 
     game.currentPlayer().money -= rent;
@@ -88,5 +98,15 @@ export const locationRules = {
         `${game.currentPlayer().name} landed on ${tile.name} and lost $${tile.amount}`,
       );
     }
+  },
+
+  _handleGoToJail(game) {
+    const tile = game.board[game.currentPlayer().position];
+    if (!tile || tile.type !== "go-to-jail") {
+      return false;
+    }
+
+    sendCurrentPlayerToJail(game);
+    return true;
   },
 };

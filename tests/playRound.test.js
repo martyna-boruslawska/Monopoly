@@ -78,3 +78,45 @@ test("stops extra turns when player becomes bankrupt after a double", (context) 
   assert.strictEqual(player.isBankrupt, true);
   assert.strictEqual(index, 2);
 });
+
+test("skips a jailed player's turn when they cannot pay and fail to roll doubles", (context) => {
+  context.mock.method(console, "log", () => {});
+  const game = createGame(["Luke"]);
+  const player = game.players[0];
+
+  player.position = 10;
+  player.money = 30;
+  player.isInJail = true;
+
+  const randomValues = [0.2, 0.4]; // dice: 2 and 3
+  let index = 0;
+  context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
+
+  playRound(game);
+
+  assert.strictEqual(player.position, 10);
+  assert.strictEqual(player.isInJail, true);
+  assert.strictEqual(player.failedJailRolls, 1);
+  assert.strictEqual(index, 2);
+});
+
+test("uses the jail escape roll to move and does not grant an extra turn", (context) => {
+  context.mock.method(console, "log", () => {});
+  const game = createGame(["Luke"]);
+  const player = game.players[0];
+
+  player.position = 10;
+  player.money = 30;
+  player.isInJail = true;
+
+  const randomValues = [0, 0, 0.2, 0.4]; // first roll doubles 1+1 to escape, next pair would be consumed by an extra turn
+  let index = 0;
+  context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
+
+  playRound(game);
+
+  assert.strictEqual(player.position, 12);
+  assert.strictEqual(player.isInJail, false);
+  assert.strictEqual(player.failedJailRolls, 0);
+  assert.strictEqual(index, 2);
+});

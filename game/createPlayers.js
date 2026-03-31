@@ -2,7 +2,7 @@
  * Creates an array of player objects based on the provided names.
  *
  * @param {Array<string>} names - An array of player names.
- * @returns {Array<{id: number, name: string, position: number, money: number, propertyIds: Array<number>, isBankrupt: boolean}>} An array of player objects.
+ * @returns {Array<{id: number, name: string, position: number, money: number, propertyIds: Array<number>, isBankrupt: boolean, isInJail: boolean, failedJailRolls: number}>} An array of player objects.
  * 
  * Each player object has the following properties:
  * - id: A unique identifier for the player (starting from 1).
@@ -11,14 +11,16 @@
  * - money: The amount of money the player has (initially 1500).
  * - propertyIds: An array of property IDs owned by the player (initially empty).
  * - isBankrupt: A boolean indicating whether the player is bankrupt (initially false).
+ * - isInJail: A boolean indicating whether the player is currently in jail.
+ * - failedJailRolls: Number of failed attempts to roll doubles while in jail.
  * 
  * @example
  * const players = createPlayers(["Alice", "Bob"]);
  * console.log(players);
  * // Output:
  * // [
- * //   { id: 1, name: "Alice", position: 0, money: 1500, propertyIds: [], isBankrupt: false },
- * //   { id: 2, name: "Bob", position: 0, money: 1500, propertyIds: [], isBankrupt: false }
+ * //   { id: 1, name: "Alice", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
+ * //   { id: 2, name: "Bob", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 }
  * // ]
  */
 export function createPlayers(names) {
@@ -31,7 +33,7 @@ export function createPlayers(names) {
  *
  * @param {string} name - The name of the player.
  * @param {number} id - The unique ID of the player.
- * @returns {{id: number, name: string, position: number, money: number, propertyIds: Array<number>, isBankrupt: boolean}} The newly created player object.
+ * @returns {{id: number, name: string, position: number, money: number, propertyIds: Array<number>, isBankrupt: boolean, isInJail: boolean, failedJailRolls: number}} The newly created player object.
  */
 function createPlayer(name, id) {
   return {
@@ -40,6 +42,8 @@ function createPlayer(name, id) {
     position: 0,
     money: 1500,
     propertyIds: [],
-    isBankrupt: false
+    isBankrupt: false,
+    isInJail: false,
+    failedJailRolls: 0,
   };
 }

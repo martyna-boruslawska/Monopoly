@@ -1,4 +1,5 @@
 import { movePlayer } from "./movePlayer.js";
+import { jailRules } from "./rules/jailRules.js";
 
 export function playRound(game) {
   const turnsToPlay = game.countActivePlayers();
@@ -21,9 +22,20 @@ function executePlayerTurn(game) {
       return;
     }
 
-    const roll = game.rollDice();
+    const jailResult = jailRules(game);
+    if (!jailResult.canMove) {
+      return;
+    }
+
+    const roll = jailResult.roll ?? game.rollDice();
     movePlayer(game, roll.total);
-    hasDouble = roll.isDouble;
+
+    const updatedPlayer = game.currentPlayer();
+    if (updatedPlayer == null || updatedPlayer.isBankrupt || updatedPlayer.isInJail) {
+      return;
+    }
+
+    hasDouble = roll.isDouble && !jailResult.usedJailRoll;
     if (hasDouble) {
       console.log(
         `${currentPlayer.name} rolled doubles: ${roll.dice1} & ${roll.dice2} and gets another turn!`,

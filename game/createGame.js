@@ -8,6 +8,7 @@ export function createGame(playerNames) {
     board: createBoard(),
     rollDice: rollDice,
     currentPlayerId: null,
+    lastRoll: null,
     currentPlayer() {
       return this.players.find(player => player.id === this.currentPlayerId) ?? null;
     },

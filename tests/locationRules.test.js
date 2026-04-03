@@ -49,6 +49,21 @@ test("buys unowned railroad when player has enough funds", (ctx) => {
   assert.deepStrictEqual(game.currentPlayer().propertyIds, [tile.id]);
 });
 
+test("buys unowned utility when player has enough funds", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+ 
+  const game = createGame(["Martyna", "Jarek"]);
+  const tile = game.board[12]; // Electric Company: price 150
+  game.currentPlayerId = game.players[0].id;
+  game.currentPlayer().position = 12;
+
+  locationRules.handle(game);
+
+  assert.strictEqual(tile.ownerId, game.currentPlayer().id);
+  assert.strictEqual(game.currentPlayer().money, 1500 - tile.price);
+  assert.deepStrictEqual(game.currentPlayer().propertyIds, [tile.id]);
+});
+
 test("skips railroad purchase when funds are insufficient", (ctx) => {
   ctx.mock.method(console, "log", () => {});
  
@@ -65,7 +80,7 @@ test("skips railroad purchase when funds are insufficient", (ctx) => {
   assert.deepStrictEqual(game.currentPlayer().propertyIds, []);
 });
 
-test("pays rent to another player", (ctx) => {
+test("pays property rent to another player", (ctx) => {
   ctx.mock.method(console, "log", () => {});
   
   const game = createGame(["Martyna", "Jarek"]);
@@ -81,20 +96,118 @@ test("pays rent to another player", (ctx) => {
   assert.strictEqual(owner.money, 1500 + tile.rent);
 });
 
-test("pays railroad rent to another player", (ctx) => {
+test("pays railroad rent to another player with 1 railroad owned", (ctx) => {
   ctx.mock.method(console, "log", () => {});
   
   const game = createGame(["Martyna", "Jarek"]);
   game.currentPlayerId = game.players[0].id;
   const owner = game.players[1];
-  const tile = game.board[5]; // Reading Railroad, rent 25
-  tile.ownerId = owner.id;
+  game.board[5].ownerId = owner.id; // Reading Railroad
   game.currentPlayer().position = 5;
 
   locationRules.handle(game);
 
-  assert.strictEqual(game.currentPlayer().money, 1500 - tile.rent);
-  assert.strictEqual(owner.money, 1500 + tile.rent);
+  assert.strictEqual(game.currentPlayer().money, 1500 - 25);
+  assert.strictEqual(owner.money, 1500 + 25);
+});
+
+test("pays railroad rent to another player with 2 railroads owned", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+  
+  const game = createGame(["Martyna", "Jarek"]);
+  game.currentPlayerId = game.players[0].id;
+  const owner = game.players[1];
+  game.board[5].ownerId = owner.id; // Reading Railroad
+  game.board[15].ownerId = owner.id; // Pennsylvania Railroad
+  game.currentPlayer().position = 5;
+
+  locationRules.handle(game);
+
+  assert.strictEqual(game.currentPlayer().money, 1500 - 50);
+  assert.strictEqual(owner.money, 1500 + 50);
+});
+
+test("pays railroad rent to another player with 3 railroads owned", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+  
+  const game = createGame(["Martyna", "Jarek"]);
+  game.currentPlayerId = game.players[0].id;
+  const owner = game.players[1];
+  game.board[5].ownerId = owner.id; // Reading Railroad
+  game.board[15].ownerId = owner.id; // Pennsylvania Railroad
+  game.board[25].ownerId = owner.id; // B&O Railroad
+  game.currentPlayer().position = 5;
+
+  locationRules.handle(game);
+
+  assert.strictEqual(game.currentPlayer().money, 1500 - 100);
+  assert.strictEqual(owner.money, 1500 + 100);
+});
+
+test("pays railroad rent to another player with 4 railroads owned", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+  
+  const game = createGame(["Martyna", "Jarek"]);
+  game.currentPlayerId = game.players[0].id;
+  const owner = game.players[1];
+  game.board[5].ownerId = owner.id; // Reading Railroad
+  game.board[15].ownerId = owner.id; // Pennsylvania Railroad
+  game.board[25].ownerId = owner.id; // B&O Railroad
+  game.board[35].ownerId = owner.id; // Short Line
+  game.currentPlayer().position = 5;
+
+  locationRules.handle(game);
+
+  assert.strictEqual(game.currentPlayer().money, 1500 - 200);
+  assert.strictEqual(owner.money, 1500 + 200);
+});
+
+test("pays utility rent to another player with 1 utility owned", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+  
+  const game = createGame(["Martyna", "Jarek"]);
+  game.currentPlayerId = game.players[0].id;
+  const owner = game.players[1];
+  game.board[12].ownerId = owner.id; // Electric Company
+  game.currentPlayer().position = 12;
+  game.lastRoll = { dice1: 3, dice2: 4, total: 7, isDouble: false };
+
+  locationRules.handle(game);
+
+  assert.strictEqual(game.currentPlayer().money, 1500 - game.lastRoll.total * 4);
+  assert.strictEqual(owner.money, 1500 + game.lastRoll.total * 4);
+});
+
+test("pays utility rent to another player with 2 utilities owned", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+  
+  const game = createGame(["Martyna", "Jarek"]);
+  game.currentPlayerId = game.players[0].id;
+  const owner = game.players[1];
+  game.board[12].ownerId = owner.id; // Electric Company
+  game.board[28].ownerId = owner.id; // Water Works
+  game.currentPlayer().position = 12;
+  game.lastRoll = { dice1: 3, dice2: 4, total: 7, isDouble: false };
+
+  locationRules.handle(game);
+
+  assert.strictEqual(game.currentPlayer().money, 1500 - game.lastRoll.total * 10);
+  assert.strictEqual(owner.money, 1500 + game.lastRoll.total * 10);
+});
+
+test("skips utility rent payment when last roll total is unavailable", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+  
+  const game = createGame(["Martyna", "Jarek"]);
+  game.currentPlayerId = game.players[0].id;
+  const owner = game.players[1];
+  game.board[12].ownerId = owner.id;
+  game.currentPlayer().position = 12;
+  game.lastRoll = null;
+
+  assert.doesNotThrow(() => locationRules.handle(game));
+  assert.strictEqual(game.currentPlayer().money, 1500);
+  assert.strictEqual(owner.money, 1500);
 });
 
 test("does not pay rent on self-owned properties", (ctx) => {
@@ -105,6 +218,35 @@ test("does not pay rent on self-owned properties", (ctx) => {
   const tile = game.board[1];
   tile.ownerId = game.currentPlayer().id;
   game.currentPlayer().position = 1;
+
+  locationRules.handle(game);
+
+  assert.strictEqual(game.currentPlayer().money, 1500);
+  assert.strictEqual(game.players[1].money, 1500);
+});
+
+test("does not pay rent on self-owned railroad", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+  
+  const game = createGame(["Martyna", "Jarek"]);
+  game.currentPlayerId = game.players[0].id;
+  game.board[5].ownerId = game.currentPlayer().id;
+  game.currentPlayer().position = 5;
+
+  locationRules.handle(game);
+
+  assert.strictEqual(game.currentPlayer().money, 1500);
+  assert.strictEqual(game.players[1].money, 1500);
+});
+
+test("does not pay rent on self-owned utility", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+  
+  const game = createGame(["Martyna", "Jarek"]);
+  game.currentPlayerId = game.players[0].id;
+  game.board[12].ownerId = game.currentPlayer().id;
+  game.currentPlayer().position = 12;
+  game.lastRoll = { dice1: 1, dice2: 2, total: 3, isDouble: false };
 
   locationRules.handle(game);
 

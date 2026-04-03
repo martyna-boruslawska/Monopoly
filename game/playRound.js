@@ -28,6 +28,7 @@ function executePlayerTurn(game) {
     }
 
     const roll = jailResult.roll ?? game.rollDice();
+    game.lastRoll = roll;
     movePlayer(game, roll.total);
 
     const updatedPlayer = game.currentPlayer();

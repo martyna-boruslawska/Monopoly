@@ -52,7 +52,7 @@ export const locationRules = {
 
   _handlePayRent(game) {
     const tile = game.board[game.currentPlayer().position];
-    const isRentPaymentRequired = tile && tile.rent && tile.ownerId != null && tile.ownerId !== game.currentPlayer().id;
+    const isRentPaymentRequired = tile && tile.price && tile.ownerId != null && tile.ownerId !== game.currentPlayer().id;
     if (!isRentPaymentRequired) return;
 
     const owner = game.players.find((p) => p.id === tile.ownerId);
@@ -63,6 +63,40 @@ export const locationRules = {
       return;
     }
 
+    if (tile.type === "railroad") {
+      let railroadRent = tile.rent;
+      const railroadsOwned = game.board.filter((t) => t.type === "railroad" && t.ownerId === owner.id).length;
+      const railroadsLabel = railroadsOwned === 1 ? "railroad" : "railroads";
+      if (railroadsOwned === 2) {
+        railroadRent = 50;
+      }
+      else if (railroadsOwned === 3) {
+        railroadRent = 100;
+      }
+      else if (railroadsOwned === 4) {
+        railroadRent = 200;
+      }
+      game.currentPlayer().money -= railroadRent;
+      owner.money += railroadRent;
+      console.log(`${game.currentPlayer().name} pays ${owner.name} $${railroadRent} for landing on ${tile.name} (${railroadsOwned} ${railroadsLabel} owned).`);
+      return;
+    }
+    
+    if (tile.type === "utility") {
+      const diceRollTotal = game.lastRoll && game.lastRoll.total;
+      if (typeof diceRollTotal !== "number") {
+        console.log(`Cannot calculate utility rent on ${tile.name} because last roll total is unavailable.`);
+        return;
+      }
+      const utilitiesOwned = game.board.filter((t) => t.type === "utility" && t.ownerId === owner.id).length;
+      const utilitiesLabel = utilitiesOwned === 1 ? "utility" : "utilities";
+      const utilityRent = utilitiesOwned === 2 ? diceRollTotal * 10 : diceRollTotal * 4;
+      game.currentPlayer().money -= utilityRent;
+      owner.money += utilityRent;
+      console.log(`${game.currentPlayer().name} pays ${owner.name} $${utilityRent} for landing on ${tile.name} (${utilitiesOwned} ${utilitiesLabel} owned).`);
+      return;
+    }
+    
     const rent = tile.rent;
 
     game.currentPlayer().money -= rent;

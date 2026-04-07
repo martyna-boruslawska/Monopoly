@@ -31,7 +31,7 @@ export function createPlayers(names) {
  *
  * @param {string} name - The name of the player.
  * @param {number} id - The unique ID of the player.
- * @returns {{id: number, name: string, position: number, money: number, propertyIds: Array<number>, isBankrupt: boolean}} The newly created player object.
+ * @returns {{id: number, name: string, position: number, money: number, propertyIds: Array<number>, isBankrupt: boolean, inJail: boolean, jailTurns: number}} The newly created player object.
  */
 function createPlayer(name, id) {
   return {
@@ -40,7 +40,9 @@ function createPlayer(name, id) {
     position: 0,
     money: 1500,
     propertyIds: [],
-    isBankrupt: false
+    isBankrupt: false,
+    inJail: false, // Track if the player is currently in jail
+    jailTurns: 0, // Track the number of turns the player has been in jail
   };
 }
  

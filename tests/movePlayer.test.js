@@ -80,3 +80,46 @@ test("moving from Start does not collect $200", (ctx) => {
   assert.equal(game.players[0].money, 1500 - 60);
   assert.deepStrictEqual(game.players[0].propertyIds, [3]); // Should own Baltic Avenue (id: 3)
 });
+
+test("landing on Go to Jail does not collect $200 when passing Start", (ctx) => {
+  // Arrange
+  ctx.mock.method(console, "log", () => {});
+  const game = createGame(["Luke Skywalker", "Leia"]);
+  game.currentPlayerId = game.players[0].id; // Set current player to Luke Skywalker for the test
+  game.players[0].position = 28; // Move Luke to Waterworks (id: 28)
+
+  // Act
+  movePlayer(game, 2); // Move 2 steps to land on Go to Jail (id: 30)
+
+  // Assert
+  assert.equal(game.players[0].money, 1500);
+});
+
+test("landing on Go to Jail moves player to Jail", (ctx) => {
+  // Arrange
+  ctx.mock.method(console, "log", () => {});
+  const game = createGame(["Luke Skywalker", "Leia"]);
+  game.currentPlayerId = game.players[0].id; // Set current player to Luke Skywalker for the test
+  game.players[0].position = 28; // Move Luke to Waterworks (id: 28)
+
+  // Act
+  movePlayer(game, 2); // Move 2 steps to land on Go to Jail (id: 30)
+
+  // Assert
+  assert.equal(game.players[0].position, 10); // Jail position
+});
+
+test("logs a message when a player is sent to jail", (ctx) => {
+  // Arrange
+  const logMessages = [];
+  ctx.mock.method(console, "log", (message) => logMessages.push(message));
+  const game = createGame(["Darth Vader", "Leia"]);
+  game.currentPlayerId = game.players[0].id; // Set current player to Luke Skywalker for the test
+  game.players[0].position = 28; // Move Luke to Waterworks (id: 28)
+
+  // Act
+  movePlayer(game, 2); // Move 2 steps to land on Go to Jail (id: 30)
+
+  // Assert
+  assert(logMessages.some((msg) => msg.includes("is sent to jail for landing on Go To Jail")));
+});

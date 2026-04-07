@@ -18,6 +18,7 @@ test("buys unowned property when player has enough funds", (ctx) => {
   assert.equal(tile.ownerId, player.id);
   assert.equal(player.money, 1500 - tile.price);
   assert.deepStrictEqual(player.propertyIds, [tile.id]);
+  assert.strictEqual(game.board[1].ownerId, player.id);
 });
 
 test("skips purchase when funds are insufficient", (ctx) => {
@@ -36,6 +37,7 @@ test("skips purchase when funds are insufficient", (ctx) => {
   assert.equal(tile.ownerId, null);
   assert.equal(player.money, 100);
   assert.deepStrictEqual(player.propertyIds, []);
+  assert.strictEqual(game.board[39].ownerId, null);
 });
 
 test("buys unowned railroad when player has enough funds", (ctx) => {
@@ -53,6 +55,7 @@ test("buys unowned railroad when player has enough funds", (ctx) => {
   assert.equal(tile.ownerId, player.id);
   assert.equal(player.money, 1500 - tile.price);
   assert.deepStrictEqual(player.propertyIds, [tile.id]);
+  assert.strictEqual(game.board[5].ownerId, player.id);
 });
 
 test("skips railroad purchase when funds are insufficient", (ctx) => {
@@ -71,6 +74,7 @@ test("skips railroad purchase when funds are insufficient", (ctx) => {
   assert.equal(tile.ownerId, null);
   assert.equal(player.money, 150);
   assert.deepStrictEqual(player.propertyIds, []);
+  assert.strictEqual(game.board[5].ownerId, null);
 });
 
 test("pays rent to another player", (ctx) => {
@@ -208,7 +212,7 @@ test("marks player bankrupt and releases owned properties when money drops below
   // Assert
   assert.equal(player.isBankrupt, true);
   assert.equal(player.money, -150);
-  assert.equal(ownedTile.ownerId, null);
+  assert.strictEqual(ownedTile.ownerId, null);
   assert.deepEqual(player.propertyIds, []);
 });
 

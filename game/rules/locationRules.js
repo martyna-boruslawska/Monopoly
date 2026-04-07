@@ -23,8 +23,9 @@ export const locationRules = {
 
     this._handlePayRent(currentPlayer, tile, game.players);
     this._markBankruptIfNeeded(currentPlayer, game.board);
+
+    this._handleGoToJail(currentPlayer, tile);
   },
-  
 
   _markBankruptIfNeeded(player, board) {
     if (player.isBankrupt || player.money >= 0) {
@@ -54,6 +55,11 @@ export const locationRules = {
     if (!owner) return;
 
     const rent = tile.rent;
+
+    if (owner.inJail) {
+      console.log(`${owner.name} is in jail and cannot collect rent from ${player.name}`);
+      return;
+    }
 
     player.money -= rent;
     owner.money += rent;
@@ -85,6 +91,15 @@ export const locationRules = {
       console.log(
         `${player.name} landed on ${tile.name} and lost $${tile.amount}`,
       );
+    }
+  },
+
+  _handleGoToJail(player, tile) {
+    if (tile.type === "go-to-jail") {
+      player.position = 10; // Move player to Jail position
+      player.inJail = true; // Mark player as in jail
+      player.jailTurns = 0; // Reset jail turn counter
+      console.log(`${player.name} is sent to jail for landing on Go To Jail`);
     }
   },
 };

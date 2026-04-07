@@ -3,8 +3,7 @@ import { locationRules } from "./rules/locationRules.js";
 export function movePlayer(game, steps) {
   const player = game.currentPlayer();
   const board = game.board;
-  const players = game.players;
-
+  
   const passStart = (player.position+steps) >= board.length; 
 
   // Move player position

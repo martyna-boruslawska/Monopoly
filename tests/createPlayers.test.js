@@ -18,6 +18,8 @@ test("created players use expected object shape and defaults", () => {
     money: 1500,
     propertyIds: [],
     isBankrupt: false,
+    inJail: false,
+    jailTurns: 0,
   });
 
   assert.deepEqual(players[1], {
@@ -27,6 +29,8 @@ test("created players use expected object shape and defaults", () => {
     money: 1500,
     propertyIds: [],
     isBankrupt: false,
+    inJail: false,
+    jailTurns: 0,
   });
 });
 

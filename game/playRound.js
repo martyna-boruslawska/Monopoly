@@ -59,6 +59,7 @@ function executeTypicalTurn(player, game) {
 
   while (hasDouble && doublesCount < 3 && !player.isBankrupt) {
     const roll = rollDice();
+    game.rollDice = roll; // Store the current roll in the game state for reference in rules
     movePlayer(game, roll.total);
 
     let tile = game.board[player.position];

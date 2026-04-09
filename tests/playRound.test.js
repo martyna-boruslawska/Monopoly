@@ -186,7 +186,6 @@ test("logs a message when a player is in jail they cannot collect rent", (ctx) =
   assert(logMessages.some((msg) => msg.includes("is in jail and cannot collect rent from")));
 });
 
-// wariant aa)
 test("logs a message when a player pays $50 to get out of jail (player rolls non doubles before and after jail)", (ctx) => {
   // Arrange
   const logMessages = [];
@@ -216,7 +215,6 @@ test("logs a message when a player pays $50 to get out of jail (player rolls non
   assert(logMessages.some((msg) => msg.includes("pays $50 to get out of jail")));
 });
 
-// wariant ab)
 test("logs a message when a player pays $50 to get out of jail (player rolls doubles before jail and non doubles after)", (ctx) => {
   // Arrange
   const logMessages = [];
@@ -247,7 +245,6 @@ test("logs a message when a player pays $50 to get out of jail (player rolls dou
 });
 
 
-// wariant ac)
 test("logs a message when a player pays $50 to get out of jail (player rolls non doubles before jail and doubles after)", (ctx) => {
   // Arrange
   const logMessages = [];
@@ -278,7 +275,6 @@ test("logs a message when a player pays $50 to get out of jail (player rolls non
   assert(logMessages.some((msg) => msg.includes("pays $50 to get out of jail")));
 });
 
-// wariant ad)
 test("logs a message when a player pays $50 to get out of jail (player rolls doubles before and after jail)", (ctx) => {
   // Arrange
   const logMessages = [];
@@ -309,7 +305,6 @@ test("logs a message when a player pays $50 to get out of jail (player rolls dou
   assert(logMessages.some((msg) => msg.includes("pays $50 to get out of jail")));
 });
 
-// wariant ba) (1)
 test("logs a message when a player rolls doubles to get out of jail in 1st jail round", (ctx) => {
   // Arrange
   const logMessages = [];
@@ -338,7 +333,6 @@ test("logs a message when a player rolls doubles to get out of jail in 1st jail 
   assert(logMessages.some((msg) => msg.includes("rolls doubles and gets out of jail")));
 });
 
-// wariant bb) (2)
 test("logs a message when a player rolls doubles to get out of jail in 2nd jail round", (ctx) => {
   // Arrange
   const logMessages = [];
@@ -368,7 +362,6 @@ test("logs a message when a player rolls doubles to get out of jail in 2nd jail 
   assert(logMessages.some((msg) => msg.includes("rolls doubles and gets out of jail")));
 });
 
-// wariant bc) (3a)
 test("logs a message when a player rolls doubles to get out of jail in 3rd jail round", (ctx) => {
   // Arrange
   const logMessages = [];
@@ -400,7 +393,6 @@ test("logs a message when a player rolls doubles to get out of jail in 3rd jail 
   assert(logMessages.some((msg) => msg.includes("rolls doubles and gets out of jail")));
 });
 
-// wariant bd) (3b)
 test("logs a message when a player fails to roll doubles to get out of jail", (ctx) => {
   // Arrange
   const logMessages = [];
@@ -433,7 +425,6 @@ test("logs a message when a player fails to roll doubles to get out of jail", (c
   assert(logMessages.some((msg) => msg.includes("fails to roll doubles and remains in jail")));
 });
 
-// wariant ca)
 test("player moves on after landing on Jail tile", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
@@ -458,7 +449,6 @@ test("player moves on after landing on Jail tile", (ctx) => {
   assert.equal(game.players[0].position, 13); 
 });
 
-// wariant cb)
 test("player gets another turn after landing on Jail tile and rolling doubles", (ctx) => {
   // Arrange
   const logMessages = [];
@@ -485,7 +475,6 @@ test("player gets another turn after landing on Jail tile and rolling doubles", 
   assert.equal(game.players[0].position, 15); 
 });
 
-// wariant cc)
 test("player gets another turn after landing on Jail tile and rolling doubles twice", (ctx) => {
   // Arrange
   const logMessages = [];
@@ -513,7 +502,6 @@ test("player gets another turn after landing on Jail tile and rolling doubles tw
   assert.equal(game.players[0].position, 17); 
 });
 
-// wariant cc)
 test("player gets another turn after landing on Jail tile and rolling doubles 3 times", (ctx) => {
   // Arrange
   const logMessages = [];
@@ -539,4 +527,283 @@ test("player gets another turn after landing on Jail tile and rolling doubles 3 
   
   // Assert
   assert.equal(game.players[0].position, 16); 
+});
+
+test("player lands on free utility and buys it", (ctx) => {
+  // Arrange
+  const logMessages = [];
+  ctx.mock.method(console, "log", (message) => logMessages.push(message));
+  const game = createGame(["Obi-Wan", "Luke"]);
+  game.players[0].position = 9;
+  game.currentPlayerId = game.players[0].id; // Set current player to Obi-Wan for the test
+
+  const randomValues = 
+  [
+    0, 0.2,   0, 0.2
+  ];
+  let index = 0;
+  ctx.mock.method(Math, "random", () => randomValues[index++] ?? 0);
+
+  // Act
+  playRound(game);  // 1st player buys Electric Company
+  
+  // Assert
+  assert.strictEqual(game.players[0].position, 12);
+  assert.strictEqual(game.players[0].money, 1500 - 150);
+  assert.strictEqual(game.board[12].ownerId, game.players[0].id);
+  assert.deepStrictEqual(game.players[0].propertyIds, [12]);
+  assert(logMessages.some((msg) => msg.includes("Obi-Wan bought Electric Company for $150")));
+});
+
+test("player lands on free railroad and buys it", (ctx) => {
+  // Arrange
+  const logMessages = [];
+  ctx.mock.method(console, "log", (message) => logMessages.push(message));
+  const game = createGame(["Rey", "Kylo"]);
+  game.players[0].position = 2;
+  game.currentPlayerId = game.players[0].id; // Set current player to Rey for the test
+
+  const randomValues = 
+  [
+    0, 0.2,   0, 0.2
+  ];
+  let index = 0;
+  ctx.mock.method(Math, "random", () => randomValues[index++] ?? 0);
+
+  // Act
+  playRound(game);  // 1st player buys Reading Railroad
+  
+  // Assert
+  assert.strictEqual(game.players[0].position, 5);
+  assert.strictEqual(game.players[0].money, 1500 - 200);
+  assert.strictEqual(game.board[5].ownerId, game.players[0].id);
+  assert.deepStrictEqual(game.players[0].propertyIds, [5]);
+  assert(logMessages.some((msg) => msg.includes("bought Reading Railroad for $200")));
+});
+
+test("player lands on his own utility - no rent charged", (ctx) => {
+  // Arrange
+  const logMessages = [];
+  ctx.mock.method(console, "log", (message) => logMessages.push(message));
+  const game = createGame(["Obi-Wan", "Luke"]);
+  game.players[0].position = 9;
+  game.players[0].propertyIds = [12];           // Own Electric Company to ensure rent would be collected if not owned by the player
+  game.board[12].ownerId = game.players[0].id;  // Set ownership of Electric Company to Obi-Wan
+  game.currentPlayerId = game.players[0].id;    // Set current player to Obi-Wan for the test
+
+  const randomValues = 
+  [
+    0, 0.2,   0, 0.2
+  ];
+  let index = 0;
+  ctx.mock.method(Math, "random", () => randomValues[index++] ?? 0);
+
+  // Act
+  playRound(game);  // 1st player lands on his own Electric Company
+  
+  // Assert
+  assert.strictEqual(game.players[0].position, 12);
+  assert.strictEqual(game.players[0].money, 1500);
+  assert(logMessages.some((msg) => !msg.includes("Obi-Wan pays")));
+});
+
+test("player lands on his own railroad - no rent charged", (ctx) => {
+  // Arrange
+  const logMessages = [];
+  ctx.mock.method(console, "log", (message) => logMessages.push(message));
+  const game = createGame(["Rey", "Kylo"]);
+  game.players[0].position = 2;
+  game.players[0].propertyIds = [5];           // Own Reading Railroad to ensure rent would be collected if not owned by the player
+  game.board[5].ownerId = game.players[0].id;  // Set ownership of Reading Railroad to Rey
+  game.currentPlayerId = game.players[0].id; // Set current player to Rey for the test
+
+  const randomValues = 
+  [
+    0, 0.2,   0, 0.2
+  ];
+  let index = 0;
+  ctx.mock.method(Math, "random", () => randomValues[index++] ?? 0);
+
+  // Act
+  playRound(game);  // 1st player lands on his own railroad
+  
+  // Assert
+  assert.strictEqual(game.players[0].position, 5);
+  assert.strictEqual(game.players[0].money, 1500);
+  assert(logMessages.some((msg) => !msg.includes("Rey pays")));
+});
+
+test("player lands on railroad - owner has 1 railroad", (ctx) => {
+  // Arrange
+  const logMessages = [];
+  ctx.mock.method(console, "log", (message) => logMessages.push(message));
+  const game = createGame(["Kylo", "Rey"]);
+  game.players[0].position = 2;
+  game.players[1].position = 17;
+  game.players[1].propertyIds = [5];           // Own Reading Railroad to ensure rent would be collected if not owned by the player
+  game.board[5].ownerId = game.players[1].id;  // Set ownership of Reading Railroad to Rey
+  game.currentPlayerId = game.players[0].id; // Set current player to Kylo for the test
+
+  const randomValues = 
+  [
+    0, 0.2,   0, 0.2
+  ];
+  let index = 0;
+  ctx.mock.method(Math, "random", () => randomValues[index++] ?? 0);
+
+  // Act
+  playRound(game);  // 1st player lands on a railroad owned by another player
+  
+  // Assert
+  assert.strictEqual(game.players[0].position, 5);
+  assert.strictEqual(game.players[0].money, 1500 - 25);
+  assert.strictEqual(game.players[1].money, 1500 + 25);
+  assert(logMessages.some((msg) => msg.includes("Kylo pays Rey $25 for landing on Reading Railroad (1 railroad owned)")));
+});
+
+test("player lands on railroad - owner has 2 railroads", (ctx) => {
+  // Arrange
+  const logMessages = [];
+  ctx.mock.method(console, "log", (message) => logMessages.push(message));
+  const game = createGame(["Kylo", "Rey"]);
+  game.players[0].position = 2;
+  game.players[1].position = 17;
+  game.players[1].propertyIds = [5, 15];            // Own Reading Railroad and another railroad to ensure rent would be collected if not owned by the player
+  game.board[5].ownerId = game.players[1].id;       // Set ownership of Reading Railroad to Rey
+  game.board[15].ownerId = game.players[1].id;      // Set ownership of another railroad to Rey
+  game.currentPlayerId = game.players[0].id;        // Set current player to Kylo for the test
+
+  const randomValues = 
+  [
+    0, 0.2,   0, 0.2
+  ];
+  let index = 0;
+  ctx.mock.method(Math, "random", () => randomValues[index++] ?? 0);
+
+  // Act
+  playRound(game);  // 1st player lands on a railroad owned by another player
+  
+  // Assert
+  assert.strictEqual(game.players[0].position, 5);
+  assert.strictEqual(game.players[0].money, 1500 - 50);
+  assert.strictEqual(game.players[1].money, 1500 + 50);
+  assert(logMessages.some((msg) => msg.includes("Kylo pays Rey $50 for landing on Reading Railroad (2 railroads owned)")));
+});
+
+test("player lands on railroad - owner has 3 railroads", (ctx) => {
+  // Arrange
+  const logMessages = [];
+  ctx.mock.method(console, "log", (message) => logMessages.push(message));
+  const game = createGame(["Kylo", "Rey"]);
+  game.players[0].position = 2;
+  game.players[1].position = 17;
+  game.players[1].propertyIds = [5, 15, 25];            // Own Reading Railroad and two other railroads to ensure rent would be collected if not owned by the player
+  game.board[5].ownerId = game.players[1].id;       // Set ownership of Reading Railroad to Rey
+  game.board[15].ownerId = game.players[1].id;      // Set ownership of another railroad to Rey
+  game.board[25].ownerId = game.players[1].id;      // Set ownership of another railroad to Rey
+  game.currentPlayerId = game.players[0].id;        // Set current player to Kylo for the test
+
+  const randomValues = 
+  [
+    0, 0.2,   0, 0.2
+  ];
+  let index = 0;
+  ctx.mock.method(Math, "random", () => randomValues[index++] ?? 0);
+
+  // Act
+  playRound(game);  // 1st player lands on a railroad owned by another player
+  
+  // Assert
+  assert.strictEqual(game.players[0].position, 5);
+  assert.strictEqual(game.players[0].money, 1500 - 100);
+  assert.strictEqual(game.players[1].money, 1500 + 100);
+  assert(logMessages.some((msg) => msg.includes("Kylo pays Rey $100 for landing on Reading Railroad (3 railroads owned)")));
+});
+
+test("player lands on railroad - owner has 4 railroads", (ctx) => {
+  // Arrange
+  const logMessages = [];
+  ctx.mock.method(console, "log", (message) => logMessages.push(message));
+  const game = createGame(["Kylo", "Rey"]);
+  game.players[0].position = 2;
+  game.players[1].position = 17;
+  game.players[1].propertyIds = [5, 15, 25, 35];            // Own Reading Railroad and three other railroads to ensure rent would be collected if not owned by the player
+  game.board[5].ownerId = game.players[1].id;       // Set ownership of Reading Railroad to Rey
+  game.board[15].ownerId = game.players[1].id;      // Set ownership of another railroad to Rey
+  game.board[25].ownerId = game.players[1].id;      // Set ownership of another railroad to Rey
+  game.board[35].ownerId = game.players[1].id;      // Set ownership of another railroad to Rey
+  game.currentPlayerId = game.players[0].id;        // Set current player to Kylo for the test
+
+  const randomValues = 
+  [
+    0, 0.2,   0, 0.2
+  ];
+  let index = 0;
+  ctx.mock.method(Math, "random", () => randomValues[index++] ?? 0);
+
+  // Act
+  playRound(game);  // 1st player lands on a railroad owned by another player
+  
+  // Assert
+  assert.strictEqual(game.players[0].position, 5);
+  assert.strictEqual(game.players[0].money, 1500 - 200);
+  assert.strictEqual(game.players[1].money, 1500 + 200);
+  assert(logMessages.some((msg) => msg.includes("Kylo pays Rey $200 for landing on Reading Railroad (4 railroads owned)")));
+});
+
+test("player lands on utility - owner has 1 utility", (ctx) => {
+  // Arrange
+  const logMessages = [];
+  ctx.mock.method(console, "log", (message) => logMessages.push(message));
+  const game = createGame(["Luke", "Obi-Wan"]);
+  game.players[0].position = 9;
+  game.players[1].position = 17;
+  game.players[1].propertyIds = [12];           // Own Electric Company to ensure rent would be collected if not owned by the player
+  game.board[12].ownerId = game.players[1].id;  // Set ownership of Electric Company to Obi-Wan
+  game.currentPlayerId = game.players[0].id;    // Set current player to Luke for the test
+
+  const randomValues = 
+  [
+    0, 0.2,   0, 0.2
+  ];
+  let index = 0;
+  ctx.mock.method(Math, "random", () => randomValues[index++] ?? 0);
+
+  // Act
+  playRound(game);  // 1st player lands on his own Electric Company
+  
+  // Assert
+  assert.strictEqual(game.players[0].position, 12);
+  assert.strictEqual(game.players[0].money, 1500 - (4*3)); // Should pay 4*3 = $12 for landing on Electric Company with 1 utility owned by the owner
+  assert.strictEqual(game.players[1].money, 1500 + (4*3)); // Owner should receive the rent paid by the player
+  assert(logMessages.some((msg) => msg.includes("Luke pays Obi-Wan $12 for landing on Electric Company (1 utility owned)")));
+});
+
+test("player lands on utility - owner has 2 utilities", (ctx) => {
+  // Arrange
+  const logMessages = [];
+  ctx.mock.method(console, "log", (message) => logMessages.push(message));
+  const game = createGame(["Luke", "Obi-Wan"]);
+  game.players[0].position = 9;
+  game.players[1].position = 17;
+  game.players[1].propertyIds = [12, 28];       // Own Electric Company and Water Works to ensure rent would be collected if not owned by the player
+  game.board[12].ownerId = game.players[1].id;  // Set ownership of Electric Company to Obi-Wan
+  game.board[28].ownerId = game.players[1].id;  // Set ownership of Water Works to Obi-Wan
+  game.currentPlayerId = game.players[0].id;    // Set current player to Luke for the test
+
+  const randomValues = 
+  [
+    0, 0.2,   0, 0.2
+  ];
+  let index = 0;
+  ctx.mock.method(Math, "random", () => randomValues[index++] ?? 0);
+
+  // Act
+  playRound(game);  // 1st player lands on his own Electric Company
+  
+  // Assert
+  assert.strictEqual(game.players[0].position, 12);
+  assert.strictEqual(game.players[0].money, 1500 - (10*3)); // Should pay 10*3 = $30 for landing on Electric Company with 2 utilities owned by the owner
+  assert.strictEqual(game.players[1].money, 1500 + (10*3)); // Owner should receive the rent paid by the player
+  assert(logMessages.some((msg) => msg.includes("Luke pays Obi-Wan $30 for landing on Electric Company (2 utilities owned)")));
 });

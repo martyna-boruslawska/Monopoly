@@ -1,13 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { locationRules } from "../game/rules/locationRules.js";
-import { createGame } from "../game/createGame.js";
+import { createTestGame } from "./helpers/createTestGame.js";
 
 test("buys unowned property when player has enough funds", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Martyna", "Jarek"]);
-  game.currentPlayerId = game.players[0].id; // Set current player for the test
+  const game = createTestGame([
+    { name: "Martyna" },
+    { name: "Jarek" },
+  ]);
   const player = game.players[0];
   const tile = game.board[1]; // Mediterranean Avenue: price 60
 
@@ -24,11 +26,12 @@ test("buys unowned property when player has enough funds", (ctx) => {
 test("skips purchase when funds are insufficient", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Martyna", "Jarek"]);
-  game.currentPlayerId = game.players[0].id; // Set current player for the test
+  const game = createTestGame([
+    { name: "Martyna", money: 100 },
+    { name: "Jarek" },
+  ]);
   const player = game.players[0];
   const tile = game.board[39]; // Boardwalk: price 400
-  player.money = 100;
 
   // Act
   locationRules.handle(game, tile);
@@ -43,8 +46,10 @@ test("skips purchase when funds are insufficient", (ctx) => {
 test("buys unowned railroad when player has enough funds", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Martyna", "Jarek"]);
-  game.currentPlayerId = game.players[0].id;
+  const game = createTestGame([
+    { name: "Martyna" },
+    { name: "Jarek" },
+  ]);
   const player = game.players[0];
   const tile = game.board[5]; // Reading Railroad: price 200
 
@@ -61,11 +66,12 @@ test("buys unowned railroad when player has enough funds", (ctx) => {
 test("skips railroad purchase when funds are insufficient", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Martyna", "Jarek"]);
-  game.currentPlayerId = game.players[0].id;
+  const game = createTestGame([
+    { name: "Martyna", money: 150 },
+    { name: "Jarek" },
+  ]);
   const player = game.players[0];
   const tile = game.board[5];
-  player.money = 150;
 
   // Act
   locationRules.handle(game, tile);
@@ -80,12 +86,13 @@ test("skips railroad purchase when funds are insufficient", (ctx) => {
 test("pays rent to another player", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Martyna", "Jarek"]);
-  game.currentPlayerId = game.players[0].id;
+  const game = createTestGame([
+    { name: "Luke Skywalker" },
+    { name: "Darth Vader", propertyIds: [1] },
+  ]);
   const currentPlayer = game.players[0];
   const owner = game.players[1];
   const tile = game.board[1]; // rent 2
-  tile.ownerId = owner.id;
 
   // Act
   locationRules.handle(game, tile);
@@ -98,12 +105,13 @@ test("pays rent to another player", (ctx) => {
 test("pays railroad rent to another player", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Martyna", "Jarek"]);
-  game.currentPlayerId = game.players[0].id;
+  const game = createTestGame([
+    { name: "Martyna" },
+    { name: "Jarek", propertyIds: [5] },
+  ]);
   const currentPlayer = game.players[0];
   const owner = game.players[1];
   const tile = game.board[5];
-  tile.ownerId = owner.id;
 
   // Act
   locationRules.handle(game, tile);
@@ -116,11 +124,12 @@ test("pays railroad rent to another player", (ctx) => {
 test("does not pay rent on self-owned properties", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Martyna", "Jarek"]);
-  game.currentPlayerId = game.players[0].id;
+  const game = createTestGame([
+    { name: "Martyna", propertyIds: [1] },
+    { name: "Jarek" },
+  ]);
   const currentPlayer = game.players[0];
   const tile = game.board[1];
-  tile.ownerId = currentPlayer.id;
 
   // Act
   locationRules.handle(game, tile);
@@ -133,8 +142,10 @@ test("does not pay rent on self-owned properties", (ctx) => {
 test("handles missing owner safely when ownerId does not match any player", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Martyna", "Jarek"]);
-  game.currentPlayerId = game.players[0].id;
+  const game = createTestGame([
+    { name: "Martyna" },
+    { name: "Jarek" },
+  ]);
   const currentPlayer = game.players[0];
   const tile = game.board[1];
   tile.ownerId = 999; // Non-existent owner ID
@@ -148,8 +159,10 @@ test("handles missing owner safely when ownerId does not match any player", (ctx
 test("applies income tax deduction", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Martyna", "Jarek"]);
-  game.currentPlayerId = game.players[0].id;
+  const game = createTestGame([
+    { name: "Martyna" },
+    { name: "Jarek" },
+  ]);
   const player = game.players[0];
   const tile = game.board[4]; // Income Tax: 200
 
@@ -163,11 +176,12 @@ test("applies income tax deduction", (ctx) => {
 test("applies income tax down to zero without marking player bankrupt", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Martyna", "Jarek"]);
-  game.currentPlayerId = game.players[0].id;
+  const game = createTestGame([
+    { name: "Martyna", money: 200 },
+    { name: "Jarek" },
+  ]);
   const player = game.players[0];
   const tile = game.board[4];
-  player.money = tile.amount;
 
   // Act
   locationRules.handle(game, tile);
@@ -180,8 +194,10 @@ test("applies income tax down to zero without marking player bankrupt", (ctx) =>
 test("applies luxury tax deduction", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Martyna", "Jarek"]);
-  game.currentPlayerId = game.players[0].id;
+  const game = createTestGame([
+    { name: "Martyna" },
+    { name: "Jarek" },
+  ]);
   const player = game.players[0];
   const tile = game.board[38]; // Luxury Tax: 100
 
@@ -195,14 +211,13 @@ test("applies luxury tax deduction", (ctx) => {
 test("marks player bankrupt and releases owned properties when money drops below zero", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Martyna", "Jarek"]);
-  game.currentPlayerId = game.players[0].id;
+  const game = createTestGame([
+    { name: "Martyna", money: 50, propertyIds: [1] },
+    { name: "Jarek" },
+  ]);
   const player = game.players[0];
 
   const ownedTile = game.board[1];
-  ownedTile.ownerId = player.id;
-  player.propertyIds = [ownedTile.id];
-  player.money = 50;
 
   const taxTile = game.board[4]; // Income Tax: 200
 
@@ -219,18 +234,15 @@ test("marks player bankrupt and releases owned properties when money drops below
 test("marks player bankrupt after paying rent and releases owned properties", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Martyna", "Jarek"]);
-  game.currentPlayerId = game.players[0].id;
+  const game = createTestGame([
+    { name: "Martyna", money: 1, propertyIds: [3] },
+    { name: "Jarek", propertyIds: [39] },
+  ]);
   const tenant = game.players[0];
   const owner = game.players[1];
 
-  tenant.money = 1;
   const tenantProperty = game.board[3];
-  tenantProperty.ownerId = tenant.id;
-  tenant.propertyIds = [tenantProperty.id];
-
   const rentedTile = game.board[39]; // Boardwalk, rent 50
-  rentedTile.ownerId = owner.id;
 
   // Act
   locationRules.handle(game, rentedTile);

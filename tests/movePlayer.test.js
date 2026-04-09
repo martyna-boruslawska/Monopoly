@@ -1,14 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { movePlayer } from "../game/movePlayer.js";
-import { createGame } from "../game/createGame.js";
+import { createTestGame } from "./helpers/createTestGame.js";
 
 test("moves player forward by steps without passing Start", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Luke Skywalker", "Leia"]);
-  game.currentPlayerId = game.players[0].id; // Set current player to Luke Skywalker for the test 
-  game.players[0].position = 1; // Ensure Luke starts at position 1
+  const game = createTestGame([
+    { name: "Luke Skywalker", position: 1 },
+    { name: "Leia" },
+  ]);
 
   // Act
   movePlayer(game, 2);
@@ -22,9 +23,10 @@ test("moves player forward by steps without passing Start", (ctx) => {
 test("complete move at Start gives $200", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Yoda", "Mace Windu"]);
-  game.currentPlayerId = game.players[0].id; // Set current player to Yoda for the test
-  game.players[0].position = 31; // Ensure Yoda starts at position 31
+  const game = createTestGame([
+    { name: "Yoda", position: 31 },
+    { name: "Mace Windu" },
+  ]);
 
   // Act
   movePlayer(game, 9);
@@ -37,9 +39,10 @@ test("complete move at Start gives $200", (ctx) => {
 test("wraps around board and gives $200 when passing Start", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Obi-Wan", "Anakin"]);
-  game.currentPlayerId = game.players[0].id; // Set current player to Obi-Wan for the test
-  game.players[0].position = 31; // Ensure Obi-Wan starts at position 31
+  const game = createTestGame([
+    { name: "Obi-Wan", position: 31 },
+    { name: "Anakin" },
+  ]);
 
   // Act
   movePlayer(game, 10);
@@ -53,9 +56,10 @@ test("wraps around board and gives $200 when passing Start", (ctx) => {
 test("lands on the last board tile without wrapping", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Luke Skywalker", "Leia"]);
-  game.currentPlayerId = game.players[0].id;
-  game.players[0].position = 37;
+  const game = createTestGame([
+    { name: "Luke Skywalker", position: 37 },
+    { name: "Leia" },
+  ]);
 
   // Act
   movePlayer(game, 2);
@@ -69,8 +73,10 @@ test("lands on the last board tile without wrapping", (ctx) => {
 test("moving from Start does not collect $200", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Luke Skywalker", "Leia"]);
-  game.currentPlayerId = game.players[0].id; // Set current player to Luke Skywalker for the test
+  const game = createTestGame([
+    { name: "Luke Skywalker" },
+    { name: "Leia" },
+  ]);
 
   // Act
   movePlayer(game, 3);
@@ -84,9 +90,10 @@ test("moving from Start does not collect $200", (ctx) => {
 test("landing on Go to Jail does not collect $200 when passing Start", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Luke Skywalker", "Leia"]);
-  game.currentPlayerId = game.players[0].id; // Set current player to Luke Skywalker for the test
-  game.players[0].position = 28; // Move Luke to Waterworks (id: 28)
+  const game = createTestGame([
+    { name: "Luke Skywalker", position: 28 },
+    { name: "Leia" },
+  ]);
 
   // Act
   movePlayer(game, 2); // Move 2 steps to land on Go to Jail (id: 30)
@@ -98,9 +105,10 @@ test("landing on Go to Jail does not collect $200 when passing Start", (ctx) => 
 test("landing on Go to Jail moves player to Jail", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Luke Skywalker", "Leia"]);
-  game.currentPlayerId = game.players[0].id; // Set current player to Luke Skywalker for the test
-  game.players[0].position = 28; // Move Luke to Waterworks (id: 28)
+  const game = createTestGame([
+    { name: "Luke Skywalker", position: 28 },
+    { name: "Leia" },
+  ]);
 
   // Act
   movePlayer(game, 2); // Move 2 steps to land on Go to Jail (id: 30)
@@ -113,9 +121,10 @@ test("logs a message when a player is sent to jail", (ctx) => {
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Darth Vader", "Leia"]);
-  game.currentPlayerId = game.players[0].id; // Set current player to Luke Skywalker for the test
-  game.players[0].position = 28; // Move Luke to Waterworks (id: 28)
+  const game = createTestGame([
+    { name: "Darth Vader", position: 28 },
+    { name: "Leia" },
+  ]);
 
   // Act
   movePlayer(game, 2); // Move 2 steps to land on Go to Jail (id: 30)

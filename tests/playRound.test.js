@@ -1,16 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { playRound } from "../game/playRound.js";
-import { createGame } from "../game/createGame.js";
+import { createTestGame } from "./helpers/createTestGame.js";
 
 test("skips players who are already bankrupt", (context) => {
   // Arrange
   context.mock.method(console, "log", () => {});
-  const game = createGame(["Martyna", "Jarek"]);
+  const game = createTestGame([
+    { name: "Martyna", position: 5 },
+    { name: "Jarek" },
+  ]);
 
   game.players[0].isBankrupt = true;
-  game.players[0].position = 5;
-  game.currentPlayerId = game.players[0].id; // Set current player to Jarek for the test
 
   const randomValues = [0, 0.2]; // dice: 1 and 2
   let index = 0;
@@ -27,8 +28,7 @@ test("skips players who are already bankrupt", (context) => {
 test("plays one turn for a non-bankrupt player", (context) => {
   // Arrange
   context.mock.method(console, "log", () => {});
-  const game = createGame(["Luke"]);
-  game.currentPlayerId = game.players[0].id; // Set current player to Luke for the test
+  const game = createTestGame([{ name: "Luke" }]);
 
   const randomValues = [0, 0.2];
   let index = 0;
@@ -44,8 +44,7 @@ test("plays one turn for a non-bankrupt player", (context) => {
 test("gives another turn after rolling doubles", (context) => {
   // Arrange
   context.mock.method(console, "log", () => {});
-  const game = createGame(["Luke"]);
-  game.currentPlayerId = game.players[0].id; // Set current player to Luke for the test
+  const game = createTestGame([{ name: "Luke" }]);
 
   const randomValues = [0, 0, 0.2, 0.4];
   let index = 0;
@@ -61,8 +60,7 @@ test("gives another turn after rolling doubles", (context) => {
 test("stops after three doubles", (context) => {
   // Arrange
   context.mock.method(console, "log", () => {});
-  const game = createGame(["Luke"]);
-  game.currentPlayerId = game.players[0].id; // Set current player to Luke for the test
+  const game = createTestGame([{ name: "Luke" }]);
 
   const randomValues = [0, 0, 0, 0, 0, 0, 0, 0];
   let index = 0;
@@ -79,10 +77,7 @@ test("stops after three doubles", (context) => {
 test("stops extra turns when player becomes bankrupt after a double", (context) => {
   // Arrange
   context.mock.method(console, "log", () => {});
-  const game = createGame(["Luke"]);
-  game.currentPlayerId = game.players[0].id; // Set current player to Luke for the test
-  game.players[0].position = 36;
-  game.players[0].money = 50;
+  const game = createTestGame([{ name: "Luke", position: 36, money: 50 }]);
 
   const randomValues = [0, 0, 0, 0];
   let index = 0;
@@ -102,9 +97,10 @@ test("logs a message when a player is transferred to jail", (ctx) => {
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Darth Vader", "Han Solo"]);
-  game.players[0].position = 27; // Put Darth Vader in Jail (id: 10)
-  game.currentPlayerId = game.players[0].id; // Set current player to Darth Vader for the test
+  const game = createTestGame([
+    { name: "Darth Vader", position: 27 },
+    { name: "Han Solo" },
+  ]);
 
   const randomValues = 
   [
@@ -124,9 +120,7 @@ test("logs a message when a player is transferred to jail", (ctx) => {
 test("stops extra turns when player goes to jail after a double", (context) => {
   // Arrange
   context.mock.method(console, "log", () => {});
-  const game = createGame(["Luke"]);
-  game.currentPlayerId = game.players[0].id; // Set current player to Luke for the test
-  game.players[0].position = 28;
+  const game = createTestGame([{ name: "Luke", position: 28 }]);
 
   const randomValues = [0, 0, 0, 0];
   let index = 0;
@@ -143,9 +137,7 @@ test("stops extra turns when player goes to jail after a double", (context) => {
 test("stops extra turns when player goes to jail after a second double", (context) => {
   // Arrange
   context.mock.method(console, "log", () => {});
-  const game = createGame(["Luke"]);
-  game.currentPlayerId = game.players[0].id; // Set current player to Luke for the test
-  game.players[0].position = 26;
+  const game = createTestGame([{ name: "Luke", position: 26 }]);
 
   const randomValues = [0, 0, 0, 0, 0, 0];
   let index = 0;
@@ -163,12 +155,10 @@ test("logs a message when a player is in jail they cannot collect rent", (ctx) =
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Darth Maul", "Obi-Wan"]);
-  game.players[0].position = 28; // Put Darth Maul in Jail (id: 10)
-  game.players[0].propertyIds = [6]; // Own Mediterranean Avenue to ensure rent would be collected if not in jail 
-  game.board[6].ownerId = game.players[0].id; // Set ownership of Mediterranean Avenue to Darth Maul
-  game.currentPlayerId = game.players[0].id; // Set current player to Obi-Wan for the test
-  game.players[1].position = 1; // Move Obi-Wan to Mediterranean Avenue (id: 1) to ensure rent would be collected if not in jail
+  const game = createTestGame([
+    { name: "Darth Maul", position: 28, propertyIds: [6] },
+    { name: "Obi-Wan", position: 1 },
+  ]);
 
   const randomValues = 
   [
@@ -190,11 +180,10 @@ test("logs a message when a player pays $50 to get out of jail (player rolls non
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Darth Sidious", "Han Solo"]);
-  game.players[0].position = 27; // Put Darth Sidious in Jail (id: 10)
-  game.players[0].money = 50;
-  game.currentPlayerId = game.players[0].id; // Set current player to Darth Sidious for the test
-  game.players[1].position = 6; // Move Han Solo to Oriental Avenue (id: 6) to ensure rent would be collected if not in jail
+  const game = createTestGame([
+    { name: "Darth Sidious", position: 27, money: 50 },
+    { name: "Han Solo", position: 6 },
+  ]);
 
   const randomValues = 
   [
@@ -219,11 +208,10 @@ test("logs a message when a player pays $50 to get out of jail (player rolls dou
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Darth Sidious", "Han Solo"]);
-  game.players[0].position = 28; // Put Darth Sidious in Jail (id: 10)
-  game.players[0].money = 50;
-  game.currentPlayerId = game.players[0].id; // Set current player to Darth Sidious for the test
-  game.players[1].position = 6; // Move Han Solo to Oriental Avenue (id: 6) to ensure rent would be collected if not in jail
+  const game = createTestGame([
+    { name: "Darth Sidious", position: 28, money: 50 },
+    { name: "Han Solo", position: 6 },
+  ]);
 
   const randomValues = 
   [
@@ -249,11 +237,10 @@ test("logs a message when a player pays $50 to get out of jail (player rolls non
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Darth Sidious", "Han Solo"]);
-  game.players[0].position = 27; // Put Darth Sidious in Jail (id: 10)
-  game.players[0].money = 50;
-  game.currentPlayerId = game.players[0].id; // Set current player to Darth Sidious for the test
-  game.players[1].position = 6; // Move Han Solo to Oriental Avenue (id: 6) to ensure rent would be collected if not in jail
+  const game = createTestGame([
+    { name: "Darth Sidious", position: 27, money: 50 },
+    { name: "Han Solo", position: 6 },
+  ]);
 
   const randomValues = 
   [
@@ -279,11 +266,10 @@ test("logs a message when a player pays $50 to get out of jail (player rolls dou
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Darth Sidious", "Han Solo"]);
-  game.players[0].position = 28; // Put Darth Sidious in Jail (id: 10)
-  game.players[0].money = 50;
-  game.currentPlayerId = game.players[0].id; // Set current player to Darth Sidious for the test
-  game.players[1].position = 6; // Move Han Solo to Oriental Avenue (id: 6) to ensure rent would be collected if not in jail
+  const game = createTestGame([
+    { name: "Darth Sidious", position: 28, money: 50 },
+    { name: "Han Solo", position: 6 },
+  ]);
 
   const randomValues = 
   [
@@ -309,11 +295,10 @@ test("logs a message when a player rolls doubles to get out of jail in 1st jail 
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Boba Fett", "Han Solo"]);
-  game.players[0].position = 28;
-  game.players[0].money = 49;
-  game.currentPlayerId = game.players[0].id; // Set current player to Boba Fett for the test
-  game.players[1].position = 6; // Move Han Solo to Oriental Avenue (id: 6) to ensure rent would be collected if not in jail  
+  const game = createTestGame([
+    { name: "Boba Fett", position: 28, money: 49 },
+    { name: "Han Solo", position: 6 },
+  ]);
 
   const randomValues = 
     [
@@ -337,11 +322,10 @@ test("logs a message when a player rolls doubles to get out of jail in 2nd jail 
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Boba Fett", "Han Solo"]);
-  game.players[0].position = 28; // Put Boba Fett in Jail (id: 10)
-  game.players[0].money = 49;
-  game.currentPlayerId = game.players[0].id; // Set current player to Boba Fett for the test
-  game.players[1].position = 6; // Move Han Solo to Oriental Avenue (id: 6) to ensure rent would be collected if not in jail  
+  const game = createTestGame([
+    { name: "Boba Fett", position: 28, money: 49 },
+    { name: "Han Solo", position: 6 },
+  ]);
 
   const randomValues = 
   [
@@ -366,11 +350,10 @@ test("logs a message when a player rolls doubles to get out of jail in 3rd jail 
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Boba Fett", "Han Solo"]);
-  game.players[0].position = 28; // Put Boba Fett in Jail (id: 10)
-  game.players[0].money = 49;
-  game.currentPlayerId = game.players[0].id; // Set current player to Boba Fett for the test
-  game.players[1].position = 6; // Move Han Solo to Oriental Avenue (id: 6) to ensure rent would be collected if not in jail  
+  const game = createTestGame([
+    { name: "Boba Fett", position: 28, money: 49 },
+    { name: "Han Solo", position: 6 },
+  ]);
 
   const randomValues = 
   [
@@ -397,11 +380,10 @@ test("logs a message when a player fails to roll doubles to get out of jail", (c
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Luke Skywalker", "Han Solo"]);
-  game.players[0].position = 28; // Put Luke Skywalker in Jail (id: 10)
-  game.players[0].money = 49;
-  game.currentPlayerId = game.players[0].id; // Set current player to Luke Skywalker for the test
-  game.players[1].position = 6; // Move Han Solo to Oriental Avenue (id: 6) to ensure rent would be collected if not in jail  
+  const game = createTestGame([
+    { name: "Luke Skywalker", position: 28, money: 49 },
+    { name: "Han Solo", position: 6 },
+  ]);
 
   const randomValues = 
   [
@@ -428,10 +410,10 @@ test("logs a message when a player fails to roll doubles to get out of jail", (c
 test("player moves on after landing on Jail tile", (ctx) => {
   // Arrange
   ctx.mock.method(console, "log", () => {});
-  const game = createGame(["Leia", "Han Solo"]);
-  game.players[0].position = 7;               // Put Leia in Jail (id: 10)
-  game.currentPlayerId = game.players[0].id;  // Set current player to Leia for the test
-  game.players[1].position = 6;               // Move Han Solo to Oriental Avenue (id: 6) to ensure rent would be collected if not in jail  
+  const game = createTestGame([
+    { name: "Leia", position: 7 },
+    { name: "Han Solo", position: 6 },
+  ]);
 
   const randomValues = 
   [
@@ -453,10 +435,10 @@ test("player gets another turn after landing on Jail tile and rolling doubles", 
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Leia", "Han Solo"]);
-  game.players[0].position = 7;               // Put Leia in Jail (id: 10)
-  game.currentPlayerId = game.players[0].id;  // Set current player to Leia for the test
-  game.players[1].position = 6;               // Move Han Solo to Oriental Avenue (id: 6) to ensure rent would be collected if not in jail  
+  const game = createTestGame([
+    { name: "Leia", position: 7 },
+    { name: "Han Solo", position: 6 },
+  ]);
 
   const randomValues = 
   [
@@ -479,10 +461,10 @@ test("player gets another turn after landing on Jail tile and rolling doubles tw
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Leia", "Han Solo"]);
-  game.players[0].position = 7; // Put Leia in Jail (id: 10)
-  game.currentPlayerId = game.players[0].id; // Set current player to Leia for the test
-  game.players[1].position = 6; // Move Han Solo to Oriental Avenue (id: 6) to ensure rent would be collected if not in jail  
+  const game = createTestGame([
+    { name: "Leia", position: 7 },
+    { name: "Han Solo", position: 6 },
+  ]);
 
   const randomValues = 
   [
@@ -506,10 +488,10 @@ test("player gets another turn after landing on Jail tile and rolling doubles 3 
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Leia", "Han Solo"]);
-  game.players[0].position = 7; // Put Leia in Jail (id: 10)
-  game.currentPlayerId = game.players[0].id; // Set current player to Leia for the test
-  game.players[1].position = 6; // Move Han Solo to Oriental Avenue (id: 6) to ensure rent would be collected if not in jail  
+  const game = createTestGame([
+    { name: "Leia", position: 7 },
+    { name: "Han Solo", position: 6 },
+  ]);
 
   const randomValues = 
   [
@@ -533,9 +515,10 @@ test("player lands on free utility and buys it", (ctx) => {
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Obi-Wan", "Luke"]);
-  game.players[0].position = 9;
-  game.currentPlayerId = game.players[0].id; // Set current player to Obi-Wan for the test
+  const game = createTestGame([
+    { name: "Obi-Wan", position: 9 },
+    { name: "Luke" },
+  ]);
 
   const randomValues = 
   [
@@ -559,9 +542,10 @@ test("player lands on free railroad and buys it", (ctx) => {
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Rey", "Kylo"]);
-  game.players[0].position = 2;
-  game.currentPlayerId = game.players[0].id; // Set current player to Rey for the test
+  const game = createTestGame([
+    { name: "Rey", position: 2 },
+    { name: "Kylo" },
+  ]);
 
   const randomValues = 
   [
@@ -585,11 +569,10 @@ test("player lands on his own utility - no rent charged", (ctx) => {
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Obi-Wan", "Luke"]);
-  game.players[0].position = 9;
-  game.players[0].propertyIds = [12];           // Own Electric Company to ensure rent would be collected if not owned by the player
-  game.board[12].ownerId = game.players[0].id;  // Set ownership of Electric Company to Obi-Wan
-  game.currentPlayerId = game.players[0].id;    // Set current player to Obi-Wan for the test
+  const game = createTestGame([
+    { name: "Obi-Wan", position: 9, propertyIds: [12] },
+    { name: "Luke" },
+  ]);
 
   const randomValues = 
   [
@@ -611,11 +594,10 @@ test("player lands on his own railroad - no rent charged", (ctx) => {
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Rey", "Kylo"]);
-  game.players[0].position = 2;
-  game.players[0].propertyIds = [5];           // Own Reading Railroad to ensure rent would be collected if not owned by the player
-  game.board[5].ownerId = game.players[0].id;  // Set ownership of Reading Railroad to Rey
-  game.currentPlayerId = game.players[0].id; // Set current player to Rey for the test
+  const game = createTestGame([
+    { name: "Rey", position: 2, propertyIds: [5] },
+    { name: "Kylo" },
+  ]);
 
   const randomValues = 
   [
@@ -637,12 +619,10 @@ test("player lands on railroad - owner has 1 railroad", (ctx) => {
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Kylo", "Rey"]);
-  game.players[0].position = 2;
-  game.players[1].position = 17;
-  game.players[1].propertyIds = [5];           // Own Reading Railroad to ensure rent would be collected if not owned by the player
-  game.board[5].ownerId = game.players[1].id;  // Set ownership of Reading Railroad to Rey
-  game.currentPlayerId = game.players[0].id; // Set current player to Kylo for the test
+  const game = createTestGame([
+    { name: "Kylo", position: 2 },
+    { name: "Rey", position: 17, propertyIds: [5] },
+  ]);
 
   const randomValues = 
   [
@@ -665,13 +645,10 @@ test("player lands on railroad - owner has 2 railroads", (ctx) => {
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Kylo", "Rey"]);
-  game.players[0].position = 2;
-  game.players[1].position = 17;
-  game.players[1].propertyIds = [5, 15];            // Own Reading Railroad and another railroad to ensure rent would be collected if not owned by the player
-  game.board[5].ownerId = game.players[1].id;       // Set ownership of Reading Railroad to Rey
-  game.board[15].ownerId = game.players[1].id;      // Set ownership of another railroad to Rey
-  game.currentPlayerId = game.players[0].id;        // Set current player to Kylo for the test
+  const game = createTestGame([
+    { name: "Kylo", position: 2 },
+    { name: "Rey", position: 17, propertyIds: [5, 15] },
+  ]);
 
   const randomValues = 
   [
@@ -694,14 +671,10 @@ test("player lands on railroad - owner has 3 railroads", (ctx) => {
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Kylo", "Rey"]);
-  game.players[0].position = 2;
-  game.players[1].position = 17;
-  game.players[1].propertyIds = [5, 15, 25];            // Own Reading Railroad and two other railroads to ensure rent would be collected if not owned by the player
-  game.board[5].ownerId = game.players[1].id;       // Set ownership of Reading Railroad to Rey
-  game.board[15].ownerId = game.players[1].id;      // Set ownership of another railroad to Rey
-  game.board[25].ownerId = game.players[1].id;      // Set ownership of another railroad to Rey
-  game.currentPlayerId = game.players[0].id;        // Set current player to Kylo for the test
+  const game = createTestGame([
+    { name: "Kylo", position: 2 },
+    { name: "Rey", position: 17, propertyIds: [5, 15, 25] },
+  ]);
 
   const randomValues = 
   [
@@ -724,15 +697,10 @@ test("player lands on railroad - owner has 4 railroads", (ctx) => {
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Kylo", "Rey"]);
-  game.players[0].position = 2;
-  game.players[1].position = 17;
-  game.players[1].propertyIds = [5, 15, 25, 35];            // Own Reading Railroad and three other railroads to ensure rent would be collected if not owned by the player
-  game.board[5].ownerId = game.players[1].id;       // Set ownership of Reading Railroad to Rey
-  game.board[15].ownerId = game.players[1].id;      // Set ownership of another railroad to Rey
-  game.board[25].ownerId = game.players[1].id;      // Set ownership of another railroad to Rey
-  game.board[35].ownerId = game.players[1].id;      // Set ownership of another railroad to Rey
-  game.currentPlayerId = game.players[0].id;        // Set current player to Kylo for the test
+  const game = createTestGame([
+    { name: "Kylo", position: 2 },
+    { name: "Rey", position: 17, propertyIds: [5, 15, 25, 35] },
+  ]);
 
   const randomValues = 
   [
@@ -755,12 +723,10 @@ test("player lands on utility - owner has 1 utility", (ctx) => {
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Luke", "Obi-Wan"]);
-  game.players[0].position = 9;
-  game.players[1].position = 17;
-  game.players[1].propertyIds = [12];           // Own Electric Company to ensure rent would be collected if not owned by the player
-  game.board[12].ownerId = game.players[1].id;  // Set ownership of Electric Company to Obi-Wan
-  game.currentPlayerId = game.players[0].id;    // Set current player to Luke for the test
+  const game = createTestGame([
+    { name: "Luke", position: 9 },
+    { name: "Obi-Wan", position: 17, propertyIds: [12] },
+  ]);
 
   const randomValues = 
   [
@@ -783,13 +749,10 @@ test("player lands on utility - owner has 2 utilities", (ctx) => {
   // Arrange
   const logMessages = [];
   ctx.mock.method(console, "log", (message) => logMessages.push(message));
-  const game = createGame(["Luke", "Obi-Wan"]);
-  game.players[0].position = 9;
-  game.players[1].position = 17;
-  game.players[1].propertyIds = [12, 28];       // Own Electric Company and Water Works to ensure rent would be collected if not owned by the player
-  game.board[12].ownerId = game.players[1].id;  // Set ownership of Electric Company to Obi-Wan
-  game.board[28].ownerId = game.players[1].id;  // Set ownership of Water Works to Obi-Wan
-  game.currentPlayerId = game.players[0].id;    // Set current player to Luke for the test
+  const game = createTestGame([
+    { name: "Luke", position: 9 },
+    { name: "Obi-Wan", position: 17, propertyIds: [12, 28] },
+  ]);
 
   const randomValues = 
   [

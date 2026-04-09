@@ -1,17 +1,16 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { showSummary } from "../game/showSummary.js";
-import { createGame } from "../game/createGame.js";
+import { createTestGame } from "./helpers/createTestGame.js";
 
 test("displays player summary correctly", (context) => {
   // Arrange
-  const game = createGame(["Martyna", "Jarek", "Ola Olaszewska"]);
+  const game = createTestGame([
+    { name: "Martyna", money: 1500 },
+    { name: "Jarek", money: 1200, propertyIds: [1, 3, 5] },
+    { name: "Ola Olaszewska", money: -200, propertyIds: [6] },
+  ]);
   const players = game.players;
-  players[0].money = 1500;
-  players[1].money = 1200;
-  players[1].propertyIds = [1, 2, 3];
-  players[2].money = -200;
-  players[2].propertyIds = [4];
   context.mock.method(console, "log", (message) => {}); // mock console.log to capture output
 
   // Act
@@ -24,6 +23,6 @@ test("displays player summary correctly", (context) => {
   assert.equal(logs[1], "🏁  Game Summary 🏁");
   assert.equal(logs[3], "");
   assert.equal(logs[4], "🏆  Martyna:         $1500 | 🏠  properties (0): []");
-  assert.equal(logs[5], "💰  Jarek:           $1200 | 🏠  properties (3): [1, 2, 3]");
-  assert.equal(logs[6], "💀  Ola Olaszewska:  -$200 | 🏠  properties (1): [4]");
+  assert.equal(logs[5], "💰  Jarek:           $1200 | 🏠  properties (3): [1, 3, 5]");
+  assert.equal(logs[6], "💀  Ola Olaszewska:  -$200 | 🏠  properties (1): [6]");
 });

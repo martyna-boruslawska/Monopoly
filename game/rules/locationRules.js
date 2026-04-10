@@ -52,7 +52,7 @@ export const locationRules = {
 
   _handlePayRent(game) {
     const tile = game.board[game.currentPlayer().position];
-    const isRentPaymentRequired = tile && tile.price && tile.ownerId != null && tile.ownerId !== game.currentPlayer().id;
+    const isRentPaymentRequired = tile && tile.price && tile.ownerId !== null && tile.ownerId !== undefined && tile.ownerId !== game.currentPlayer().id;
     if (!isRentPaymentRequired) return;
 
     const owner = game.players.find((p) => p.id === tile.ownerId);

@@ -3,97 +3,97 @@ const JAIL_TILE_ID = 10;
 const MAX_FAILED_JAIL_ROLLS = 3;
 
 export function jailRules(game) {
-	const player = game.currentPlayer();
-	if (player == null || player.isBankrupt || !player.isInJail) {
-		return {
-			canMove: true,
-			roll: null,
-			usedJailRoll: false,
-		};
-	}
+  const player = game.currentPlayer();
+  if (player === null || player === undefined || player.isBankrupt || !player.isInJail) {
+    return {
+      canMove: true,
+      roll: null,
+      usedJailRoll: false,
+    };
+  }
 
-	if (player.money >= JAIL_FINE) {
-		releasePlayerFromJail(player);
-		player.money -= JAIL_FINE;
-		console.log(`${player.name} pays $50 to get out of jail.`);
+  if (player.money >= JAIL_FINE) {
+    releasePlayerFromJail(player);
+    player.money -= JAIL_FINE;
+    console.log(`${player.name} pays $50 to get out of jail.`);
 
-		return {
-			canMove: true,
-			roll: null,
-			usedJailRoll: false,
-		};
-	}
+    return {
+      canMove: true,
+      roll: null,
+      usedJailRoll: false,
+    };
+  }
 
-	const roll = game.rollDice();
-	if (roll.isDouble) {
-		releasePlayerFromJail(player);
-		console.log(`${player.name} rolls doubles and gets out of jail.`);
+  const roll = game.rollDice();
+  if (roll.isDouble) {
+    releasePlayerFromJail(player);
+    console.log(`${player.name} rolls doubles and gets out of jail.`);
 
-		return {
-			canMove: true,
-			roll,
-			usedJailRoll: true,
-		};
-	}
+    return {
+      canMove: true,
+      roll,
+      usedJailRoll: true,
+    };
+  }
 
-	player.failedJailRolls += 1;
-	console.log(`${player.name} fails to roll doubles and remains in jail.`);
+  player.failedJailRolls += 1;
+  console.log(`${player.name} fails to roll doubles and remains in jail.`);
 
-	if (player.failedJailRolls < MAX_FAILED_JAIL_ROLLS) {
-		return {
-			canMove: false,
-			roll,
-			usedJailRoll: true,
-		};
-	}
+  if (player.failedJailRolls < MAX_FAILED_JAIL_ROLLS) {
+    return {
+      canMove: false,
+      roll,
+      usedJailRoll: true,
+    };
+  }
 
-	releasePlayerFromJail(player);
+  releasePlayerFromJail(player);
 
-	if (player.money < JAIL_FINE) {
-		markPlayerBankrupt(game, player);
-		return {
-			canMove: false,
-			roll: null,
-			usedJailRoll: true,
-		};
-	}
+  if (player.money < JAIL_FINE) {
+    markPlayerBankrupt(game, player);
+    return {
+      canMove: false,
+      roll: null,
+      usedJailRoll: true,
+    };
+  }
 
-	player.money -= JAIL_FINE;
-	console.log(`${player.name} pays $50 to get out of jail.`);
+  player.money -= JAIL_FINE;
+  console.log(`${player.name} pays $50 to get out of jail.`);
 
-	return {
-		canMove: true,
-		roll,
-		usedJailRoll: true,
-	};
+  return {
+    canMove: true,
+    roll,
+    usedJailRoll: true,
+  };
 }
 
 export function sendCurrentPlayerToJail(game) {
-	const player = game.currentPlayer();
-	if (player == null) {
-		return;
-	}
+  const player = game.currentPlayer();
+  if (player === null || player === undefined) {
+    return;
+  }
 
-	player.position = JAIL_TILE_ID;
-	player.isInJail = true;
-	player.failedJailRolls = 0;
-	console.log(`${player.name} is sent to jail for landing on Go To Jail.`);
+  player.position = JAIL_TILE_ID;
+  player.isInJail = true;
+  player.failedJailRolls = 0;
+  console.log(`${player.name} is sent to jail for landing on Go To Jail.`);
 }
 
 function releasePlayerFromJail(player) {
-	player.isInJail = false;
-	player.failedJailRolls = 0;
+  player.isInJail = false;
+  player.failedJailRolls = 0;
 }
 
 function markPlayerBankrupt(game, player) {
-	player.isBankrupt = true;
+  player.isBankrupt = true;
 
-	for (const tile of game.board) {
-		if (tile.ownerId === player.id) {
-			tile.ownerId = null;
-		}
-	}
+  for (const tile of game.board) {
+    if (tile.ownerId === player.id) {
+      tile.ownerId = null;
+    }
+  }
 
-	player.propertyIds = [];
-	console.log(`${player.name} is bankrupt and out of the game.`);
+  player.propertyIds = [];
+  console.log(`${player.name} is bankrupt and out of the game.`);
 }

@@ -3,12 +3,12 @@ import assert from "node:assert/strict";
 import { createGame } from "../game/createGame.js";
 
 test("creates game with expected structure and defaults", () => {
-  const game = createGame(["Martyna", "Jarek", "Ania"]);
+  const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
   
   assert.deepStrictEqual(game.players, [
-    { id: 1, name: "Martyna", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
-    { id: 2, name: "Jarek", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
-    { id: 3, name: "Ania", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
+    { id: 1, name: "Luke Skywalker", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
+    { id: 2, name: "Darth Vader", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
+    { id: 3, name: "Leia Organa", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
   ]);
   
   assert.deepStrictEqual(game.board, [
@@ -56,7 +56,7 @@ test("creates game with expected structure and defaults", () => {
 });
 
 test("rollDice method returns an object with two dice values between 1 and 6", () => {
-  const game = createGame(["Martyna", "Jarek", "Ania"]);
+  const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
   
   assert.strictEqual(typeof game.rollDice, "function");
   const diceResult = game.rollDice();
@@ -71,47 +71,47 @@ test("rollDice method returns an object with two dice values between 1 and 6", (
 });
 
 test("currentPlayer method returns null when currentPlayerId is null", () => {
-  const game = createGame(["Martyna", "Jarek", "Ania"]);
+  const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
 
   game.currentPlayerId = null;
   assert.strictEqual(game.currentPlayer(), null);
 });
 
 test("nextActivePlayer method returns first active player when currentPlayerId is null", () => {
-  const game = createGame(["Martyna", "Jarek", "Ania"]);
+  const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
 
   game.players[0].isBankrupt = false;
   game.players[1].isBankrupt = false;
   game.players[2].isBankrupt = false;
   game.currentPlayerId = null;
   
-  assert.deepStrictEqual(game.nextActivePlayer(), { id: 1, name: "Martyna", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 });
+  assert.deepStrictEqual(game.nextActivePlayer(), { id: 1, name: "Luke Skywalker", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 });
   assert.strictEqual(game.currentPlayerId, 1);
 });
 
 test("currentPlayer method returns the correct player based on currentPlayerId", () => {
-  const game = createGame(["Martyna", "Jarek", "Ania"]);
+  const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
   
   game.currentPlayerId = 1;
-  assert.deepStrictEqual(game.currentPlayer(), { id: 1, name: "Martyna", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 });
+  assert.deepStrictEqual(game.currentPlayer(), { id: 1, name: "Luke Skywalker", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 });
 });
 
 test("getActivePlayers method returns an array of active players", () => {
-  const game = createGame(["Martyna", "Jarek", "Ania"]);
+  const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
   
   game.players[0].isBankrupt = false;
   game.players[1].isBankrupt = false;
   game.players[2].isBankrupt = false;
   assert.deepStrictEqual(game.getActivePlayers(), [
-    { id: 1, name: "Martyna", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
-    { id: 2, name: "Jarek", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
-    { id: 3, name: "Ania", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
+    { id: 1, name: "Luke Skywalker", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
+    { id: 2, name: "Darth Vader", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
+    { id: 3, name: "Leia Organa", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
   ]);
   
   game.players[0].isBankrupt = true;
   assert.deepStrictEqual(game.getActivePlayers(), [
-    { id: 2, name: "Jarek", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
-    { id: 3, name: "Ania", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
+    { id: 2, name: "Darth Vader", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
+    { id: 3, name: "Leia Organa", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
   ]);
   
   game.players[1].isBankrupt = true;
@@ -120,7 +120,7 @@ test("getActivePlayers method returns an array of active players", () => {
 });
 
 test("countActivePlayers method returns the correct count of active players", () => {
-  const game = createGame(["Martyna", "Jarek", "Ania"]);
+  const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
   
   game.players[0].isBankrupt = false;
   game.players[1].isBankrupt = false;
@@ -136,21 +136,21 @@ test("countActivePlayers method returns the correct count of active players", ()
 });
 
 test("nextActivePlayer method returns the next active player and updates currentPlayerId", () => {
-  const game = createGame(["Martyna", "Jarek", "Ania"]);
+  const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
   
   game.players[0].isBankrupt = false;
   game.players[1].isBankrupt = false;
   game.players[2].isBankrupt = false;
   game.currentPlayerId = 2;
-  assert.deepStrictEqual(game.nextActivePlayer(), { id: 3, name: "Ania", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 });
+  assert.deepStrictEqual(game.nextActivePlayer(), { id: 3, name: "Leia Organa", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 });
   assert.strictEqual(game.currentPlayerId, 3);
-  assert.deepStrictEqual(game.nextActivePlayer(), { id: 1, name: "Martyna", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 });
+  assert.deepStrictEqual(game.nextActivePlayer(), { id: 1, name: "Luke Skywalker", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 });
   assert.strictEqual(game.currentPlayerId, 1);
   
   game.players[0].isBankrupt = true;
-  assert.deepStrictEqual(game.nextActivePlayer(), { id: 2, name: "Jarek", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 });
+  assert.deepStrictEqual(game.nextActivePlayer(), { id: 2, name: "Darth Vader", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 });
   assert.strictEqual(game.currentPlayerId, 2);
-  assert.deepStrictEqual(game.nextActivePlayer(), { id: 3, name: "Ania", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 });
+  assert.deepStrictEqual(game.nextActivePlayer(), { id: 3, name: "Leia Organa", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 });
   assert.strictEqual(game.currentPlayerId, 3);
   
   game.players[1].isBankrupt = true;
@@ -160,13 +160,13 @@ test("nextActivePlayer method returns the next active player and updates current
 });
 
 test("nextActivePlayer method skips current player if they become bankrupt", () => {
-  const game = createGame(["Martyna", "Jarek", "Ania"]);
+  const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
   
   game.players[0].isBankrupt = false;
   game.players[1].isBankrupt = false;
   game.players[2].isBankrupt = false;
   game.currentPlayerId = 1;
   game.players[0].isBankrupt = true;
-  assert.deepStrictEqual(game.nextActivePlayer(), { id: 2, name: "Jarek", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 });
+  assert.deepStrictEqual(game.nextActivePlayer(), { id: 2, name: "Darth Vader", position: 0, money: 1500, propertyIds: [], isBankrupt: false, isInJail: false, failedJailRolls: 0 });
   assert.strictEqual(game.currentPlayerId, 2);
 });

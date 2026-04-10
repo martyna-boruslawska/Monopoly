@@ -18,7 +18,7 @@ function executePlayerTurn(game) {
   let hasDouble = true;
   while (hasDouble && doublesCount < 3) {
     const currentPlayer = game.currentPlayer();
-    if (currentPlayer == null || currentPlayer.isBankrupt) {
+    if (currentPlayer === null || currentPlayer === undefined || currentPlayer.isBankrupt) {
       return;
     }
 
@@ -32,7 +32,7 @@ function executePlayerTurn(game) {
     movePlayer(game, roll.total);
 
     const updatedPlayer = game.currentPlayer();
-    if (updatedPlayer == null || updatedPlayer.isBankrupt || updatedPlayer.isInJail) {
+    if (updatedPlayer === null || updatedPlayer === undefined || updatedPlayer.isBankrupt || updatedPlayer.isInJail) {
       return;
     }
 

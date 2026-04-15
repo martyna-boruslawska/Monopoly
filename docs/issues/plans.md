@@ -1,11 +1,12 @@
 
 # Short-Term Plans
 
-1. Extendable Rules System.
-2. Working with branches.
-3. End-of-game handling and the main loop.
-4. Folder restructuring.
-5. Chance and Community Chest cards, including:
+1. Working with branches.
+2. GitHub Pull Requests.
+3. Extendable Rules System.
+4. End-of-game handling and the main loop.
+5. Folder restructuring.
+6. Chance and Community Chest cards, including:
   - handle payments to the bank and payouts from the bank
   - handle gift cards: payments from all players to one player (the active player)
   - handle move-to-location cards, including passing Go
@@ -13,7 +14,6 @@
   - handle property repairs
   - handle moving to a utility with double payment
   - preserve the "Get Out of Jail Free" card
-6. GitHub Pull Requests.
 7. Buying houses and rent - Simple **STRATEGY**, with the following rules:
   - allow switching between different strategies
   - players always buy houses evenly across all of their complete property sets

@@ -19,8 +19,26 @@ test("creates a game with provided player setup and ownership on the board", () 
   const electricCompany = getOwnableTile(game, 12);
 
   assert.deepStrictEqual(game.players, [
-    { id: 1, name: "Luke Skywalker", position: 7, money: 900, propertyIds: [1, 5], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
-    { id: 2, name: "Darth Vader", position: 12, money: 1200, propertyIds: [12], isBankrupt: false, isInJail: false, failedJailRolls: 0 },
+    {
+      id: 1,
+      name: "Luke Skywalker",
+      position: 7,
+      money: 900,
+      propertyIds: [1, 5],
+      isBankrupt: false,
+      isInJail: false,
+      failedJailRolls: 0,
+    },
+    {
+      id: 2,
+      name: "Darth Vader",
+      position: 12,
+      money: 1200,
+      propertyIds: [12],
+      isBankrupt: false,
+      isInJail: false,
+      failedJailRolls: 0,
+    },
   ]);
   assert.strictEqual(mediterraneanAvenue.ownerId, 1);
   assert.strictEqual(readingRailroad.ownerId, 1);
@@ -31,10 +49,7 @@ test("creates a game with provided player setup and ownership on the board", () 
 
 test("copies propertyIds input and safely ignores unknown board ids", () => {
   const propertyIds = [1, 999];
-  const game = createTestGame([
-    { name: "Luke Skywalker", propertyIds },
-    { name: "Darth Vader" },
-  ]);
+  const game = createTestGame([{ name: "Luke Skywalker", propertyIds }, { name: "Darth Vader" }]);
   const mediterraneanAvenue = getOwnableTile(game, 1);
   const readingRailroad = getOwnableTile(game, 5);
 
@@ -46,10 +61,7 @@ test("copies propertyIds input and safely ignores unknown board ids", () => {
 });
 
 test("applies zero money overrides instead of falling back to defaults", () => {
-  const game = createTestGame([
-    { name: "Luke Skywalker", money: 0 },
-    { name: "Darth Vader" },
-  ]);
+  const game = createTestGame([{ name: "Luke Skywalker", money: 0 }, { name: "Darth Vader" }]);
 
   assert.strictEqual(game.players[0].money, 0);
   assert.strictEqual(game.players[1].money, 1500);

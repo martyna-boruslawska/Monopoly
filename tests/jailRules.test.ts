@@ -4,7 +4,7 @@ import { jailRules } from "../game/rules/jailRules.js";
 import { locationRules } from "../game/rules/locationRules.js";
 import { createTestGame } from "./helpers/createTestGame.js";
 
-test("player goes to jail when landing on Go To Jail tile", (ctx) => {
+test("player goes to jail when landing on Go To Jail tile", ctx => {
   const mockLog = ctx.mock.method(console, "log", () => {});
 
   const game = createTestGame([
@@ -18,10 +18,13 @@ test("player goes to jail when landing on Go To Jail tile", (ctx) => {
   assert.strictEqual(player.isInJail, true);
   assert.strictEqual(player.position, 10); // Jail tile
   assert.strictEqual(player.money, 1500); // No bonus for passing Start when sent to jail
-  assert.strictEqual(mockLog.mock.calls[0].arguments[0], "Luke Skywalker is sent to jail for landing on Go To Jail.");
+  assert.strictEqual(
+    mockLog.mock.calls[0].arguments[0],
+    "Luke Skywalker is sent to jail for landing on Go To Jail.",
+  );
 });
 
-test("player in jail cannot collect rent", (ctx) => {
+test("player in jail cannot collect rent", ctx => {
   const mockLog = ctx.mock.method(console, "log", () => {});
 
   const game = createTestGame([
@@ -38,16 +41,16 @@ test("player in jail cannot collect rent", (ctx) => {
   assert.strictEqual(playerInJail.isInJail, true);
   assert.strictEqual(otherPlayer.money, 1500);
   assert.strictEqual(playerInJail.money, 1500);
-  assert.strictEqual(mockLog.mock.calls[0].arguments[0], "Luke Skywalker is in jail and cannot collect rent from Darth Vader.");
+  assert.strictEqual(
+    mockLog.mock.calls[0].arguments[0],
+    "Luke Skywalker is in jail and cannot collect rent from Darth Vader.",
+  );
 });
 
-test("player in jail can pay fine to get out", (ctx) => {
+test("player in jail can pay fine to get out", ctx => {
   const mockLog = ctx.mock.method(console, "log", () => {});
 
-  const game = createTestGame([
-    { name: "Luke Skywalker" },
-    { name: "Darth Vader" },
-  ]);
+  const game = createTestGame([{ name: "Luke Skywalker" }, { name: "Darth Vader" }]);
   const player = game.players[0];
   player.isInJail = true;
 
@@ -57,16 +60,16 @@ test("player in jail can pay fine to get out", (ctx) => {
   assert.strictEqual(player.isInJail, false);
   assert.strictEqual(player.money, 1500 - 50); // Paid $50 fine
   assert.strictEqual(player.failedJailRolls, 0);
-  assert.strictEqual(mockLog.mock.calls[0].arguments[0], "Luke Skywalker pays $50 to get out of jail.");
+  assert.strictEqual(
+    mockLog.mock.calls[0].arguments[0],
+    "Luke Skywalker pays $50 to get out of jail.",
+  );
 });
 
-test("player in jail can roll doubles to get out when they cannot pay", (ctx) => {
+test("player in jail can roll doubles to get out when they cannot pay", ctx => {
   const mockLog = ctx.mock.method(console, "log", () => {});
 
-  const game = createTestGame([
-    { name: "Luke Skywalker", money: 40 },
-    { name: "Darth Vader" },
-  ]);
+  const game = createTestGame([{ name: "Luke Skywalker", money: 40 }, { name: "Darth Vader" }]);
   const player = game.players[0];
   player.isInJail = true;
   game.rollDice = () => ({ dice1: 1, dice2: 1, total: 2, isDouble: true });
@@ -79,16 +82,16 @@ test("player in jail can roll doubles to get out when they cannot pay", (ctx) =>
   assert.strictEqual(player.isInJail, false);
   assert.strictEqual(player.money, 40); // No fine paid, got out by rolling doubles
   assert.strictEqual(player.failedJailRolls, 0);
-  assert.strictEqual(mockLog.mock.calls[0].arguments[0], "Luke Skywalker rolls doubles and gets out of jail.");
+  assert.strictEqual(
+    mockLog.mock.calls[0].arguments[0],
+    "Luke Skywalker rolls doubles and gets out of jail.",
+  );
 });
 
-test("player in jail stays in jail after failing to roll doubles", (ctx) => {
+test("player in jail stays in jail after failing to roll doubles", ctx => {
   const mockLog = ctx.mock.method(console, "log", () => {});
 
-  const game = createTestGame([
-    { name: "Luke Skywalker", money: 40 },
-    { name: "Darth Vader" },
-  ]);
+  const game = createTestGame([{ name: "Luke Skywalker", money: 40 }, { name: "Darth Vader" }]);
   const player = game.players[0];
   player.isInJail = true;
   game.rollDice = () => ({ dice1: 2, dice2: 3, total: 5, isDouble: false });
@@ -99,16 +102,16 @@ test("player in jail stays in jail after failing to roll doubles", (ctx) => {
   assert.strictEqual(player.isInJail, true);
   assert.strictEqual(player.money, 40); // No fine paid, still in jail
   assert.strictEqual(player.failedJailRolls, 1);
-  assert.strictEqual(mockLog.mock.calls[0].arguments[0], "Luke Skywalker fails to roll doubles and remains in jail.");
+  assert.strictEqual(
+    mockLog.mock.calls[0].arguments[0],
+    "Luke Skywalker fails to roll doubles and remains in jail.",
+  );
 });
 
-test("player in jail goes bankrupt after failing three turns and being unable to pay", (ctx) => {
+test("player in jail goes bankrupt after failing three turns and being unable to pay", ctx => {
   const mockLog = ctx.mock.method(console, "log", () => {});
 
-  const game = createTestGame([
-    { name: "Luke Skywalker", money: 30 },
-    { name: "Darth Vader" },
-  ]);
+  const game = createTestGame([{ name: "Luke Skywalker", money: 30 }, { name: "Darth Vader" }]);
   const player = game.players[0];
   player.isInJail = true;
   game.rollDice = () => ({ dice1: 2, dice2: 3, total: 5, isDouble: false });
@@ -123,6 +126,12 @@ test("player in jail goes bankrupt after failing three turns and being unable to
   assert.strictEqual(player.isInJail, false);
   assert.strictEqual(player.isBankrupt, true);
   assert.strictEqual(player.failedJailRolls, 0);
-  assert.strictEqual(mockLog.mock.calls[2].arguments[0], "Luke Skywalker fails to roll doubles and remains in jail.");
-  assert.strictEqual(mockLog.mock.calls[3].arguments[0], "Luke Skywalker is bankrupt and out of the game.");
+  assert.strictEqual(
+    mockLog.mock.calls[2].arguments[0],
+    "Luke Skywalker fails to roll doubles and remains in jail.",
+  );
+  assert.strictEqual(
+    mockLog.mock.calls[3].arguments[0],
+    "Luke Skywalker is bankrupt and out of the game.",
+  );
 });

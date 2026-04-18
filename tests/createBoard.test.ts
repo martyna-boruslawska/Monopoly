@@ -2,7 +2,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createBoard } from "../game/createBoard.js";
 import { isOwnableLocation } from "../game/types.js";
-import type { PropertyLocation, RailroadLocation, TaxLocation, UtilityLocation } from "../game/types.js";
+import type {
+  PropertyLocation,
+  RailroadLocation,
+  TaxLocation,
+  UtilityLocation,
+} from "../game/types.js";
 
 test("board has exactly 40 spaces", () => {
   const board = createBoard();

@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { showSummary } from "../game/showSummary.js";
 
-test("displays player summary correctly", (context) => {
+test("displays player summary correctly", context => {
   // Arrange
   const players = [
     { name: "Luke Skywalker", money: 1500, propertyIds: [] },
@@ -15,9 +15,7 @@ test("displays player summary correctly", (context) => {
   showSummary(players);
 
   // Assert
-  const logs = mockLog.mock.calls.map(call =>
-    call.arguments.map(arg => String(arg)).join("|"),
-  );
+  const logs = mockLog.mock.calls.map(call => call.arguments.map(arg => String(arg)).join("|"));
 
   assert.strictEqual(logs.length, 7);
   assert.strictEqual(logs[1], "🏁  Game Summary 🏁");

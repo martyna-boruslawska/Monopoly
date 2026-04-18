@@ -13,7 +13,7 @@ export function createTestGame(testPlayers: TestPlayerInput[]): Game {
     if (testPlayer.propertyIds !== undefined) player.propertyIds = [...testPlayer.propertyIds];
 
     if (player.propertyIds.length > 0) {
-      player.propertyIds.forEach((propertyId) => {
+      player.propertyIds.forEach(propertyId => {
         const location = game.board.find(t => t.id === propertyId);
         if (location && isOwnableLocation(location)) {
           location.ownerId = player.id;

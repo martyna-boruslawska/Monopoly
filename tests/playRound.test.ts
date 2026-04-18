@@ -3,13 +3,10 @@ import assert from "node:assert/strict";
 import { playRound } from "../game/playRound.js";
 import { createTestGame } from "./helpers/createTestGame.js";
 
-test("skips players who are already bankrupt", (context) => {
+test("skips players who are already bankrupt", context => {
   context.mock.method(console, "log", () => {});
 
-  const game = createTestGame([
-    { name: "Luke Skywalker", position: 5 },
-    { name: "Darth Vader" },
-  ]);
+  const game = createTestGame([{ name: "Luke Skywalker", position: 5 }, { name: "Darth Vader" }]);
   game.players[0].isBankrupt = true;
 
   const randomValues = [0, 0.2];
@@ -22,12 +19,10 @@ test("skips players who are already bankrupt", (context) => {
   assert.strictEqual(game.players[1].position, 3);
 });
 
-test("plays one turn for a non-bankrupt player", (context) => {
+test("plays one turn for a non-bankrupt player", context => {
   context.mock.method(console, "log", () => {});
 
-  const game = createTestGame([
-    { name: "Luke Skywalker" },
-  ]);
+  const game = createTestGame([{ name: "Luke Skywalker" }]);
 
   const randomValues = [0, 0.2];
   let index = 0;
@@ -38,12 +33,10 @@ test("plays one turn for a non-bankrupt player", (context) => {
   assert.strictEqual(game.players[0].position, 3);
 });
 
-test("gives another turn after rolling doubles", (context) => {
+test("gives another turn after rolling doubles", context => {
   context.mock.method(console, "log", () => {});
 
-  const game = createTestGame([
-    { name: "Luke Skywalker" },
-  ]);
+  const game = createTestGame([{ name: "Luke Skywalker" }]);
 
   const randomValues = [0, 0, 0.2, 0.4];
   let index = 0;
@@ -54,12 +47,10 @@ test("gives another turn after rolling doubles", (context) => {
   assert.strictEqual(game.players[0].position, 7);
 });
 
-test("stops after three doubles", (context) => {
+test("stops after three doubles", context => {
   context.mock.method(console, "log", () => {});
 
-  const game = createTestGame([
-    { name: "Luke Skywalker" },
-  ]);
+  const game = createTestGame([{ name: "Luke Skywalker" }]);
 
   const randomValues = [0, 0, 0, 0, 0, 0, 0, 0];
   let index = 0;
@@ -71,12 +62,10 @@ test("stops after three doubles", (context) => {
   assert.strictEqual(index, 6);
 });
 
-test("stops extra turns when player becomes bankrupt after a double", (context) => {
+test("stops extra turns when player becomes bankrupt after a double", context => {
   context.mock.method(console, "log", () => {});
 
-  const game = createTestGame([
-    { name: "Luke Skywalker", position: 36, money: 50 },
-  ]);
+  const game = createTestGame([{ name: "Luke Skywalker", position: 36, money: 50 }]);
 
   const randomValues = [0, 0, 0, 0];
   let index = 0;
@@ -89,12 +78,10 @@ test("stops extra turns when player becomes bankrupt after a double", (context) 
   assert.strictEqual(index, 2);
 });
 
-test("skips a jailed player's turn when they cannot pay and fail to roll doubles", (context) => {
+test("skips a jailed player's turn when they cannot pay and fail to roll doubles", context => {
   context.mock.method(console, "log", () => {});
 
-  const game = createTestGame([
-    { name: "Luke Skywalker", position: 10, money: 30 },
-  ]);
+  const game = createTestGame([{ name: "Luke Skywalker", position: 10, money: 30 }]);
   game.players[0].isInJail = true;
 
   const randomValues = [0.2, 0.4];
@@ -109,12 +96,10 @@ test("skips a jailed player's turn when they cannot pay and fail to roll doubles
   assert.strictEqual(index, 2);
 });
 
-test("uses the jail escape roll to move and does not grant an extra turn", (context) => {
+test("uses the jail escape roll to move and does not grant an extra turn", context => {
   context.mock.method(console, "log", () => {});
 
-  const game = createTestGame([
-    { name: "Luke Skywalker", position: 10, money: 30 },
-  ]);
+  const game = createTestGame([{ name: "Luke Skywalker", position: 10, money: 30 }]);
   game.players[0].isInJail = true;
 
   const randomValues = [0, 0, 0.2, 0.4];

@@ -29,7 +29,14 @@ type LocationSeed = PropertySeed | RailroadSeed | UtilitySeed | NonOwnableLocati
 
 const board: LocationSeed[] = [
   { id: 0, name: "Start", type: "start" },
-  { id: 1, name: "Mediterranean Avenue", type: "property", color: "dark-purple", price: 60, rent: 2 },
+  {
+    id: 1,
+    name: "Mediterranean Avenue",
+    type: "property",
+    color: "dark-purple",
+    price: 60,
+    rent: 2,
+  },
   { id: 2, name: "Chance", type: "chance" },
   { id: 3, name: "Baltic Avenue", type: "property", color: "dark-purple", price: 60, rent: 4 },
   { id: 4, name: "Income Tax", type: "tax", amount: 200 },

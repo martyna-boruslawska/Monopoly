@@ -5,17 +5,19 @@ import { showSummary } from "../game/showSummary.js";
 test("displays player summary correctly", (context) => {
   // Arrange
   const players = [
-    {name: "Luke Skywalker", money: 1500, propertyIds: []},
-    {name: "Darth Vader", money: 1200, propertyIds: [1, 2, 3]},
-    {name: "Leia Organa", money: -200, propertyIds: [4]}
+    { name: "Luke Skywalker", money: 1500, propertyIds: [] },
+    { name: "Darth Vader", money: 1200, propertyIds: [1, 2, 3] },
+    { name: "Leia Organa", money: -200, propertyIds: [4] },
   ];
-  context.mock.method(console, "log", (message) => {}); // mock console.log to capture output
+  const mockLog = context.mock.method(console, "log", () => {}); // mock console.log to capture output
 
   // Act
   showSummary(players);
 
   // Assert
-  const logs = console.log.mock.calls.map(call => call.arguments.map(arg => arg.toString()).join("|"));
+  const logs = mockLog.mock.calls.map(call =>
+    call.arguments.map(arg => String(arg)).join("|"),
+  );
 
   assert.strictEqual(logs.length, 7);
   assert.strictEqual(logs[1], "🏁  Game Summary 🏁");

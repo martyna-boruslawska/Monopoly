@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "test": "node --test",
+    "start": "tsx index.js",
+    "test": "tsx --test 'tests/**/*.test.{js,ts}'",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

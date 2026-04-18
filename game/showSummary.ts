@@ -1,13 +1,6 @@
-/**
- * Displays a summary of the game, showing each player's name, money, and properties.
- * Players are sorted by their money in descending order, with the richest player at the top.
- * The richest player is marked with a trophy icon (🏆), while players with negative money are marked with a skull icon (💀).
- * Each player's properties are listed with their IDs.
- * 
- * @param {Array<{id: number, name: string, money: number, propertyIds: number[]}>} players 
- */
+type SummaryPlayer = { name: string; money: number; propertyIds?: number[] };
 
-export function showSummary(players) {
+export function showSummary(players: SummaryPlayer[]): void {
   console.log("=================================");
   console.log("🏁  Game Summary 🏁");
   console.log("=================================");

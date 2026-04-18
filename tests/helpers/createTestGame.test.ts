@@ -9,7 +9,7 @@ function getOwnableTile(game: ReturnType<typeof createTestGame>, index: number) 
   return tile;
 }
 
-test("creates a game with provided player setup and ownership on the board", () => {
+test("createTestGame - creates a game with provided player setup and ownership on the board", () => {
   const game = createTestGame([
     { name: "Luke Skywalker", position: 7, money: 900, propertyIds: [1, 5] },
     { name: "Darth Vader", position: 12, money: 1200, propertyIds: [12] },
@@ -47,7 +47,7 @@ test("creates a game with provided player setup and ownership on the board", () 
   assert.deepStrictEqual(game.currentPlayer(), game.players[0]);
 });
 
-test("copies propertyIds input and safely ignores unknown board ids", () => {
+test("createTestGame - copies propertyIds input and safely ignores unknown board ids", () => {
   const propertyIds = [1, 999];
   const game = createTestGame([{ name: "Luke Skywalker", propertyIds }, { name: "Darth Vader" }]);
   const mediterraneanAvenue = getOwnableTile(game, 1);
@@ -60,7 +60,7 @@ test("copies propertyIds input and safely ignores unknown board ids", () => {
   assert.strictEqual(readingRailroad.ownerId, null);
 });
 
-test("applies zero money overrides instead of falling back to defaults", () => {
+test("createTestGame - applies zero money overrides instead of falling back to defaults", () => {
   const game = createTestGame([{ name: "Luke Skywalker", money: 0 }, { name: "Darth Vader" }]);
 
   assert.strictEqual(game.players[0].money, 0);

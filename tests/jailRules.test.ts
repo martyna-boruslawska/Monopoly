@@ -4,7 +4,7 @@ import { jailRules } from "../game/rules/jailRules.js";
 import { locationRules } from "../game/rules/locationRules.js";
 import { createTestGame } from "./helpers/createTestGame.js";
 
-test("player goes to jail when landing on Go To Jail tile", ctx => {
+test("jailRules - player goes to jail when landing on Go To Jail tile", ctx => {
   const mockLog = ctx.mock.method(console, "log", () => {});
 
   const game = createTestGame([
@@ -24,7 +24,7 @@ test("player goes to jail when landing on Go To Jail tile", ctx => {
   );
 });
 
-test("player in jail cannot collect rent", ctx => {
+test("jailRules - player in jail cannot collect rent", ctx => {
   const mockLog = ctx.mock.method(console, "log", () => {});
 
   const game = createTestGame([
@@ -47,7 +47,7 @@ test("player in jail cannot collect rent", ctx => {
   );
 });
 
-test("player in jail can pay fine to get out", ctx => {
+test("jailRules - player in jail can pay fine to get out", ctx => {
   const mockLog = ctx.mock.method(console, "log", () => {});
 
   const game = createTestGame([{ name: "Luke Skywalker" }, { name: "Darth Vader" }]);
@@ -66,7 +66,7 @@ test("player in jail can pay fine to get out", ctx => {
   );
 });
 
-test("player in jail can roll doubles to get out when they cannot pay", ctx => {
+test("jailRules - player in jail can roll doubles to get out when they cannot pay", ctx => {
   const mockLog = ctx.mock.method(console, "log", () => {});
 
   const game = createTestGame([{ name: "Luke Skywalker", money: 40 }, { name: "Darth Vader" }]);
@@ -88,7 +88,7 @@ test("player in jail can roll doubles to get out when they cannot pay", ctx => {
   );
 });
 
-test("player in jail stays in jail after failing to roll doubles", ctx => {
+test("jailRules - player in jail stays in jail after failing to roll doubles", ctx => {
   const mockLog = ctx.mock.method(console, "log", () => {});
 
   const game = createTestGame([{ name: "Luke Skywalker", money: 40 }, { name: "Darth Vader" }]);
@@ -108,7 +108,7 @@ test("player in jail stays in jail after failing to roll doubles", ctx => {
   );
 });
 
-test("player in jail goes bankrupt after failing three turns and being unable to pay", ctx => {
+test("jailRules - player in jail goes bankrupt after failing three turns and being unable to pay", ctx => {
   const mockLog = ctx.mock.method(console, "log", () => {});
 
   const game = createTestGame([{ name: "Luke Skywalker", money: 30 }, { name: "Darth Vader" }]);

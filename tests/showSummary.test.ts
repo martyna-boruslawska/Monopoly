@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { showSummary } from "../game/showSummary.js";
 
-test("displays player summary correctly", context => {
+test("showSummary - displays player summary correctly", context => {
   // Arrange
   const players = [
     { name: "Luke Skywalker", money: 1500, propertyIds: [] },

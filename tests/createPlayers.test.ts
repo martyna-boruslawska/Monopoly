@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createPlayers } from "../game/createPlayers.js";
 
-test("created players use expected object shape and defaults", () => {
+test("createPlayers - created players use expected object shape and defaults", () => {
   const players = createPlayers(["Luke Skywalker", "Darth Vader"]);
 
   assert.strictEqual(players.length, 2);
@@ -30,13 +30,13 @@ test("created players use expected object shape and defaults", () => {
   });
 });
 
-test("returns an empty list when no player names are provided", () => {
+test("createPlayers - returns an empty list when no player names are provided", () => {
   const players = createPlayers([]);
 
   assert.deepStrictEqual(players, []);
 });
 
-test("creates independent player objects and property lists", () => {
+test("createPlayers - creates independent player objects and property lists", () => {
   const players = createPlayers(["Luke Skywalker", "Darth Vader"]);
 
   players[0].propertyIds.push(99);
@@ -51,7 +51,7 @@ test("creates independent player objects and property lists", () => {
   assert.strictEqual(players[1].position, 0);
 });
 
-test("preserves input order and assigns sequential ids", () => {
+test("createPlayers - preserves input order and assigns sequential ids", () => {
   const players = createPlayers(["Leia Organa", "Luke Skywalker", "Darth Vader"]);
 
   assert.strictEqual(players[0].name, "Leia Organa");
@@ -62,7 +62,7 @@ test("preserves input order and assigns sequential ids", () => {
   assert.strictEqual(players[2].id, 3);
 });
 
-test("keeps provided names unchanged", () => {
+test("createPlayers - keeps provided names unchanged", () => {
   const players = createPlayers(["", "  Leia Organa  ", "R2-D2"]);
 
   assert.strictEqual(players[0].name, "");

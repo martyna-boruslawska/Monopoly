@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { playRound } from "../game/playRound.js";
 import { createTestGame } from "./helpers/createTestGame.js";
 
-test("skips players who are already bankrupt", context => {
+test("playRound - skips players who are already bankrupt", context => {
   context.mock.method(console, "log", () => {});
 
   const game = createTestGame([{ name: "Luke Skywalker", position: 5 }, { name: "Darth Vader" }]);
@@ -19,7 +19,7 @@ test("skips players who are already bankrupt", context => {
   assert.strictEqual(game.players[1].position, 3);
 });
 
-test("plays one turn for a non-bankrupt player", context => {
+test("playRound - plays one turn for a non-bankrupt player", context => {
   context.mock.method(console, "log", () => {});
 
   const game = createTestGame([{ name: "Luke Skywalker" }]);
@@ -33,7 +33,7 @@ test("plays one turn for a non-bankrupt player", context => {
   assert.strictEqual(game.players[0].position, 3);
 });
 
-test("gives another turn after rolling doubles", context => {
+test("playRound - gives another turn after rolling doubles", context => {
   context.mock.method(console, "log", () => {});
 
   const game = createTestGame([{ name: "Luke Skywalker" }]);
@@ -47,7 +47,7 @@ test("gives another turn after rolling doubles", context => {
   assert.strictEqual(game.players[0].position, 7);
 });
 
-test("stops after three doubles", context => {
+test("playRound - stops after three doubles", context => {
   context.mock.method(console, "log", () => {});
 
   const game = createTestGame([{ name: "Luke Skywalker" }]);
@@ -62,7 +62,7 @@ test("stops after three doubles", context => {
   assert.strictEqual(index, 6);
 });
 
-test("stops extra turns when player becomes bankrupt after a double", context => {
+test("playRound - stops extra turns when player becomes bankrupt after a double", context => {
   context.mock.method(console, "log", () => {});
 
   const game = createTestGame([{ name: "Luke Skywalker", position: 36, money: 50 }]);
@@ -78,7 +78,7 @@ test("stops extra turns when player becomes bankrupt after a double", context =>
   assert.strictEqual(index, 2);
 });
 
-test("skips a jailed player's turn when they cannot pay and fail to roll doubles", context => {
+test("playRound - skips a jailed player's turn when they cannot pay and fail to roll doubles", context => {
   context.mock.method(console, "log", () => {});
 
   const game = createTestGame([{ name: "Luke Skywalker", position: 10, money: 30 }]);
@@ -96,7 +96,7 @@ test("skips a jailed player's turn when they cannot pay and fail to roll doubles
   assert.strictEqual(index, 2);
 });
 
-test("uses the jail escape roll to move and does not grant an extra turn", context => {
+test("playRound - uses the jail escape roll to move and does not grant an extra turn", context => {
   context.mock.method(console, "log", () => {});
 
   const game = createTestGame([{ name: "Luke Skywalker", position: 10, money: 30 }]);

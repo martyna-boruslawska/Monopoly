@@ -9,12 +9,12 @@ import type {
   UtilityLocation,
 } from "../game/types.js";
 
-test("board has exactly 40 spaces", () => {
+test("createBoard - board has exactly 40 spaces", () => {
   const board = createBoard();
   assert.strictEqual(board.length, 40);
 });
 
-test("all purchasable locations are initialized with ownerId: null", () => {
+test("createBoard - all purchasable locations are initialized with ownerId: null", () => {
   const board = createBoard();
   const purchasableLocations = board.filter(isOwnableLocation);
 
@@ -22,7 +22,7 @@ test("all purchasable locations are initialized with ownerId: null", () => {
   assert.ok(purchasableLocations.every(location => location.ownerId === null));
 });
 
-test("board contains key locations in expected positions", () => {
+test("createBoard - board contains key locations in expected positions", () => {
   const board = createBoard();
 
   assert.strictEqual(board[0].name, "Start");
@@ -46,7 +46,7 @@ test("board contains key locations in expected positions", () => {
   assert.strictEqual(boardwalk.rent, 50);
 });
 
-test("initializes purchasable and property-specific fields correctly", () => {
+test("createBoard - initializes purchasable and property-specific fields correctly", () => {
   const board = createBoard();
 
   const railroad = board[5] as RailroadLocation;
@@ -68,7 +68,7 @@ test("initializes purchasable and property-specific fields correctly", () => {
   assert.strictEqual("ownerId" in tax, false);
 });
 
-test("creates a fresh board on each call", () => {
+test("createBoard - creates a fresh board on each call", () => {
   const boardA = createBoard();
   const boardB = createBoard();
 

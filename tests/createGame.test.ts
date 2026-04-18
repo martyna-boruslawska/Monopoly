@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createGame } from "../game/createGame.js";
 
-test("creates game with expected structure and defaults", () => {
+test("createGame - creates game with expected structure and defaults", () => {
   const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
 
   assert.deepStrictEqual(game.players, [
@@ -309,7 +309,7 @@ test("creates game with expected structure and defaults", () => {
   ]);
 });
 
-test("rollDice method returns an object with two dice values between 1 and 6", () => {
+test("createGame - rollDice method returns an object with two dice values between 1 and 6", () => {
   const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
 
   assert.strictEqual(typeof game.rollDice, "function");
@@ -324,14 +324,14 @@ test("rollDice method returns an object with two dice values between 1 and 6", (
   assert.strictEqual(diceResult.isDouble, diceResult.dice1 === diceResult.dice2);
 });
 
-test("currentPlayer method returns null when currentPlayerId is null", () => {
+test("createGame - currentPlayer method returns null when currentPlayerId is null", () => {
   const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
 
   game.currentPlayerId = null;
   assert.strictEqual(game.currentPlayer(), null);
 });
 
-test("nextActivePlayer method returns first active player when currentPlayerId is null", () => {
+test("createGame - nextActivePlayer method returns first active player when currentPlayerId is null", () => {
   const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
 
   game.players[0].isBankrupt = false;
@@ -352,7 +352,7 @@ test("nextActivePlayer method returns first active player when currentPlayerId i
   assert.strictEqual(game.currentPlayerId, 1);
 });
 
-test("currentPlayer method returns the correct player based on currentPlayerId", () => {
+test("createGame - currentPlayer method returns the correct player based on currentPlayerId", () => {
   const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
 
   game.currentPlayerId = 1;
@@ -368,7 +368,7 @@ test("currentPlayer method returns the correct player based on currentPlayerId",
   });
 });
 
-test("getActivePlayers method returns an array of active players", () => {
+test("createGame - getActivePlayers method returns an array of active players", () => {
   const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
 
   game.players[0].isBankrupt = false;
@@ -436,7 +436,7 @@ test("getActivePlayers method returns an array of active players", () => {
   assert.deepStrictEqual(game.getActivePlayers(), []);
 });
 
-test("countActivePlayers method returns the correct count of active players", () => {
+test("createGame - countActivePlayers method returns the correct count of active players", () => {
   const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
 
   game.players[0].isBankrupt = false;
@@ -452,7 +452,7 @@ test("countActivePlayers method returns the correct count of active players", ()
   assert.strictEqual(game.countActivePlayers(), 0);
 });
 
-test("nextActivePlayer method returns the next active player and updates currentPlayerId", () => {
+test("createGame - nextActivePlayer method returns the next active player and updates currentPlayerId", () => {
   const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
 
   game.players[0].isBankrupt = false;
@@ -512,7 +512,7 @@ test("nextActivePlayer method returns the next active player and updates current
   assert.strictEqual(game.currentPlayerId, null);
 });
 
-test("nextActivePlayer method skips current player if they become bankrupt", () => {
+test("createGame - nextActivePlayer method skips current player if they become bankrupt", () => {
   const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);
 
   game.players[0].isBankrupt = false;

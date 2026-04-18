@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createBoard } from "../game/createBoard.js";
+import { isOwnableLocation } from "../game/types.js";
+import type { PropertyLocation, RailroadLocation, TaxLocation, UtilityLocation } from "../game/types.js";
 
 test("board has exactly 40 spaces", () => {
   const board = createBoard();
@@ -9,10 +11,10 @@ test("board has exactly 40 spaces", () => {
 
 test("all purchasable locations are initialized with ownerId: null", () => {
   const board = createBoard();
-  const purchasableLocations = board.filter((location) => location.price);
+  const purchasableLocations = board.filter(isOwnableLocation);
 
   assert.ok(purchasableLocations.length > 0);
-  assert.ok(purchasableLocations.every((location) => location.ownerId === null));
+  assert.ok(purchasableLocations.every(location => location.ownerId === null));
 });
 
 test("board contains key locations in expected positions", () => {
@@ -21,9 +23,10 @@ test("board contains key locations in expected positions", () => {
   assert.strictEqual(board[0].name, "Start");
   assert.strictEqual(board[0].type, "start");
 
-  assert.strictEqual(board[4].name, "Income Tax");
-  assert.strictEqual(board[4].type, "tax");
-  assert.strictEqual(board[4].amount, 200);
+  const incomeTax = board[4] as TaxLocation;
+  assert.strictEqual(incomeTax.name, "Income Tax");
+  assert.strictEqual(incomeTax.type, "tax");
+  assert.strictEqual(incomeTax.amount, 200);
 
   assert.strictEqual(board[10].name, "Jail");
   assert.strictEqual(board[10].type, "jail");
@@ -31,18 +34,19 @@ test("board contains key locations in expected positions", () => {
   assert.strictEqual(board[30].name, "Go To Jail");
   assert.strictEqual(board[30].type, "go-to-jail");
 
-  assert.strictEqual(board[39].name, "Boardwalk");
-  assert.strictEqual(board[39].type, "property");
-  assert.strictEqual(board[39].price, 400);
-  assert.strictEqual(board[39].rent, 50);
+  const boardwalk = board[39] as PropertyLocation;
+  assert.strictEqual(boardwalk.name, "Boardwalk");
+  assert.strictEqual(boardwalk.type, "property");
+  assert.strictEqual(boardwalk.price, 400);
+  assert.strictEqual(boardwalk.rent, 50);
 });
 
 test("initializes purchasable and property-specific fields correctly", () => {
   const board = createBoard();
 
-  const railroad = board[5];
-  const utility = board[12];
-  const property = board[1];
+  const railroad = board[5] as RailroadLocation;
+  const utility = board[12] as UtilityLocation;
+  const property = board[1] as PropertyLocation;
   const tax = board[4];
 
   assert.strictEqual(railroad.ownerId, null);
@@ -63,9 +67,12 @@ test("creates a fresh board on each call", () => {
   const boardA = createBoard();
   const boardB = createBoard();
 
-  boardA[1].ownerId = 123;
-  boardA[1].houses = 2;
+  const boardAProperty = boardA[1] as PropertyLocation;
+  const boardBProperty = boardB[1] as PropertyLocation;
 
-  assert.strictEqual(boardB[1].ownerId, null);
-  assert.strictEqual(boardB[1].houses, 0);
+  boardAProperty.ownerId = 123;
+  boardAProperty.houses = 2;
+
+  assert.strictEqual(boardBProperty.ownerId, null);
+  assert.strictEqual(boardBProperty.houses, 0);
 });

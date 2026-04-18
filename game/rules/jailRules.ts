@@ -1,10 +1,12 @@
+import type { Game, JailResult, Player } from "../types.js";
+
 const JAIL_FINE = 50;
 const JAIL_TILE_ID = 10;
 const MAX_FAILED_JAIL_ROLLS = 3;
 
-export function jailRules(game) {
+export function jailRules(game: Game): JailResult {
   const player = game.currentPlayer();
-  if (player === null || player === undefined || player.isBankrupt || !player.isInJail) {
+  if (player === null || player.isBankrupt || !player.isInJail) {
     return {
       canMove: true,
       roll: null,
@@ -68,9 +70,9 @@ export function jailRules(game) {
   };
 }
 
-export function sendCurrentPlayerToJail(game) {
+export function sendCurrentPlayerToJail(game: Game): void {
   const player = game.currentPlayer();
-  if (player === null || player === undefined) {
+  if (player === null) {
     return;
   }
 
@@ -80,16 +82,16 @@ export function sendCurrentPlayerToJail(game) {
   console.log(`${player.name} is sent to jail for landing on Go To Jail.`);
 }
 
-function releasePlayerFromJail(player) {
+function releasePlayerFromJail(player: Player): void {
   player.isInJail = false;
   player.failedJailRolls = 0;
 }
 
-function markPlayerBankrupt(game, player) {
+function markPlayerBankrupt(game: Game, player: Player): void {
   player.isBankrupt = true;
 
   for (const tile of game.board) {
-    if (tile.ownerId === player.id) {
+    if ("ownerId" in tile && tile.ownerId === player.id) {
       tile.ownerId = null;
     }
   }

@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "tsx index.js",
-    "test": "tsx --test 'tests/**/*.test.{js,ts}'",
-    "test:watch": "tsx --test --watch 'tests/**/*.test.{js,ts}'",
+    "start": "tsx index.ts",
+    "test": "tsx --test 'tests/**/*.test.ts'",
+    "test:watch": "tsx --test --watch 'tests/**/*.test.ts'",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

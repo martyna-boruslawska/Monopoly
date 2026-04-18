@@ -5,14 +5,14 @@ import { createTestGame } from "./helpers/createTestGame.js";
 
 test("skips players who are already bankrupt", (context) => {
   context.mock.method(console, "log", () => {});
-  
+
   const game = createTestGame([
     { name: "Luke Skywalker", position: 5 },
-    { name: "Darth Vader" }
+    { name: "Darth Vader" },
   ]);
   game.players[0].isBankrupt = true;
 
-  const randomValues = [0, 0.2]; // dice: 1 and 2
+  const randomValues = [0, 0.2];
   let index = 0;
   context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
 
@@ -24,9 +24,9 @@ test("skips players who are already bankrupt", (context) => {
 
 test("plays one turn for a non-bankrupt player", (context) => {
   context.mock.method(console, "log", () => {});
-  
+
   const game = createTestGame([
-    { name: "Luke Skywalker" }
+    { name: "Luke Skywalker" },
   ]);
 
   const randomValues = [0, 0.2];
@@ -40,9 +40,9 @@ test("plays one turn for a non-bankrupt player", (context) => {
 
 test("gives another turn after rolling doubles", (context) => {
   context.mock.method(console, "log", () => {});
-  
+
   const game = createTestGame([
-    { name: "Luke Skywalker" }
+    { name: "Luke Skywalker" },
   ]);
 
   const randomValues = [0, 0, 0.2, 0.4];
@@ -56,9 +56,9 @@ test("gives another turn after rolling doubles", (context) => {
 
 test("stops after three doubles", (context) => {
   context.mock.method(console, "log", () => {});
-  
+
   const game = createTestGame([
-    { name: "Luke Skywalker" }
+    { name: "Luke Skywalker" },
   ]);
 
   const randomValues = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -73,9 +73,9 @@ test("stops after three doubles", (context) => {
 
 test("stops extra turns when player becomes bankrupt after a double", (context) => {
   context.mock.method(console, "log", () => {});
-  
+
   const game = createTestGame([
-    { name: "Luke Skywalker", position: 36, money: 50 }
+    { name: "Luke Skywalker", position: 36, money: 50 },
   ]);
 
   const randomValues = [0, 0, 0, 0];
@@ -91,13 +91,13 @@ test("stops extra turns when player becomes bankrupt after a double", (context) 
 
 test("skips a jailed player's turn when they cannot pay and fail to roll doubles", (context) => {
   context.mock.method(console, "log", () => {});
-  
+
   const game = createTestGame([
-    { name: "Luke Skywalker", position: 10, money: 30 }
+    { name: "Luke Skywalker", position: 10, money: 30 },
   ]);
   game.players[0].isInJail = true;
 
-  const randomValues = [0.2, 0.4]; // dice: 2 and 3
+  const randomValues = [0.2, 0.4];
   let index = 0;
   context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
 
@@ -111,13 +111,13 @@ test("skips a jailed player's turn when they cannot pay and fail to roll doubles
 
 test("uses the jail escape roll to move and does not grant an extra turn", (context) => {
   context.mock.method(console, "log", () => {});
-  
+
   const game = createTestGame([
-    { name: "Luke Skywalker", position: 10, money: 30 }
+    { name: "Luke Skywalker", position: 10, money: 30 },
   ]);
   game.players[0].isInJail = true;
 
-  const randomValues = [0, 0, 0.2, 0.4]; // first roll doubles 1+1 to escape, next pair would be consumed by an extra turn
+  const randomValues = [0, 0, 0.2, 0.4];
   let index = 0;
   context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
 

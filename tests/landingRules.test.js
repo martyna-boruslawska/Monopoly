@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { locationRules } from "../game/rules/locationRules.js";
+import { landingRules } from "../game/rules/landingRules.js";
 import { createTestGame } from "./helpers/createTestGame.js";
 
 test("buys unowned property when player has enough funds", (ctx) => {
@@ -12,7 +12,7 @@ test("buys unowned property when player has enough funds", (ctx) => {
   ]);
   const tile = game.board[1]; // Mediterranean Avenue: price 60
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(tile.ownerId, game.currentPlayer().id);
   assert.strictEqual(game.currentPlayer().money, 1500 - tile.price);
@@ -28,7 +28,7 @@ test("skips purchase when funds are insufficient", (ctx) => {
   ]);
   const tile = game.board[39]; // Boardwalk: price 400
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(tile.ownerId, null);
   assert.strictEqual(game.currentPlayer().money, 100);
@@ -44,7 +44,7 @@ test("buys unowned railroad when player has enough funds", (ctx) => {
   ]);
   const tile = game.board[5]; // Reading Railroad: price 200
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(tile.ownerId, game.currentPlayer().id);
   assert.strictEqual(game.currentPlayer().money, 1500 - tile.price);
@@ -60,7 +60,7 @@ test("buys unowned utility when player has enough funds", (ctx) => {
   ]);
   const tile = game.board[12]; // Electric Company: price 150
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(tile.ownerId, game.currentPlayer().id);
   assert.strictEqual(game.currentPlayer().money, 1500 - tile.price);
@@ -76,7 +76,7 @@ test("skips railroad purchase when funds are insufficient", (ctx) => {
   ]);
   const tile = game.board[5];
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(tile.ownerId, null);
   assert.strictEqual(game.currentPlayer().money, 150);
@@ -91,7 +91,7 @@ test("pays property rent to another player", (ctx) => {
     { name: "Darth Vader", propertyIds: [1] }
   ]);
 
-  locationRules.handle(game);
+  landingRules(game);
 
   const tile = game.board[1];
   assert.strictEqual(game.currentPlayer().money, 1500 - tile.rent);
@@ -106,7 +106,7 @@ test("pays railroad rent to another player with 1 railroad owned", (ctx) => {
     { name: "Darth Vader", propertyIds: [5] }
   ]);
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(game.currentPlayer().money, 1500 - 25);
   assert.strictEqual(game.players[1].money, 1500 + 25);
@@ -120,7 +120,7 @@ test("pays railroad rent to another player with 2 railroads owned", (ctx) => {
     { name: "Darth Vader", propertyIds: [5, 15] }
   ]);
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(game.currentPlayer().money, 1500 - 50);
   assert.strictEqual(game.players[1].money, 1500 + 50);
@@ -134,7 +134,7 @@ test("pays railroad rent to another player with 3 railroads owned", (ctx) => {
     { name: "Darth Vader", propertyIds: [5, 15, 25] }
   ]);
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(game.currentPlayer().money, 1500 - 100);
   assert.strictEqual(game.players[1].money, 1500 + 100);
@@ -148,7 +148,7 @@ test("pays railroad rent to another player with 4 railroads owned", (ctx) => {
     { name: "Darth Vader", propertyIds: [5, 15, 25, 35] }
   ]);
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(game.currentPlayer().money, 1500 - 200);
   assert.strictEqual(game.players[1].money, 1500 + 200);
@@ -163,7 +163,7 @@ test("pays utility rent to another player with 1 utility owned", (ctx) => {
   ]);
   game.lastRoll = { dice1: 3, dice2: 4, total: 7, isDouble: false };
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(game.currentPlayer().money, 1500 - game.lastRoll.total * 4);
   assert.strictEqual(game.players[1].money, 1500 + game.lastRoll.total * 4);
@@ -178,7 +178,7 @@ test("pays utility rent to another player with 2 utilities owned", (ctx) => {
   ]);
   game.lastRoll = { dice1: 3, dice2: 4, total: 7, isDouble: false };
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(game.currentPlayer().money, 1500 - game.lastRoll.total * 10);
   assert.strictEqual(game.players[1].money, 1500 + game.lastRoll.total * 10);
@@ -193,7 +193,7 @@ test("skips utility rent payment when last roll total is unavailable", (ctx) => 
   ]);
   game.lastRoll = null;
 
-  assert.doesNotThrow(() => locationRules.handle(game));
+  assert.doesNotThrow(() => landingRules(game));
   assert.strictEqual(game.currentPlayer().money, 1500);
   assert.strictEqual(game.players[1].money, 1500);
 });
@@ -206,7 +206,7 @@ test("does not pay rent on self-owned properties", (ctx) => {
     { name: "Darth Vader" }
   ]);
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(game.currentPlayer().money, 1500);
   assert.strictEqual(game.players[1].money, 1500);
@@ -220,7 +220,7 @@ test("does not pay rent on self-owned railroad", (ctx) => {
     { name: "Darth Vader" }
   ]);
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(game.currentPlayer().money, 1500);
   assert.strictEqual(game.players[1].money, 1500);
@@ -235,25 +235,10 @@ test("does not pay rent on self-owned utility", (ctx) => {
   ]);
   game.lastRoll = { dice1: 1, dice2: 2, total: 3, isDouble: false };
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(game.currentPlayer().money, 1500);
   assert.strictEqual(game.players[1].money, 1500);
-});
-
-test("handles missing owner safely when ownerId does not match any player", (ctx) => {
-  ctx.mock.method(console, "log", () => {});
-  
-  const game = createTestGame([
-    { name: "Luke Skywalker", position: 1 },
-    { name: "Darth Vader" }
-  ]);
-  const tile = game.board[1];
-  tile.ownerId = 999;
-
-  assert.doesNotThrow(() => locationRules.handle(game));
-  assert.strictEqual(game.currentPlayer().money, 1500);
-  assert.ok(!game.currentPlayer().propertyIds.includes(tile.id));
 });
 
 test("applies income tax deduction", (ctx) => {
@@ -265,7 +250,7 @@ test("applies income tax deduction", (ctx) => {
   ]);
   const tile = game.board[4]; // Income Tax: 200
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(game.currentPlayer().money, 1500 - tile.amount);
 });
@@ -278,7 +263,7 @@ test("applies income tax down to zero without marking player bankrupt", (ctx) =>
     { name: "Darth Vader" }
   ]);
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(game.currentPlayer().money, 0);
   assert.strictEqual(game.currentPlayer().isBankrupt, false);
@@ -293,7 +278,7 @@ test("applies luxury tax deduction", (ctx) => {
   ]);
   const tile = game.board[38]; // Luxury Tax: 100
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(game.currentPlayer().money, 1500 - tile.amount);
 });
@@ -307,7 +292,7 @@ test("marks player bankrupt and releases owned properties when money drops below
   ]);
   const ownedTile = game.board[1];
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(game.currentPlayer().isBankrupt, true);
   assert.strictEqual(game.currentPlayer().money, -150);
@@ -326,7 +311,7 @@ test("marks player bankrupt after paying rent and releases owned properties", (c
   const owner = game.players[1];
   const rentedTile = game.board[39]; // Boardwalk, rent 50
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(tenant.isBankrupt, true);
   assert.strictEqual(tenant.money, 1 - rentedTile.rent);

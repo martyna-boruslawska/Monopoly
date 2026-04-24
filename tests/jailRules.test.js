@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { jailRules } from "../game/rules/jailRules.js";
-import { locationRules } from "../game/rules/locationRules.js";
+import { landingRules } from "../game/rules/landingRules.js";
 import { createTestGame } from "./helpers/createTestGame.js";
 
 test("player goes to jail when landing on Go To Jail tile", (ctx) => {
@@ -13,7 +13,7 @@ test("player goes to jail when landing on Go To Jail tile", (ctx) => {
   ]);
   const player = game.players[0];
 
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(player.isInJail, true);
   assert.strictEqual(player.position, 10); // Jail tile
@@ -33,7 +33,7 @@ test("player in jail cannot collect rent", (ctx) => {
   playerInJail.isInJail = true;
   game.currentPlayerId = otherPlayer.id;
   
-  locationRules.handle(game);
+  landingRules(game);
 
   assert.strictEqual(playerInJail.isInJail, true);
   assert.strictEqual(otherPlayer.money, 1500);

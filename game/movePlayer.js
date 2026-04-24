@@ -1,4 +1,4 @@
-import { locationRules } from "./rules/locationRules.js";
+import { landingRules } from "./rules/landingRules.js";
 
 export function movePlayer(game, steps) {
   const passStart = (game.currentPlayer().position+steps) >= game.board.length; 
@@ -14,5 +14,5 @@ export function movePlayer(game, steps) {
     console.log(`${game.currentPlayer().name} passes Start and collects $200`);
   }
 
-  locationRules.handle(game);
+  landingRules(game);
 }

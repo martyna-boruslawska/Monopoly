@@ -34,7 +34,7 @@ ChanceCards =
 CommunityChestCards =
 [
 {type: "advance", location: "Go", text: "Advance to Go (Collect $200)"},
-{type: "collect", value: 200, text: "Bank error in your favor. Collect $200"},
+{type: "collect", value: 200, text: "Bank error in your favour. Collect $200"},
 {type: "pay", value: 50, text: "Doctor’s fee. Pay $50"},
 {type: "collect", value: 50, text: "From sale of stock you get $50"},
 {type: "get-out-jail", text: "Get Out of Jail Free"},

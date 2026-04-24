@@ -57,18 +57,23 @@ const ChanceCards = [
 ];
 
 export function createChanceCardDeck() {
-  const deck = ChanceCards.map((card, index) => ({ ...card, id: index }));
-  const shuffledDeck = shuffle(deck);
-  return shuffledDeck;
+  const deck = new Deck(ChanceCards);
+  deck.shuffle();
+  return deck;
 }
 
-function shuffle(array) {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const temp = shuffled[i];
-    shuffled[i] = shuffled[j];
-    shuffled[j] = temp;
-  }
-  return shuffled;
+// ---------------------------------------------------------------------------------------------------
+// module: Deck.js
+
+/**
+  * A class representing a deck of Monopoly cards. It allows you to draw a card, return a card to the bottom of the deck, and shuffle the deck. 
+  * Dedicated for Chance and Community Chest cards in Monopoly, but can be used for any card-based game.
+  * @class Deck
+  * @param {Array} cards - An array of Chance cards to initialize the deck with.
+  * @method drawCard - Draws the top card from the deck and returns it. Throws an error if the deck is empty.
+  * @method returnCard - Takes a card and returns it to the bottom of the deck.
+  * @method shuffle - Shuffles the cards in the deck using the Fisher-Yates algorithm. Accepts an optional random function for testing purposes. 
+ */
+class Deck {
+  // TODO: Implement
 }

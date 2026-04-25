@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createPlayers } from "../game/createPlayers.js";
+import { createPlayers } from "../../../game/factories/createPlayers.js";
 
 test("created players use expected object shape and defaults", () => {
   const players = createPlayers(["Luke Skywalker", "Darth Vader"]);

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createGame } from "../game/createGame.js";
+import { createGame } from "../../../game/factories/createGame.js";
 
 test("creates game with expected structure and defaults", () => {
   const game = createGame(["Luke Skywalker", "Darth Vader", "Leia Organa"]);

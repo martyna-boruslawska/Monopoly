@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>The Modern Estate | Game Viewer</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-variant": "#e1e3e4",
+            "surface-tint": "#ba1a20",
+            "outline": "#747878",
+            "background": "#f8f9fa",
+            "on-primary-container": "#f04440",
+            "secondary-fixed-dim": "#a5c8ff",
+            "inverse-on-surface": "#f0f1f2",
+            "surface-container-high": "#e7e8e9",
+            "tertiary": "#000000",
+            "on-secondary-container": "#003567",
+            "error": "#ba1a1a",
+            "on-background": "#191c1d",
+            "on-tertiary-fixed": "#002204",
+            "surface-container-low": "#f3f4f5",
+            "surface-dim": "#d9dadb",
+            "on-error": "#ffffff",
+            "secondary-fixed": "#d4e3ff",
+            "on-tertiary": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "on-error-container": "#93000a",
+            "secondary": "#005faf",
+            "inverse-surface": "#2e3132",
+            "on-secondary-fixed": "#001c3a",
+            "surface-container-highest": "#e1e3e4",
+            "tertiary-fixed": "#9df898",
+            "on-primary": "#ffffff",
+            "error-container": "#ffdad6",
+            "primary-container": "#410003",
+            "tertiary-container": "#002204",
+            "primary-fixed-dim": "#ffb3ac",
+            "surface-container": "#edeeef",
+            "on-surface": "#191c1d",
+            "on-secondary": "#ffffff",
+            "inverse-primary": "#ffb3ac",
+            "tertiary-fixed-dim": "#82db7e",
+            "surface": "#f8f9fa",
+            "primary-fixed": "#ffdad6",
+            "on-tertiary-container": "#3f9542",
+            "on-primary-fixed": "#410003",
+            "on-tertiary-fixed-variant": "#005312",
+            "surface-bright": "#f8f9fa",
+            "outline-variant": "#c4c7c7",
+            "on-surface-variant": "#444748",
+            "secondary-container": "#54a0fe",
+            "primary": "#000000",
+            "on-primary-fixed-variant": "#930010",
+            "on-secondary-fixed-variant": "#004786"
+          },
+          fontFamily: {
+            "headline": ["Space Grotesk"],
+            "body": ["Manrope"],
+            "label": ["Manrope"]
+          },
+          borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+        },
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .board-grid {
+      display: grid;
+      grid-template-columns: 2fr repeat(9, 1fr) 2fr;
+      grid-template-rows: 2fr repeat(9, 1fr) 2fr;
+      aspect-ratio: 1 / 1;
+    }
+
+    .board-grid .vertical-tile {
+      width: 100%;
+    }
+
+    .token-pulse {
+      box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+
+<body class="bg-background text-on-background font-body overflow-hidden h-screen flex flex-col">
+  <main class="flex-1 flex overflow-hidden">
+    <aside
+      class="w-70 bg-zinc-50 dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 flex flex-col h-full hidden lg:flex">
+      <div class="p-6">
+        <h2 class="font-headline text-lg font-bold text-zinc-900 dark:text-zinc-50">Match Feed</h2>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400">Session #4029</p>
+      </div>
+      <div class="flex-1 overflow-y-auto px-4 space-y-2 pb-24">
+        <div class="p-4 bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-100 dark:border-zinc-700/50">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Turn 42</span>
+            <span class="text-[10px] font-medium text-zinc-400">12:44 PM</span>
+          </div>
+          <p class="text-sm font-medium text-on-surface">Player 1 landed on <span
+              class="font-bold text-on-primary-container">Park Place</span></p>
+          <p class="text-xs text-on-surface-variant mt-1">Transaction: -$350.00 (Purchase)</p>
+        </div>
+        <div class="p-4 bg-surface-container-low dark:bg-zinc-800/50 rounded-lg">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Turn 41</span>
+            <span class="text-[10px] font-medium text-zinc-400">12:43 PM</span>
+          </div>
+          <p class="text-sm text-on-surface-variant">Player 2 passed <span class="font-bold">GO</span></p>
+          <p class="text-xs text-on-tertiary-container mt-1">Collected: +$200.00</p>
+        </div>
+        <div class="p-4 bg-surface-container-low dark:bg-zinc-800/50 rounded-lg">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Turn 40</span>
+            <span class="text-[10px] font-medium text-zinc-400">12:41 PM</span>
+          </div>
+          <p class="text-sm text-on-surface-variant">Player 3 rolled a <span class="font-bold">7</span></p>
+          <p class="text-xs text-on-surface-variant mt-1">Moved to Vermont Avenue</p>
+        </div>
+        <div class="p-4 bg-surface-container-low dark:bg-zinc-800/50 rounded-lg opacity-60">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Turn 39</span>
+            <span class="text-[10px] font-medium text-zinc-400">12:39 PM</span>
+          </div>
+          <p class="text-sm text-on-surface-variant">Player 1 built 2 houses</p>
+          <p class="text-xs text-on-surface-variant mt-1">Cost: -$200.00 (St. James Place)</p>
+        </div>
+        <div class="p-4 bg-surface-container-low dark:bg-zinc-800/50 rounded-lg opacity-40">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Turn 38</span>
+            <span class="text-[10px] font-medium text-zinc-400">12:38 PM</span>
+          </div>
+          <p class="text-sm text-on-surface-variant">Community Chest: "Bank error in your favor"</p>
+        </div>
+      </div>
+    </aside>
+    <main class="flex-1 bg-surface-container flex items-center justify-center p-8 relative overflow-hidden">
+      <div
+        class="board-grid w-full max-w-[800px] bg-surface-container-low border-[3px] border-zinc-900 rounded-sm shadow-2xl overflow-hidden relative">
+        
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-col items-center justify-center p-2 text-center"
+          style="grid-column: 11 / 13; grid-row: 11 / 13;">
+          <span class="font-headline font-black text-2xl text-on-primary-container leading-none">GO</span>
+          <span class="text-[8px] font-bold uppercase tracking-tighter mt-1">Collect $200 Salary</span>
+        </div>
+
+        <div class="vertical-tile bg-white border-[1.5px] border-zinc-900 flex flex-col" style="grid-column: 10; grid-row: 11 / 13;">
+          <div class="h-1/4 bg-[#955436]"></div>
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Mediter-ranean Avenue</span>
+            <span class="text-[8px] font-black mt-1">$60</span>
+          </div>
+        </div>
+        <div class="vertical-tile bg-white border-[1.5px] border-zinc-900 flex flex-col items-center justify-center p-1"
+          style="grid-column: 9; grid-row: 11 / 13;">
+          <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">help_center</span>
+          <span class="text-[7px] font-bold uppercase mt-1 text-center">Community Chest</span>
+        </div>
+        <div class="vertical-tile bg-white border-[1.5px] border-zinc-900 flex flex-col" style="grid-column: 8; grid-row: 11 / 13;">
+          <div class="h-1/4 bg-[#955436]"></div>
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Baltic Avenue</span>
+            <span class="text-[8px] font-black mt-1">$60</span>
+          </div>
+        </div>
+        <div class="vertical-tile bg-white border-[1.5px] border-zinc-900 flex flex-col items-center justify-center p-1"
+          style="grid-column: 7; grid-row: 11 / 13;">
+          <span class="text-[7px] font-bold uppercase text-center">Income Tax</span>
+          <span class="text-[8px] font-black mt-1">Pay $200</span>
+        </div>
+        <div class="vertical-tile bg-white border-[1.5px] border-zinc-900 flex flex-col items-center justify-center p-1"
+          style="grid-column: 6; grid-row: 11 / 13;">
+          <span class="material-symbols-outlined text-lg">directions_transit</span>
+          <span class="text-[7px] font-bold uppercase mt-1 text-center">Reading Railroad</span>
+          <span class="text-[8px] font-black mt-1">$200</span>
+        </div>
+        <div class="vertical-tile bg-white border-[1.5px] border-zinc-900 flex flex-col" style="grid-column: 5; grid-row: 11 / 13;">
+          <div class="h-1/4 bg-[#aae0fa]"></div>
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Oriental Avenue</span>
+            <span class="text-[8px] font-black mt-1">$100</span>
+          </div>
+        </div>
+        <div class="vertical-tile bg-white border-[1.5px] border-zinc-900 flex flex-col items-center justify-center p-1"
+          style="grid-column: 4; grid-row: 11 / 13;">
+          <span class="material-symbols-outlined text-lg">question_mark</span>
+          <span class="text-[7px] font-bold uppercase mt-1">Chance</span>
+        </div>
+        <div class="vertical-tile bg-white border-[1.5px] border-zinc-900 flex flex-col" style="grid-column: 3; grid-row: 11 / 13;">
+          <div class="h-1/4 bg-[#aae0fa]"></div>
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Vermont Avenue</span>
+            <span class="text-[8px] font-black mt-1">$100</span>
+          </div>
+        </div>
+        <div class="vertical-tile bg-white border-[1.5px] border-zinc-900 flex flex-col" style="grid-column: 2; grid-row: 11 / 13;">
+          <div class="h-1/4 bg-[#aae0fa]"></div>
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Connec-ticut Avenue</span>
+            <span class="text-[8px] font-black mt-1">$120</span>
+          </div>
+        </div>
+
+
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-col items-center justify-center text-center p-1" style="grid-column: 1 / 2; grid-row: 11 / 13;">
+          <div class="w-full flex-1 border-b border-zinc-900 flex items-center justify-center p-1">
+            <span class="text-[8px] font-bold uppercase leading-tight">Just Visiting</span>
+          </div>
+          <div class="w-full flex-[2] flex flex-col items-center justify-center bg-orange-500/10">
+            <span class="font-headline font-black text-sm text-orange-600">IN JAIL</span>
+          </div>
+        </div>
+
+
+        <div class="horizontal-tile bg-white border-[1.5px] border-zinc-900 flex flex-row" style="grid-column: 1 / 2; grid-row: 10;">
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">St. Charles Place</span>
+            <span class="text-[8px] font-black mt-1">$140</span>
+          </div>
+          <div class="w-1/4 bg-[#d93a96]"></div>
+        </div>
+        <div class="horizontal-tile bg-white border-[1.5px] border-zinc-900 flex flex-row gap-2 items-center justify-center p-1" style="grid-column: 1 / 2; grid-row: 9;">
+          <div class="flex flex-col items-center justify-center">
+            <span class="text-[7px] font-bold uppercase text-center mt-1">Electric Company</span>
+            <span class="text-[8px] font-black mt-1">$150</span>
+          </div>
+          <span class="material-symbols-outlined text-lg">lightbulb</span>
+        </div>
+        <div class="horizontal-tile bg-white border-[1.5px] border-zinc-900 flex flex-row" style="grid-column: 1 / 2; grid-row: 8;">
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">States Avenue</span>
+            <span class="text-[8px] font-black mt-1">$140</span>
+          </div>
+          <div class="w-1/4 bg-[#d93a96]"></div>
+        </div>
+        <div class="horizontal-tile bg-white border-[1.5px] border-zinc-900 flex flex-row" style="grid-column: 1 / 2; grid-row: 7;">
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Virginia Avenue</span>
+            <span class="text-[8px] font-black mt-1">$160</span>
+          </div>
+          <div class="w-1/4 bg-[#d93a96]"></div>
+        </div>
+        <div class="horizontal-tile bg-white border-[1.5px] border-zinc-900 flex flex-row items-center gap-2 justify-center p-1" style="grid-column: 1 / 2; grid-row: 6;">
+          <div class="flex flex-col items-center justify-center">
+            <span class="text-[7px] font-bold uppercase text-center mt-1">Pennsylvania RR</span>
+            <span class="text-[8px] font-black mt-1">$200</span>
+          </div>
+          <span class="material-symbols-outlined text-lg">directions_transit</span>
+        </div>
+        <div class="horizontal-tile bg-white border-[1.5px] border-zinc-900 flex flex-row" style="grid-column: 1 / 2; grid-row: 5;">
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">St. James Place</span>
+            <span class="text-[8px] font-black mt-1">$180</span>
+          </div>
+          <div class="w-1/4 bg-[#f7941d]"></div>
+        </div>
+        <div class="horizontal-tile bg-white border-[1.5px] border-zinc-900 flex items-center justify-center gap-2 p-1" style="grid-column: 1 / 2; grid-row: 4;">
+          <div class="flex flex-col items-center justify-center">
+            <span class="text-[7px] font-bold uppercase text-center mt-1">Community Chest</span>
+          </div>
+          <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">help_center</span>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-row" style="grid-column: 1 / 2; grid-row: 3;">
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Tennessee Avenue</span>
+            <span class="text-[8px] font-black mt-1">$180</span>
+          </div>
+          <div class="w-1/4 bg-[#f7941d]"></div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-row" style="grid-column: 1 / 2; grid-row: 2;">
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">New York Avenue</span>
+            <span class="text-[8px] font-black mt-1">$200</span>
+          </div>
+          <div class="w-1/4 bg-[#f7941d]"></div>
+        </div>
+
+
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-col items-center justify-center text-center p-2"
+          style="grid-column: 1 / 2; grid-row: 1;">
+          <span class="font-headline font-black text-lg text-secondary leading-none">FREE PARKING</span>
+          <span class="material-symbols-outlined text-2xl mt-1 text-secondary">local_parking</span>
+        </div>
+
+
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-col" style="grid-column: 2; grid-row: 1;">
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Kentucky Avenue</span>
+            <span class="text-[8px] font-black mt-1">$220</span>
+          </div>
+          <div class="h-1/4 bg-[#ed1c24]"></div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-col items-center justify-center gap-2 p-1" style="grid-column: 3; grid-row: 1;">
+          <div class="flex flex-col items-center justify-center">
+            <span class="text-[7px] font-bold uppercase text-center mt-1">Chance</span>
+          </div>
+          <div class="material-symbols-outlined text-lg">question_mark</div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-col" style="grid-column: 4; grid-row: 1;">
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Indiana Avenue</span>
+            <span class="text-[8px] font-black mt-1">$220</span>
+          </div>
+          <div class="h-1/4 bg-[#ed1c24]"></div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-col" style="grid-column: 5; grid-row: 1;">
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Illinois Avenue</span>
+            <span class="text-[8px] font-black mt-1">$240</span>
+          </div>
+          <div class="h-1/4 bg-[#ed1c24]"></div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-col items-center justify-center gap-2 p-1" style="grid-column: 6; grid-row: 1;">
+          <div class="flex flex-col items-center justify-center">
+            <span class="text-[7px] font-bold uppercase text-center mt-1">B. &amp; O. Railroad</span>
+            <span class="text-[8px] font-black mt-1">$200</span>
+          </div>
+          <div class="material-symbols-outlined text-lg">directions_transit</div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-col" style="grid-column: 7; grid-row: 1;">
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Atlantic Avenue</span>
+            <span class="text-[8px] font-black mt-1">$260</span>
+          </div>
+          <div class="h-1/4 bg-[#fef200]"></div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-col" style="grid-column: 8; grid-row: 1;">
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Ventnor Avenue</span>
+            <span class="text-[8px] font-black mt-1">$260</span>
+          </div>
+          <div class="h-1/4 bg-[#fef200]"></div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-col items-center justify-center gap-2 p-1" style="grid-column: 9; grid-row: 1;">
+          <div class="flex flex-col items-center justify-center">
+            <span class="text-[7px] font-bold uppercase text-center mt-1">Water Works</span>
+            <span class="text-[8px] font-black mt-1">$150</span>
+          </div>
+          <span class="material-symbols-outlined text-lg">water_drop</span>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-col" style="grid-column: 10; grid-row: 1;">
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Marvin Gardens</span>
+            <span class="text-[8px] font-black mt-1">$280</span>
+          </div>
+          <div class="h-1/4 bg-[#fef200]"></div>
+        </div>
+
+
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-col items-center justify-center text-center p-2"
+          style="grid-column: 11 / 13; grid-row: 1;">
+          <span class="font-headline font-black text-lg text-error leading-none">GO TO JAIL</span>
+          <span class="material-symbols-outlined text-2xl mt-1 text-error">gavel</span>
+        </div>
+
+
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-row" style="grid-column: 11 / 13; grid-row: 2;">
+          <div class="w-1/4 bg-[#1fb25a]"></div>
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Pacific Avenue</span>
+            <span class="text-[8px] font-black mt-1">$300</span>
+          </div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-row" style="grid-column: 11 / 13; grid-row: 3;">
+          <div class="w-1/4 bg-[#1fb25a]"></div>
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">North Carolina Ave</span>
+            <span class="text-[8px] font-black mt-1">$300</span>
+          </div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex items-center justify-center gap-2 p-1" style="grid-column: 11 / 13; grid-row: 4;">
+          <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">help_center</span>
+          <div class="flex flex-col items-center justify-center">
+            <span class="text-[7px] font-bold uppercase mt-1">Community <br/> Chest</span>
+          </div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-row" style="grid-column: 11 / 13; grid-row: 5;">
+          <div class="w-1/4 bg-[#1fb25a]"></div>
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Pennsylvania Ave</span>
+            <span class="text-[8px] font-black mt-1">$320</span>
+          </div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex items-center justify-center gap-2 p-1" style="grid-column: 11 / 13; grid-row: 6;">
+          <div class="material-symbols-outlined text-lg">directions_transit</div>
+          <div class="flex flex-col items-center justify-center">
+            <span class="text-[7px] font-bold uppercase mt-1">Short Line RR</span>
+            <span class="text-[8px] font-black mt-1">$200</span>
+          </div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex items-center justify-center gap-2 p-1" style="grid-column: 11 / 13; grid-row: 7;">
+          <span class="material-symbols-outlined text-lg">question_mark</span>
+          <div class="flex flex-col items-center justify-center">
+            <span class="text-[7px] font-bold uppercase mt-1">Chance</span>
+          </div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-row" style="grid-column: 11 / 13; grid-row: 8;">
+          <div class="w-1/4 bg-[#0072bb]"></div>
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Park Place</span>
+            <span class="text-[8px] font-black mt-1">$350</span>
+          </div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex items-center justify-center p-1" style="grid-column: 11 / 13; grid-row: 9;">
+          <div class="flex flex-col items-center justify-center">
+            <span class="text-[7px] font-bold uppercase">Luxury Tax</span>
+            <span class="text-[8px] font-black mt-1">Pay $75</span>
+          </div>
+        </div>
+        <div class="bg-white border-[1.5px] border-zinc-900 flex flex-row" style="grid-column: 11 / 13; grid-row: 10;">
+          <div class="w-1/4 bg-[#0072bb]"></div>
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-1">
+            <span class="text-[7px] font-bold uppercase">Boardwalk</span>
+            <span class="text-[8px] font-black mt-1">$400</span>
+          </div>
+        </div>
+
+
+
+        <div class="bg-surface flex flex-col items-center justify-center relative p-8"
+          style="grid-column: 2 / 11; grid-row: 2 / 11;">
+          <div class="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
+            <span class="font-headline font-black text-9xl uppercase tracking-tighter rotate-[-45deg]">ESTATE</span>
+          </div>
+          <div class="flex space-x-12 mb-12">
+            <div
+              class="w-32 h-44 bg-surface-container-low border border-outline-variant/30 rounded-xl flex flex-col items-center justify-center p-4">
+              <span class="material-symbols-outlined text-4xl text-outline-variant mb-2">question_mark</span>
+              <span class="text-[10px] font-bold uppercase tracking-widest text-outline">Chance</span>
+            </div>
+            <div
+              class="w-32 h-44 bg-surface-container-low border border-outline-variant/30 rounded-xl flex flex-col items-center justify-center p-4">
+              <span class="material-symbols-outlined text-4xl text-outline-variant mb-2"
+                style="font-variation-settings: 'FILL' 1;">help_center</span>
+              <span class="text-[10px] font-bold uppercase tracking-widest text-outline">Community</span>
+            </div>
+          </div>
+          <div class="flex space-x-4">
+            <div
+              class="w-12 h-12 bg-white border-2 border-zinc-900 rounded-lg flex items-center justify-center shadow-lg">
+              <div class="grid grid-cols-2 gap-1 p-1">
+                <div class="w-1.5 h-1.5 bg-zinc-900 rounded-full"></div>
+                <div class="w-1.5 h-1.5 bg-zinc-900 rounded-full"></div>
+                <div class="w-1.5 h-1.5 bg-zinc-900 rounded-full"></div>
+                <div class="w-1.5 h-1.5 bg-zinc-900 rounded-full"></div>
+              </div>
+            </div>
+            <div
+              class="w-12 h-12 bg-white border-2 border-zinc-900 rounded-lg flex items-center justify-center shadow-lg">
+              <div class="w-2 h-2 bg-zinc-900 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Player Tokens -->
+        <!-- 4 Line: Vertical Right  |  position: left=80.6% top=(16.8+y*7.7)% -->
+        <div class="absolute" style="left: 80.6%; top: 16.8%;">
+          <div class="w-9 h-9 rounded-full bg-zinc-900 ring-4 ring-white shadow-xl flex items-center justify-center">
+            <span class="text-[10px] text-white font-bold">P1</span>
+          </div>
+        </div>
+        <!-- 2 Line: Vertical Left  |  position: left=32% top=(16.8+y*7.7)% -->
+        <div class="absolute" style="left: 14.5%; top: 24.5%;">
+          <div class="w-9 h-9 rounded-full bg-on-tertiary-container ring-4 ring-white shadow-xl flex items-center justify-center">
+            <span class="text-[10px] text-white font-bold">P3</span>
+          </div>
+        </div>
+        <!-- 1 Line: Horizontal Bottom  |  position: left=(17.0+x*7.7)% top=80.5% -->
+        <div class="absolute" style="left: 24.7%; top: 80.5%;">
+          <div class="w-9 h-9 rounded-full bg-secondary ring-4 ring-white shadow-xl flex items-center justify-center">
+            <span class="text-[10px] text-white font-bold">P2</span>
+          </div>
+        </div>
+      </div>
+
+    </main>
+    <section class="w-72 bg-white p-6 border-l border-zinc-200 hidden xl:flex flex-col">
+      <h3 class="font-headline font-bold text-sm uppercase tracking-widest mb-6 text-zinc-400">Current Standings</h3>
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <div class="flex justify-between items-end">
+            <span class="text-xs font-bold text-zinc-900">Player 1</span>
+            <span class="text-sm font-black">$2,450</span>
+          </div>
+          <div class="h-1 w-full bg-zinc-100 rounded-full overflow-hidden">
+            <div class="h-full bg-zinc-900 w-[75%]"></div>
+          </div>
+          <p class="text-[10px] text-zinc-500 uppercase font-bold tracking-tighter">12 Properties • 4 Houses</p>
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between items-end">
+            <span class="text-xs font-bold text-zinc-900">Player 2</span>
+            <span class="text-sm font-black">$1,120</span>
+          </div>
+          <div class="h-1 w-full bg-zinc-100 rounded-full overflow-hidden">
+            <div class="h-full bg-secondary w-[40%]"></div>
+          </div>
+          <p class="text-[10px] text-zinc-500 uppercase font-bold tracking-tighter">5 Properties • 0 Houses</p>
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between items-end">
+            <span class="text-xs font-bold text-zinc-900">Player 3</span>
+            <span class="text-sm font-black">$840</span>
+          </div>
+          <div class="h-1 w-full bg-zinc-100 rounded-full overflow-hidden">
+            <div class="h-full bg-on-tertiary-container w-[25%]"></div>
+          </div>
+          <p class="text-[10px] text-zinc-500 uppercase font-bold tracking-tighter">3 Properties • 0 Houses</p>
+        </div>
+      </div>
+    <div
+      class="w-full z-50 mt-10 flex justify-center space-x-8 items-center px-8 py-4 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-t border-zinc-200/50 dark:border-zinc-800/50 shadow-2xl shadow-zinc-900/10">
+      <button
+        class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-600 hover:text-zinc-900 dark:hover:text-zinc-100 hover:scale-110 transition-transform active:translate-y-1">
+        <span class="material-symbols-outlined">slow_motion_video</span>
+        <span class="font-headline text-[10px] uppercase tracking-tighter font-bold mt-1">Slow</span>
+      </button>
+      <button
+        class="flex flex-col items-center justify-center bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900 rounded-full w-14 h-14 hover:scale-110 transition-transform active:translate-y-1 shadow-xl shadow-zinc-900/20">
+        <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+      </button>
+      <button
+        class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-600 hover:text-zinc-900 dark:hover:text-zinc-100 hover:scale-110 transition-transform active:translate-y-1">
+        <span class="material-symbols-outlined">speed</span>
+        <span class="font-headline text-[10px] uppercase tracking-tighter font-bold mt-1">Fast</span>
+      </button>
+    </div>
+      <div class="mt-auto space-y-8">
+        <button
+          class="w-full py-4 bg-primary text-white font-headline font-bold rounded-xl active:translate-y-0.5 transition-all shadow-lg shadow-zinc-900/10">
+          VIEW PORTFOLIOS
+        </button>
+        <button
+          class="w-full py-4 bg-white border border-outline-variant/50 text-on-surface font-headline font-bold rounded-xl hover:bg-zinc-50 transition-colors">
+          TRADE MANAGER
+        </button>
+      </div>
+    </section>
+  </main>
+</body>
+
+</html>

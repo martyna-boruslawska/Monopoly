@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { showSummary } from "../game/showSummary.js";
+import { showSummary } from "../../game/showSummary.js";
 
 test("displays player summary correctly", (context) => {
   // Arrange

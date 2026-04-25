@@ -7,7 +7,8 @@ import { rentStrategies } from "../patterns/rentStrategies.js";
  * @param {Object} game - The game object
  */
 export function handlePayRent(game, rentStrategies) {
-  const tile = gameUtils.getTile(game);
+  const player = game.currentPlayer();
+  const tile = game.getPlayerTile(player);
   const owner = gameUtils.getOwner(game);
 
   if (owner.isInJail) {

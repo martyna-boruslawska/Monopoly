@@ -1,47 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { jailRules } from "../game/rules/jailRules.js";
-import { landingRules } from "../game/rules/landingRules.js";
-import { createTestGame } from "./helpers/createTestGame.js";
+import { jailRules } from "../../../game/rules/jailRules.js";
+import { createTestGame } from "../../helpers/createTestGame.js";
 
-test("player goes to jail when landing on Go To Jail tile", (ctx) => {
-  ctx.mock.method(console, "log", () => {});
-
-  const game = createTestGame([
-    { name: "Luke Skywalker", position: 30 }, // Go To Jail tile
-    { name: "Darth Vader" }
-  ]);
-  const player = game.players[0];
-
-  landingRules(game);
-
-  assert.strictEqual(player.isInJail, true);
-  assert.strictEqual(player.position, 10); // Jail tile
-  assert.strictEqual(player.money, 1500); // No bonus for passing Start when sent to jail
-  assert.strictEqual(console.log.mock.calls[0].arguments[0], "Luke Skywalker is sent to jail for landing on Go To Jail.");
-});
-
-test("player in jail cannot collect rent", (ctx) => {
-  ctx.mock.method(console, "log", () => {});
-
-  const game = createTestGame([
-    { name: "Luke Skywalker", propertyIds: [1] },
-    { name: "Darth Vader", position: 1 }
-  ]);
-  const playerInJail = game.players[0];
-  const otherPlayer = game.players[1];
-  playerInJail.isInJail = true;
-  game.currentPlayerId = otherPlayer.id;
-  
-  landingRules(game);
-
-  assert.strictEqual(playerInJail.isInJail, true);
-  assert.strictEqual(otherPlayer.money, 1500);
-  assert.strictEqual(playerInJail.money, 1500);
-  assert.strictEqual(console.log.mock.calls[0].arguments[0], "Luke Skywalker is in jail and cannot collect rent from Darth Vader.");
-});
-
-test("player in jail can pay fine to get out", (ctx) => {
+test("jailRules - player in jail can pay fine to get out", (ctx) => {
   ctx.mock.method(console, "log", () => {});
 
   const game = createTestGame([
@@ -60,7 +22,7 @@ test("player in jail can pay fine to get out", (ctx) => {
   assert.strictEqual(console.log.mock.calls[0].arguments[0], "Luke Skywalker pays $50 to get out of jail.");
 });
 
-test("player in jail can roll doubles to get out when they cannot pay", (ctx) => {
+test("jailRules - player in jail can roll doubles to get out when they cannot pay", (ctx) => {
   ctx.mock.method(console, "log", () => {});
   
   const game = createTestGame([
@@ -82,7 +44,7 @@ test("player in jail can roll doubles to get out when they cannot pay", (ctx) =>
   assert.strictEqual(console.log.mock.calls[0].arguments[0], "Luke Skywalker rolls doubles and gets out of jail.");
 });
 
-test("player in jail stays in jail after failing to roll doubles", (ctx) => {
+test("jailRules - player in jail stays in jail after failing to roll doubles", (ctx) => {
   ctx.mock.method(console, "log", () => {});
   
   const game = createTestGame([
@@ -102,7 +64,7 @@ test("player in jail stays in jail after failing to roll doubles", (ctx) => {
   assert.strictEqual(console.log.mock.calls[0].arguments[0], "Luke Skywalker fails to roll doubles and remains in jail.");
 });
 
-test("player in jail goes bankrupt after failing three turns and being unable to pay", (ctx) => {
+test("jailRules - player in jail goes bankrupt after failing three turns and being unable to pay", (ctx) => {
   ctx.mock.method(console, "log", () => {});
 
   const game = createTestGame([

@@ -1,8 +1,9 @@
 import { gameUtils } from "../../utils/gameUtils.js";
+import { transferMoney } from "../../utils/transferMoney.js";
 
 export function handlePayRentUtilities(game) {
   const player = game.currentPlayer();
-  const tile = gameUtils.getTile(game);
+  const tile = game.getPlayerTile(player);
   const owner = gameUtils.getOwner(game);
 
   const diceRollTotal = game.lastRoll && game.lastRoll.total;
@@ -13,22 +14,13 @@ export function handlePayRentUtilities(game) {
     return;
   }
 
-  const utilitiesOwned = countOwnedTiles(game.board, owner.id, "utility");
+  const utilitiesOwned = game.countOwnedTilesOfType(owner, "utility");
   const rent = utilitiesOwned === 2 ? diceRollTotal * 10 : diceRollTotal * 4;
   const utilitiesLabel = utilitiesOwned === 1 ? "utility" : "utilities";
 
   transferMoney(player, owner, rent);
+
   console.log(
     `${player.name} pays ${owner.name} $${rent} for landing on ${tile.name} (${utilitiesOwned} ${utilitiesLabel} owned).`,
   );
-}
-
-function transferMoney(fromPlayer, toPlayer, amount) {
-  fromPlayer.money -= amount;
-  toPlayer.money += amount;
-}
-
-function countOwnedTiles(board, ownerId, type) {
-  return board.filter((tile) => tile.type === type && tile.ownerId === ownerId)
-    .length;
 }

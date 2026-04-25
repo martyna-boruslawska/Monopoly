@@ -1,6 +1,5 @@
 
 export const gameUtils = {
-  getTile,
   getOwner,
 };
 
@@ -10,10 +9,14 @@ export const gameUtils = {
  * @param {Object} game - The game object
  * @returns {Object} The tile the current player has landed on
  */ 
-function getTile(game) {
-    const currentPlayer = game.currentPlayer();
-    const tile = game.board[currentPlayer.position];
-    return tile;
+export function getPlayerTile(player, board) {
+    if (!player) throw new Error(`Missing player object ${player}`);
+    if (typeof player.position !== "number") 
+      throw new Error(`Invalid player object shape. Field position not exist. Player: ${player}`);
+    if (player.position < 0 || player.position >= board.length)
+      throw new Error(`Player position has invalid value ${player.position}. Expected: [0..${board.length-1}]`);
+
+    return board[player.position];
 }
 
 /**

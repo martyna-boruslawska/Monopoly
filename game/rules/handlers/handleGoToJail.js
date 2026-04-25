@@ -7,7 +7,8 @@ import { sendCurrentPlayerToJail } from "../jailRules.js";
  * @returns {boolean} - True if player was sent to jail, false otherwise
  */
 export function handleGoToJail(game) {
-  const tile = gameUtils.getTile(game);
+  const player = game.currentPlayer();
+  const tile = game.getPlayerTile(player);
   if (!tile || tile.type !== "go-to-jail") {
     return false;
   }

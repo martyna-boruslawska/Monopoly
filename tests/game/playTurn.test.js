@@ -1,9 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { playRound } from "../game/playRound.js";
-import { createTestGame } from "./helpers/createTestGame.js";
+import { playTurn } from "../../game/playTurn.js";
+import { createTestGame } from "../helpers/createTestGame.js";
 
-test("skips players who are already bankrupt", (context) => {
+test("playTurn - skips players who are already bankrupt", (context) => {
   context.mock.method(console, "log", () => {});
   
   const game = createTestGame([
@@ -12,17 +12,12 @@ test("skips players who are already bankrupt", (context) => {
   ]);
   game.players[0].isBankrupt = true;
 
-  const randomValues = [0, 0.2]; // dice: 1 and 2
-  let index = 0;
-  context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
-
-  playRound(game);
+  playTurn(game);
 
   assert.strictEqual(game.players[0].position, 5);
-  assert.strictEqual(game.players[1].position, 3);
 });
 
-test("plays one turn for a non-bankrupt player", (context) => {
+test("playTurn - plays one turn for a non-bankrupt player", (context) => {
   context.mock.method(console, "log", () => {});
   
   const game = createTestGame([
@@ -33,12 +28,12 @@ test("plays one turn for a non-bankrupt player", (context) => {
   let index = 0;
   context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
 
-  playRound(game);
+  playTurn(game);
 
   assert.strictEqual(game.players[0].position, 3);
 });
 
-test("gives another turn after rolling doubles", (context) => {
+test("playTurn - gives another turn after rolling doubles", (context) => {
   context.mock.method(console, "log", () => {});
   
   const game = createTestGame([
@@ -49,12 +44,12 @@ test("gives another turn after rolling doubles", (context) => {
   let index = 0;
   context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
 
-  playRound(game);
+  playTurn(game);
 
   assert.strictEqual(game.players[0].position, 7);
 });
 
-test("stops after three doubles", (context) => {
+test("playTurn - stops after three doubles", (context) => {
   context.mock.method(console, "log", () => {});
   
   const game = createTestGame([
@@ -65,13 +60,13 @@ test("stops after three doubles", (context) => {
   let index = 0;
   context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
 
-  playRound(game);
+  playTurn(game);
 
   assert.strictEqual(game.players[0].position, 6);
   assert.strictEqual(index, 6);
 });
 
-test("stops extra turns when player becomes bankrupt after a double", (context) => {
+test("playTurn - stops extra turns when player becomes bankrupt after a double", (context) => {
   context.mock.method(console, "log", () => {});
   
   const game = createTestGame([
@@ -82,14 +77,14 @@ test("stops extra turns when player becomes bankrupt after a double", (context) 
   let index = 0;
   context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
 
-  playRound(game);
+  playTurn(game);
   assert.strictEqual(game.players[0].position, 38);
   assert.strictEqual(game.players[0].money, -50);
   assert.strictEqual(game.players[0].isBankrupt, true);
   assert.strictEqual(index, 2);
 });
 
-test("skips a jailed player's turn when they cannot pay and fail to roll doubles", (context) => {
+test("playTurn - skips a jailed player's turn when they cannot pay and fail to roll doubles", (context) => {
   context.mock.method(console, "log", () => {});
   
   const game = createTestGame([
@@ -101,7 +96,7 @@ test("skips a jailed player's turn when they cannot pay and fail to roll doubles
   let index = 0;
   context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
 
-  playRound(game);
+  playTurn(game);
 
   assert.strictEqual(game.players[0].position, 10);
   assert.strictEqual(game.players[0].isInJail, true);
@@ -109,7 +104,7 @@ test("skips a jailed player's turn when they cannot pay and fail to roll doubles
   assert.strictEqual(index, 2);
 });
 
-test("uses the jail escape roll to move and does not grant an extra turn", (context) => {
+test("playTurn - uses the jail escape roll to move and does not grant an extra turn", (context) => {
   context.mock.method(console, "log", () => {});
   
   const game = createTestGame([
@@ -121,7 +116,7 @@ test("uses the jail escape roll to move and does not grant an extra turn", (cont
   let index = 0;
   context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
 
-  playRound(game);
+  playTurn(game);
 
   assert.strictEqual(game.players[0].position, 12);
   assert.strictEqual(game.players[0].isInJail, false);

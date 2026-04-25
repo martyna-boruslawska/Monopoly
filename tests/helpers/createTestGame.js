@@ -1,4 +1,4 @@
-import { createGame } from "../../game/createGame.js";
+import { createGame } from "../../game/factories/createGame.js";
 
 export function createTestGame(testPlayers) {
   const game = createGame(testPlayers.map(({ name }) => name));

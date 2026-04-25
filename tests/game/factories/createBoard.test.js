@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createBoard } from "../game/createBoard.js";
+import { createBoard } from "../../../game/factories/createBoard.js";
 
 test("board has exactly 40 spaces", () => {
   const board = createBoard();

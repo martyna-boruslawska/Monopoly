@@ -1,4 +1,3 @@
-import { gameUtils } from "../utils/gameUtils.js";
 import { landingRulesPipeline } from "./patterns/landingRulesPipeline.js";
 import { markPlayerBankrupt } from '../utils/markPlayerBankrupt.js';
 
@@ -10,7 +9,7 @@ import { markPlayerBankrupt } from '../utils/markPlayerBankrupt.js';
 export function landingRules(game) {
   for (const landingRulePipelineStep of landingRulesPipeline) {
     const currentPlayer = game.currentPlayer();
-    const tile = gameUtils.getTile(game);
+    const tile = game.getPlayerTile(currentPlayer);
     
     if (landingRulePipelineStep.activator(tile, currentPlayer)) {
       landingRulePipelineStep.handler(game);

@@ -79,7 +79,6 @@ export function sendCurrentPlayerToJail(game) {
   player.position = JAIL_TILE_ID;
   player.isInJail = true;
   player.failedJailRolls = 0;
-  console.log(`${player.name} is sent to jail for landing on Go To Jail.`);
 }
 
 function releasePlayerFromJail(player) {

@@ -12,7 +12,8 @@ export function handleGoToJail(game) {
   if (!tile || tile.type !== "go-to-jail") {
     return false;
   }
-
+  
+  console.log(`${player.name} is sent to jail for landing on Go To Jail.`);
   sendCurrentPlayerToJail(game);
   return true;
 }

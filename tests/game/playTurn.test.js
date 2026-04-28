@@ -33,7 +33,7 @@ test("playTurn - plays one turn for a non-bankrupt player", (context) => {
   assert.strictEqual(game.players[0].position, 3);
 });
 
-test("playTurn - gives another turn after rolling doubles", (context) => {
+test("playTurn - gives another turn after rolling doubles once", (context) => {
   context.mock.method(console, "log", () => {});
   
   const game = createTestGame([
@@ -49,7 +49,23 @@ test("playTurn - gives another turn after rolling doubles", (context) => {
   assert.strictEqual(game.players[0].position, 7);
 });
 
-test("playTurn - stops after three doubles", (context) => {
+test("playTurn - gives another turn after rolling doubles twice", (context) => {
+  context.mock.method(console, "log", () => {});
+  
+  const game = createTestGame([
+    { name: "Luke Skywalker" }
+  ]);
+
+  const randomValues = [0, 0, 0, 0, 0.2, 0.4];
+  let index = 0;
+  context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
+
+  playTurn(game);
+
+  assert.strictEqual(game.players[0].position, 9);
+});
+
+test("playTurn - goes to jail after three doubles", (context) => {
   context.mock.method(console, "log", () => {});
   
   const game = createTestGame([
@@ -62,7 +78,11 @@ test("playTurn - stops after three doubles", (context) => {
 
   playTurn(game);
 
-  assert.strictEqual(game.players[0].position, 6);
+  assert.strictEqual(game.players[0].position, 10);
+  assert.strictEqual(game.players[0].isInJail, true);
+  assert.strictEqual(game.players[0].money, 1500-200); // paid Income Tax=200, DID NOT bought Oriental Avenue=100
+  assert.strictEqual(game.board[6].ownerId, null);
+  assert.deepStrictEqual(game.currentPlayer().propertyIds, []);
   assert.strictEqual(index, 6);
 });
 

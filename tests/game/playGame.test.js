@@ -20,8 +20,8 @@ test("playGame - validate generated logs", (context) => {
   );
 
   assert.ok(logs.length > 50, "Expected more than 50 log entries, but got " + logs.length);
-  assert.equal(logs[1], "Luke Skywalker moves to Reading Railroad");
-  assert.equal(logs[2], "Reading Railroad is available for $200");
+  assert.equal(logs[1], "Luke Skywalker moves to Vermont Avenue");
+  assert.equal(logs[2], "Vermont Avenue is available for $100");
   assert.equal(logs[logs.length-8], "Reached maximum number of rounds: 40. Ending game.");
   assert.equal(logs[logs.length-7], "=================================");
   assert.equal(logs[logs.length-6], "🏁  Game Summary 🏁");

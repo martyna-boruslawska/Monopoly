@@ -20,12 +20,3 @@ export const rentStrategies = [
     handler: handlePayRentProperties,
   },
 ];
-
-function transferMoney(fromPlayer, toPlayer, amount) {
-  fromPlayer.money -= amount;
-  toPlayer.money += amount;
-}
-
-function countOwnedTiles(board, ownerId, type) {
-  return board.filter((tile) => tile.type === type && tile.ownerId === ownerId).length;
-}

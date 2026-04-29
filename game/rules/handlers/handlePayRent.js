@@ -11,13 +11,6 @@ export function handlePayRent(game, rentStrategies) {
   const tile = game.getPlayerTile(player);
   const owner = gameUtils.getOwner(game);
 
-  if (owner.isInJail) {
-    console.log(
-      `${owner.name} is in jail and cannot collect rent from ${game.currentPlayer().name}.`,
-    );
-    return;
-  }
-
   for (const rentStrategy of rentStrategies) {
     if (rentStrategy.activator(tile)) {
       rentStrategy.handler(game, tile);

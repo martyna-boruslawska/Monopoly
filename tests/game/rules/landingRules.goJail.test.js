@@ -78,8 +78,8 @@ test("landingRules - player in jail can collect rent - utility", (ctx) => {
   landingRules(game);
 
   assert.strictEqual(playerInJail.isInJail, true);
-  assert.strictEqual(otherPlayer.money, 1500 - game.lastRoll.total * 4);
-  assert.strictEqual(playerInJail.money, 1500 + game.lastRoll.total * 4);
+  assert.strictEqual(otherPlayer.money, 1500 - 7 * 4);
+  assert.strictEqual(playerInJail.money, 1500 + 7 * 4);
   assert.notStrictEqual(console.log.mock.calls[0].arguments[0], "Luke Skywalker is in jail and cannot collect rent from Darth Vader.");
   assert.strictEqual(console.log.mock.calls[0].arguments[0], "Darth Vader pays Luke Skywalker $28 for landing on Electric Company (1 utility owned).");
 });

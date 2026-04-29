@@ -1,6 +1,7 @@
 import { movePlayer } from "./rules/movePlayer.js";
 import { jailRules } from "./rules/jailRules.js";
 import { landingRules } from './rules/landingRules.js';
+import { sendCurrentPlayerToJail } from "./rules/jailRules.js";
 
 export function playTurn(game) {
   let doublesCount = 0;
@@ -19,6 +20,16 @@ export function playTurn(game) {
     const roll = jailResult.roll ?? game.rollDice();
     game.lastRoll = roll;
 
+    hasDouble = roll.isDouble && !jailResult.usedJailRoll;
+    if (hasDouble) {
+      doublesCount++;
+    }
+    if (doublesCount === 3) {
+      console.log(`${player.name} rolled doubles three times in a row and goes to jail!`,);
+      sendCurrentPlayerToJail(game);
+      return true;
+    }
+
     movePlayer(game, roll.total);
 
     landingRules(game);
@@ -27,12 +38,8 @@ export function playTurn(game) {
       return;
     }
 
-    hasDouble = roll.isDouble && !jailResult.usedJailRoll;
     if (hasDouble) {
-      console.log(
-        `${player.name} rolled doubles: ${roll.dice1} & ${roll.dice2} and gets another turn!`,
-      );
-      doublesCount++;
-    }
+      console.log(`${player.name} rolled doubles: ${roll.dice1} & ${roll.dice2} and gets another turn!`);
+    }  
   }
 }

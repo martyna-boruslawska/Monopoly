@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --test)",
+      "Bash(node --test tests/game/playTurn.test.js)",
+      "Bash(gh issue *)"
+    ]
+  }
+}

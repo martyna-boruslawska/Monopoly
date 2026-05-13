@@ -16,6 +16,7 @@ test("created players use expected object shape and defaults", () => {
     isBankrupt: false,
     isInJail: false,
     failedJailRolls: 0,
+    getOutOfJailCards: [],
   });
 
   assert.deepStrictEqual(players[1], {
@@ -27,6 +28,7 @@ test("created players use expected object shape and defaults", () => {
     isBankrupt: false,
     isInJail: false,
     failedJailRolls: 0,
+    getOutOfJailCards: [],
   });
 });
 

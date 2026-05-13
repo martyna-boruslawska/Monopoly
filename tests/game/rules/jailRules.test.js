@@ -88,3 +88,65 @@ test("jailRules - player in jail goes bankrupt after failing three turns and bei
   assert.strictEqual(console.log.mock.calls[2].arguments[0], "Luke Skywalker fails to roll doubles and remains in jail.");
   assert.strictEqual(console.log.mock.calls[3].arguments[0], "Luke Skywalker is bankrupt and out of the game.");
 });
+
+test("jailRules - player in jail uses Get Out of Jail Free card to exit without paying", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+
+  const game = createTestGame([
+    { name: "Luke Skywalker" },
+    { name: "Darth Vader" },
+  ]);
+  const player = game.players[0];
+  player.isInJail = true;
+
+  const mockDeck = { returnedCards: [], returnCard(card) { this.returnedCards.push(card); } };
+  const card = { type: "get-out-jail", text: "Get Out of Jail Free" };
+  player.getOutOfJailCards = [{ card, deck: mockDeck }];
+
+  const result = jailRules(game);
+
+  assert.strictEqual(result.canMove, true);
+  assert.strictEqual(result.roll, null);
+  assert.strictEqual(player.isInJail, false);
+  assert.deepStrictEqual(player.getOutOfJailCards, []);
+  assert.strictEqual(player.money, 1500);
+  assert.strictEqual(console.log.mock.calls[0].arguments[0], "Luke Skywalker uses a Get Out of Jail Free card.");
+});
+
+test("jailRules - used Get Out of Jail Free card returns to the bottom of the deck", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+
+  const game = createTestGame([
+    { name: "Luke Skywalker" },
+    { name: "Darth Vader" },
+  ]);
+  const player = game.players[0];
+  player.isInJail = true;
+
+  const mockDeck = { returnedCards: [], returnCard(card) { this.returnedCards.push(card); } };
+  const card = { type: "get-out-jail", text: "Get Out of Jail Free" };
+  player.getOutOfJailCards = [{ card, deck: mockDeck }];
+
+  jailRules(game);
+
+  assert.deepStrictEqual(mockDeck.returnedCards, [card]);
+});
+
+test("jailRules - player with Get Out of Jail Free card uses it instead of paying the fine", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+
+  const game = createTestGame([
+    { name: "Luke Skywalker" },
+    { name: "Darth Vader" },
+  ]);
+  const player = game.players[0];
+  player.isInJail = true;
+
+  const mockDeck = { returnedCards: [], returnCard(card) { this.returnedCards.push(card); } };
+  const card = { type: "get-out-jail", text: "Get Out of Jail Free" };
+  player.getOutOfJailCards = [{ card, deck: mockDeck }];
+
+  jailRules(game);
+
+  assert.strictEqual(player.money, 1500);
+});

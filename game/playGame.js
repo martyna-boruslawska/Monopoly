@@ -9,25 +9,25 @@ export function playGame(game) {
 
   showIntro(game.players);
 
-  let round = 1;
+  let roundNumber = 1;
   let turns = 1;
-  let activePlayers = game.countActivePlayers();
+  let activePlayerCount = game.countActivePlayers();
 
-  while (activePlayers > 1) {
+  while (activePlayerCount > 1) {
     const prevPlayerId = game.currentPlayerId ?? 0;
     const player = game.nextActivePlayer();
     if (!player || player.isBankrupt) {
       continue;
     }
-    if (game.currentPlayerId < prevPlayerId) { round++; }
-    if (round > MAX_ROUNDS) {
+    if (game.currentPlayerId < prevPlayerId) { roundNumber++; }
+    if (roundNumber > MAX_ROUNDS) {
       console.log(`Reached maximum number of rounds: ${MAX_ROUNDS}. Ending game.`);
       break;
     }
 
     playTurn(game);
     
-    activePlayers = game.countActivePlayers();
+    activePlayerCount = game.countActivePlayers();
     turns++;
   }
 

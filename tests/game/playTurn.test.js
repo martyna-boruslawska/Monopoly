@@ -143,3 +143,49 @@ test("playTurn - uses the jail escape roll to move and does not grant an extra t
   assert.strictEqual(game.players[0].failedJailRolls, 0);
   assert.strictEqual(index, 2);
 });
+
+test("playTurn - buys houses and hotels according to building rules after moving", (context) => {
+  context.mock.method(console, "log", () => {});
+
+  const game = createTestGame([
+    { name: "Luke Skywalker", position: 0, money: 600, propertyIds: [1, 3, 6, 8, 9, 18] }
+  ]);
+
+  const randomValues = [0, 0.2];
+  let index = 0;
+  context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
+
+  // 2-street monopoly:houseCost = 50, spend cap = 200, chooses first set in board order, so buys only on 2-street monopoly
+  // 3-street monopoly: houseCost = 50
+  game.board[1].houses = 1;
+  game.board[1].hasHotel = false;
+  game.board[1].isMortgaged = false;
+  game.board[3].houses = 4;
+  game.board[3].hasHotel = false;
+  game.board[3].isMortgaged = false;
+
+  game.board[6].houses = 1;
+  game.board[6].hasHotel = false;
+  game.board[6].isMortgaged = false;
+  game.board[8].houses = 2;
+  game.board[8].hasHotel = false;
+  game.board[8].isMortgaged = false;
+  game.board[9].houses = 0;
+  game.board[9].hasHotel = false;
+  game.board[9].isMortgaged = false;
+
+  playTurn(game);
+
+  assert.strictEqual(game.players[0].position, 3);
+  assert.strictEqual(game.currentPlayer().money, 400);
+  assert.strictEqual(game.board[1].houses, 0);
+  assert.strictEqual(game.board[3].houses, 4);
+  assert.strictEqual(game.board[1].hasHotel, true);
+  assert.strictEqual(game.board[3].hasHotel, false);
+  assert.strictEqual(game.board[6].houses, 1);
+  assert.strictEqual(game.board[8].houses, 2);
+  assert.strictEqual(game.board[9].houses, 0);
+  assert.strictEqual(game.board[6].hasHotel, false);
+  assert.strictEqual(game.board[8].hasHotel, false);
+  assert.strictEqual(game.board[9].hasHotel, false);  
+});

@@ -3,21 +3,6 @@ import assert from "node:assert/strict";
 import { landingRules } from "../../../game/rules/landingRules.js";
 import { createTestGame } from "../../helpers/createTestGame.js";
 
-test("landingRules - landingRules - pays property rent to another player", (ctx) => {
-  ctx.mock.method(console, "log", () => {});
-  
-  const game = createTestGame([
-    { name: "Luke Skywalker", position: 1 },
-    { name: "Darth Vader", propertyIds: [1] }
-  ]);
-
-  landingRules(game);
-
-  const tile = game.board[1];
-  assert.strictEqual(game.currentPlayer().money, 1500 - tile.rent);
-  assert.strictEqual(game.players[1].money, 1500 + tile.rent);
-});
-
 test("landingRules - pays base property rent to another player with no street monopoly, no houses, no hotel", (ctx) => {
   ctx.mock.method(console, "log", () => {});
   
@@ -54,25 +39,6 @@ test("landingRules - pays doubled property rent to another player with a 2-stree
   assert.strictEqual(game.players[1].money, 1500 + tile.rent * 2);
 });
 
-// buying houses and hotels is not yet implemented, so base rent is still paid even if the property has a house or hotel
-test("landingRules - pays base property rent to another player with a 2-street monopoly, has house, no hotel", (ctx) => {
-  ctx.mock.method(console, "log", () => {});
-
-  const game = createTestGame([
-    { name: "Luke Skywalker", position: 1 },
-    { name: "Darth Vader", propertyIds: [1, 3] }
-  ]);
-
-  game.board[1].houses = 1;
-  game.board[1].hasHotel = false;
-
-  landingRules(game);
-
-  const tile = game.board[1];
-  assert.strictEqual(game.currentPlayer().money, 1500 - tile.rent);
-  assert.strictEqual(game.players[1].money, 1500 + tile.rent);
-});
-
 test("landingRules - pays doubled property rent to another player with a 3-street monopoly, no houses, no hotel", (ctx) => {
   ctx.mock.method(console, "log", () => {});
 
@@ -91,8 +57,79 @@ test("landingRules - pays doubled property rent to another player with a 3-stree
   assert.strictEqual(game.players[1].money, 1500 + tile.rent * 2);
 });
 
-// buying houses and hotels is not yet implemented, so base rent is still paid even if the property has a house or hotel
-test("landingRules - pays base property rent to another player with a 3-street monopoly, no houses, has hotel", (ctx) => {
+test("landingRules - pays increased property rent to another player with a 2-street monopoly, HAS 1 house, no hotel", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+
+  const game = createTestGame([
+    { name: "Luke Skywalker", position: 1 },
+    { name: "Darth Vader", propertyIds: [1, 3] }
+  ]);
+
+  game.board[1].houses = 1;
+  game.board[1].hasHotel = false;
+
+  landingRules(game);
+
+  const tile = game.board[1];
+  assert.strictEqual(game.currentPlayer().money, 1500 - tile.rent1House);
+  assert.strictEqual(game.players[1].money, 1500 + tile.rent1House);
+});
+
+test("landingRules - pays increased property rent to another player with a 2-street monopoly, HAS 2 houses, no hotel", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+
+  const game = createTestGame([
+    { name: "Luke Skywalker", position: 1 },
+    { name: "Darth Vader", propertyIds: [1, 3] }
+  ]);
+
+  game.board[1].houses = 2;
+  game.board[1].hasHotel = false;
+
+  landingRules(game);
+
+  const tile = game.board[1];
+  assert.strictEqual(game.currentPlayer().money, 1500 - tile.rent2Houses);
+  assert.strictEqual(game.players[1].money, 1500 + tile.rent2Houses);
+});
+
+test("landingRules - pays increased property rent to another player with a 2-street monopoly, HAS 3 houses, no hotel", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+
+  const game = createTestGame([
+    { name: "Luke Skywalker", position: 1 },
+    { name: "Darth Vader", propertyIds: [1, 3] }
+  ]);
+
+  game.board[1].houses = 3;
+  game.board[1].hasHotel = false;
+
+  landingRules(game);
+
+  const tile = game.board[1];
+  assert.strictEqual(game.currentPlayer().money, 1500 - tile.rent3Houses);
+  assert.strictEqual(game.players[1].money, 1500 + tile.rent3Houses);
+});
+
+test("landingRules - pays increased property rent to another player with a 2-street monopoly, HAS 4 houses, no hotel", (ctx) => {
+  ctx.mock.method(console, "log", () => {});
+
+  const game = createTestGame([
+    { name: "Luke Skywalker", position: 1 },
+    { name: "Darth Vader", propertyIds: [1, 3] }
+  ]);
+
+  game.board[1].houses = 4;
+  game.board[1].hasHotel = false;
+
+  landingRules(game);
+
+  const tile = game.board[1];
+  assert.strictEqual(game.currentPlayer().money, 1500 - tile.rent4Houses);
+  assert.strictEqual(game.players[1].money, 1500 + tile.rent4Houses);
+});
+
+test("landingRules - pays increased property rent to another player with a 3-street monopoly, no houses, HAS hotel", (ctx) => {
   ctx.mock.method(console, "log", () => {});
 
   const game = createTestGame([
@@ -106,8 +143,8 @@ test("landingRules - pays base property rent to another player with a 3-street m
   landingRules(game);
 
   const tile = game.board[6];
-  assert.strictEqual(game.currentPlayer().money, 1500 - tile.rent);
-  assert.strictEqual(game.players[1].money, 1500 + tile.rent);
+  assert.strictEqual(game.currentPlayer().money, 1500 - tile.rentHotel);
+  assert.strictEqual(game.players[1].money, 1500 + tile.rentHotel);
 });
 
 test("landingRules - pays railroad rent to another player with 1 railroad owned", (ctx) => {

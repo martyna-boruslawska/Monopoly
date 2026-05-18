@@ -49,11 +49,21 @@ test("initializes purchasable and property-specific fields correctly", () => {
   assert.strictEqual(utility.ownerId, null);
   assert.strictEqual(property.ownerId, null);
 
+  assert.strictEqual(property.houseCost, 50);
+  assert.strictEqual(property.rent1House, 10);
+  assert.strictEqual(property.rent2Houses, 30);
+  assert.strictEqual(property.rent3Houses, 90);
+  assert.strictEqual(property.rent4Houses, 160);
+  assert.strictEqual(property.rentHotel, 250);
   assert.strictEqual(property.houses, 0);
   assert.strictEqual(property.hasHotel, false);
 
+  assert.strictEqual("houseCost" in railroad, false);
+  assert.strictEqual("rent1House" in railroad, false);
   assert.strictEqual("houses" in railroad, false);
   assert.strictEqual("hasHotel" in railroad, false);
+  assert.strictEqual("houseCost" in utility, false);
+  assert.strictEqual("rent1House" in utility, false);
   assert.strictEqual("houses" in utility, false);
   assert.strictEqual("hasHotel" in utility, false);
   assert.strictEqual("ownerId" in tax, false);

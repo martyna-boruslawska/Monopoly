@@ -9,21 +9,34 @@ Milestone 1 needs a first auction flow so unowned purchasable tiles are not sile
   - The auction ends when no player is willing to increase the current bid
   - The winning player pays the Bank and becomes the owner
   - If nobody bids, the tile remains unowned
-2. Keep the design local to the current pipeline
+2. Keep design local to current pipeline
   - Start from `handleBuyOrTrade()` because the landing rules pipeline already routes purchase handling through that single handler
   - Introduce one purchase decision hook for unowned tiles rather than a wider strategy system in this issue
-  - Keep the first auction fully deterministic because there is no interactive input layer in the engine
+  - Keep first auction fully deterministic because there is no interactive input layer in the engine
 3. Use one simple deterministic auction strategy
   - A player buys the landed tile immediately only if they can afford it and would keep at least `$300` cash after purchase
   - Otherwise they decline and the tile goes to auction
-  - During auction, each active player stays in while the next minimum bid is less than or equal to both the tile's printed price and the player's cash minus the `$300` reserve
+  - During auction, each active player stays in while the next minimum bid is less than or equal to both:
+    - the tile's printed price
+    - the player's cash minus the `$300` reserve
   - Bid increments are fixed at `$10`
   - Players take turns in table order starting with the player after the one who declined
   - The last remaining bidder wins at the current bid
-4. Add focused tests
-  - Cover decline-to-auction flow, winner payment, no-bid outcome, declining-player participation, and railroad or utility auctions
+4. Out of scope in this issue
+  - Human bidding prompts
+  - Tie-breaking by timing or UI interaction
+  - Complex bidding heuristics per profile
+  - $1 increment simulation
+  - Auctions for houses and hotels, including scarce-building variants
+  - Bankruptcy-triggered property auctions
+5. Add focused tests
+  - A player with enough cash but less than `$300 + price` declines the landed tile and triggers auction
+  - The next player wins the auction at the minimum winning bid when only one bidder can afford it
+  - The original landing player can decline and still win the auction later
+  - No bids leaves the tile unowned
+  - Railroad and utility tiles also use the same auction flow
 
-# Acceptance Criteria
+## Acceptance Criteria
 
 [ ] A landing player can decline to buy an unowned purchasable tile even when they can afford it.
 [ ] Declining starts an auction for that tile.
@@ -32,8 +45,7 @@ Milestone 1 needs a first auction flow so unowned purchasable tiles are not sile
 [ ] If no player is willing to bid, the tile remains unowned.
 [ ] The deterministic auction strategy uses `$10` bid increments and preserves a `$300` cash reserve.
 
-# Notes
+## Notes
 
 - Prefer a pure helper that computes the auction winner and final bid from current players, tile, and strategy rule.
 - Keep logging deterministic so tests can assert ownership and cash without depending on console text.
-- Out of scope: human bidding prompts, $1 increment simulation, bankruptcy-triggered auctions, and building auctions for scarce houses or hotels.

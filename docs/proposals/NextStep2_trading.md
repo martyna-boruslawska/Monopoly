@@ -11,7 +11,9 @@ Milestone 1 needs the first property trading rule so future AI-only games can ex
   - Rejected trades do nothing
 2. Keep trade logic separate from purchase logic
   - Ownership is currently tracked by `ownerId` on tiles and `propertyIds` on players
+  - There is no card inventory on players yet beyond deck resolution side effects
   - The existing purchase handler mentions trade, but actual trading should not be coupled to landing on an unowned tile
+  - Current test helpers can already set up exact ownership layouts, enough for deterministic trade tests
   - Prefer a separate trade helper or phase hook at end of turn
 3. Use one simple deterministic trading strategy
   - Run the trade check once at the end of the current player's turn, after any building step
@@ -21,8 +23,19 @@ Milestone 1 needs the first property trading rule so future AI-only games can ex
   - Make the offer only if the buyer keeps at least `$300` cash after payment
   - The seller accepts only if the traded street is not developed, not mortgaged, and not part of the seller's own complete set
   - If accepted, transfer cash and the property. Otherwise do nothing
-4. Add focused tests
-  - Cover monopoly-completing offers, seller rejection when the seller's own set would be broken, developed-street blocking, reserve checks, and no-op rejection behavior
+4. Out of scope in this issue
+  - Multi-property packages
+  - Get Out of Jail Free cards in trades
+  - Counter-offers
+  - Trading during another player's turn
+  - Trading mortgaged property with forced immediate mortgage decisions
+  - Loans, gifts, or zero-value transfers
+5. Add focused tests
+  - A player who owns two of three streets offers cash for the missing third street and completes the set when accepted
+  - A seller who also owns the rest of that color set rejects the offer
+  - A developed street cannot be traded
+  - A player without enough post-trade reserve does not make an offer
+  - A rejected trade leaves both players' money and `propertyIds` unchanged
 
 # Acceptance Criteria
 
@@ -35,6 +48,6 @@ Milestone 1 needs the first property trading rule so future AI-only games can ex
 
 # Notes
 
+- Do not overload `handleBuyOrTrade()` with end-of-turn trade negotiation. Prefer a separate trade helper or phase hook.
 - Keep the first trade model serializable and explicit so later AI strategy work can replace the decision rule.
-- Out of scope: multi-property packages, counter-offers, Get Out of Jail Free card trades, loans, gifts, and trading during another player's turn.
 - If mortgage support lands first, keep the V1 trade scope limited to unmortgaged properties unless this issue is explicitly broadened later.

@@ -21,10 +21,18 @@ Milestone 1 needs mortgage support so the engine can model asset management befo
   - Within each category, choose the cheapest eligible property first
   - Never unmortgage automatically during this issue
 4. Keep the implementation local to the current engine
+  - Street tiles already have building state, which interacts with mortgage rules
   - Enforce mortgage behavior in the existing rent handlers instead of building a second rent path
+  - The current engine has no explicit debt-resolution workflow beyond immediate money transfer and bankruptcy checks
   - Avoid introducing a general action queue or a broad debt workflow redesign in this issue
 5. Add focused mortgage tests
-  - Cover mortgage cash gain, development restrictions, rent suppression, monopoly-rent interaction, unmortgaging, and debt resolution order
+  - Mortgaging a single owned utility adds the correct cash and marks it mortgaged
+  - Attempting to mortgage a street in a developed set is rejected
+  - A mortgaged railroad does not charge railroad rent
+  - A mortgaged utility does not charge utility rent
+  - A mortgaged street does not charge rent
+  - An unmortgaged partner street in the same monopoly still charges doubled unimproved rent
+  - Debt resolution mortgages the cheapest eligible properties until the amount due can be paid
 
 # Acceptance Criteria
 
@@ -39,4 +47,4 @@ Milestone 1 needs mortgage support so the engine can model asset management befo
 
 - Keep the first implementation local to ownership, rent, and debt-payment code paths.
 - Use explicit tests to pin the mortgage ordering rules before refactoring any payment logic.
-- Out of scope: bankruptcy-transfer mortgage choices, selling buildings for half price, and proactive mortgaging to fund building.
+- Out of scope: bankruptcy-transfer mortgage choices, selling buildings for half price, partial interest rules by edition, human prompts or debt negotiation, and proactive mortgaging to fund building.

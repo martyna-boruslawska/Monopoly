@@ -26,12 +26,12 @@ export class Deck {
     }
   }
 
-  #reshuffleDiscardedCards(random = Math.random) {
+  #reshuffleDiscardedCards() {
     if (this.#discardedCards.length === 0) {
       return;
     }
     this.#cards = [...this.#discardedCards];
     this.#discardedCards = [];
-    this.shuffle(random);
+    this.shuffle();
   }
 }

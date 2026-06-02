@@ -123,11 +123,11 @@ function drawAndResolve(game, deck) {
 }
 
 export function handleChanceCard(game) {
-  if (!game.decks?.chance) return;
-  drawAndResolve(game, game.decks.chance);
+  if (!game.chanceDeck) return;
+  drawAndResolve(game, game.chanceDeck);
 }
 
 export function handleCommunityChestCard(game) {
-  if (!game.decks?.communityChest) return;
-  drawAndResolve(game, game.decks.communityChest);
+  if (!game.communityChestDeck) return;
+  drawAndResolve(game, game.communityChestDeck);
 }

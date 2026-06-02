@@ -27,7 +27,7 @@ No build step — pure ESM, no external dependencies.
 
 **Player**: `{ id, name, position, money, propertyIds, isBankrupt, isInJail, failedJailRolls, getOutOfJailFree }`
 
-**Decks** (`game.decks.chance`, `game.decks.communityChest`): each exposes `drawCard()` and `returnCard(card)`. `get-out-jail` cards stay with the player and are NOT returned to the deck.
+**Decks** (`game.chanceDeck`, `game.communityChestDeck`): each exposes `drawCard()` and `returnCard(card)`. `get-out-jail` cards stay with the player and are NOT returned to the deck.
 
 ### Key directories
 
@@ -46,5 +46,6 @@ Uses Node.js built-in test runner (`node:test` + `node:assert/strict`). Tests mi
 `createTestGame(testPlayers)` in `tests/helpers/createTestGame.js` is the shared factory for test setup. Accepts `{ name, position?, money?, propertyIds? }` per player. For card tests, attach decks manually:
 
 ```js
-game.decks = { chance: chanceDeck, communityChest: communityChestDeck };
+game.chanceDeck = chanceDeck;
+game.communityChestDeck = communityChestDeck;
 ```

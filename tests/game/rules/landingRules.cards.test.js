@@ -31,10 +31,6 @@ function setupGame(testPlayers, { chanceCards = [], communityChestCards = [] } =
 
   game.chanceDeck = chanceDeck;
   game.communityChestDeck = communityChestDeck;
-  game.decks = {
-    chance: chanceDeck,
-    communityChest: communityChestDeck,
-  };
 
   return { game, chanceDeck, communityChestDeck };
 }

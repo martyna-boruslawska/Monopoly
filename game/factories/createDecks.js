@@ -38,12 +38,21 @@ const communityChestCards = [
   { type: "collect", value: 100, text: "You inherit $100" },
 ];
 
-export function createDecks() {
-  const chance = new Deck(chanceCards);
-  const communityChest = new Deck(communityChestCards);
+export function createChanceDeck() {
+  const deck = new Deck(chanceCards);
+  deck.shuffle();
+  return deck;
+}
 
-  chance.shuffle();
-  communityChest.shuffle();
+export function createCommunityChestDeck() {
+  const deck = new Deck(communityChestCards);
+  deck.shuffle();
+  return deck;
+}
+
+export function createDecks() {
+  const chance = createChanceDeck();
+  const communityChest = createCommunityChestDeck();
 
   return {
     chance,

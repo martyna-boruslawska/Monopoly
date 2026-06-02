@@ -32,7 +32,8 @@ export function createTestGame(testPlayers) {
     }
   }
 
-  game.decks = null;
+  game.chanceDeck = null;
+  game.communityChestDeck = null;
   game.currentPlayerId = game.players[0].id;
   return game;
 }

@@ -11,9 +11,6 @@ test("landingRules - pays base property rent to another player with no street mo
     { name: "Darth Vader", propertyIds: [1] }
   ]);
 
-  game.board[1].houses = 0;
-  game.board[1].hasHotel = false;
-
   landingRules(game);
 
   const tile = game.board[1];
@@ -29,9 +26,6 @@ test("landingRules - pays doubled property rent to another player with a 2-stree
     { name: "Darth Vader", propertyIds: [1, 3] }
   ]);
 
-  game.board[1].houses = 0;
-  game.board[1].hasHotel = false;
-
   landingRules(game);
 
   const tile = game.board[1];
@@ -46,9 +40,6 @@ test("landingRules - pays doubled property rent to another player with a 3-stree
     { name: "Luke Skywalker", position: 6 },
     { name: "Darth Vader", propertyIds: [6, 8, 9] }
   ]);
-
-  game.board[6].houses = 0;
-  game.board[6].hasHotel = false;
 
   landingRules(game);
 
@@ -66,7 +57,6 @@ test("landingRules - pays increased property rent to another player with a 2-str
   ]);
 
   game.board[1].houses = 1;
-  game.board[1].hasHotel = false;
 
   landingRules(game);
 
@@ -84,7 +74,6 @@ test("landingRules - pays increased property rent to another player with a 2-str
   ]);
 
   game.board[1].houses = 2;
-  game.board[1].hasHotel = false;
 
   landingRules(game);
 
@@ -102,7 +91,6 @@ test("landingRules - pays increased property rent to another player with a 2-str
   ]);
 
   game.board[1].houses = 3;
-  game.board[1].hasHotel = false;
 
   landingRules(game);
 
@@ -120,7 +108,6 @@ test("landingRules - pays increased property rent to another player with a 2-str
   ]);
 
   game.board[1].houses = 4;
-  game.board[1].hasHotel = false;
 
   landingRules(game);
 
@@ -137,7 +124,6 @@ test("landingRules - pays increased property rent to another player with a 3-str
     { name: "Darth Vader", propertyIds: [6, 8, 9] }
   ]);
 
-  game.board[6].houses = 0;
   game.board[6].hasHotel = true;
 
   landingRules(game);

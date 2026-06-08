@@ -38,11 +38,12 @@ export function playTurn(game) {
     if (!player || player.isBankrupt || player.isInJail) {
       return;
     }
-
-    buildingRules(game);
-
+    
     if (hasDouble) {
       console.log(`${player.name} rolled doubles: ${roll.dice1} & ${roll.dice2} and gets another turn!`);
     }  
   }
+
+  buildingRules(game);
+  
 }

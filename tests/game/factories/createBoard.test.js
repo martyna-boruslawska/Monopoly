@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createBoard } from "../../../game/factories/createBoard.js";
+import { createBoard, getHouseCostByColor, houseCostsByColor } from "../../../game/factories/createBoard.js";
 
 test("board has exactly 40 spaces", () => {
   const board = createBoard();
@@ -78,4 +78,20 @@ test("creates a fresh board on each call", () => {
 
   assert.strictEqual(boardB[1].ownerId, null);
   assert.strictEqual(boardB[1].houses, 0);
+});
+
+test("exports house costs by color for reuse outside board definitions", () => {
+  assert.deepStrictEqual(Object.keys(houseCostsByColor).sort(), [
+    "dark-blue",
+    "dark-purple",
+    "green",
+    "light-blue",
+    "orange",
+    "purple",
+    "red",
+    "yellow",
+  ]);
+  assert.strictEqual(houseCostsByColor["dark-purple"], 50);
+  assert.strictEqual(houseCostsByColor.green, 200);
+  assert.strictEqual(getHouseCostByColor("yellow"), 150);
 });

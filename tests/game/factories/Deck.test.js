@@ -17,16 +17,14 @@ test("Deck draws returned cards only after the draw pile is exhausted", () => {
 test("Deck reshuffles returned cards when refilling the draw pile", () => {
   const cardA = { name: "A" };
   const cardB = { name: "B" };
-  const deck = new Deck([cardA, cardB]);
+  const randomValues = [0, 0];
+  const random = () => randomValues.shift() ?? 0;
+  const deck = new Deck([cardA, cardB], random);
 
   const firstDraw = deck.drawCard();
   const secondDraw = deck.drawCard();
   deck.returnCard(firstDraw);
   deck.returnCard(secondDraw);
-
-  const randomValues = [0, 0];
-  const random = () => randomValues.shift() ?? 0;
-  deck.shuffle = deck.shuffle.bind(deck, random);
 
   assert.strictEqual(deck.drawCard(), cardB);
   assert.strictEqual(deck.drawCard(), cardA);

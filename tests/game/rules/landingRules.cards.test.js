@@ -114,7 +114,7 @@ test("landingRules cards - advance cards correctly handle passing Start", (ctx) 
   };
   const { game } = setupGame(
     [
-      { name: "Luke Skywalker", position: 36 },
+      { name: "Luke Skywalker", position: 36, propertyIds: [24] },
       { name: "Darth Vader" },
     ],
     { chanceCards: [advanceCard] },
@@ -288,7 +288,7 @@ test("landingRules cards - advance card moves to destination without collecting 
   };
   const { game } = setupGame(
     [
-      { name: "Luke Skywalker", position: 2 },
+      { name: "Luke Skywalker", position: 2, propertyIds: [24] },
       { name: "Darth Vader" },
     ],
     { chanceCards: [advanceCard] },
@@ -383,7 +383,7 @@ test("landingRules cards - Community Chest normal card returns to the bottom of 
   assert.deepStrictEqual(communityChestDeck.cards, [secondCard, firstCard]);
 });
 
-test("landingRules cards - nearest railroad card moves the player without charging rent when the railroad is unowned", (ctx) => {
+test("landingRules cards - nearest railroad card moves the player and offers to buy the railroad when unowned", (ctx) => {
   ctx.mock.method(console, "log", () => {});
 
   const railroadCard = {
@@ -400,12 +400,14 @@ test("landingRules cards - nearest railroad card moves the player without chargi
 
   landingRules(game);
 
+  // From position 7, nearest railroad going forward is Pennsylvania Railroad (15)
+  // Pennsylvania Railroad is unowned — player auto-buys for $200
   assert.strictEqual(game.currentPlayer().position, 15);
-  assert.strictEqual(game.players[0].money, 1500);
-  assert.strictEqual(game.players[1].money, 1500);
+  assert.strictEqual(game.players[0].money, 1300);
+  assert.deepStrictEqual(game.players[0].propertyIds, [15]);
 });
 
-test("landingRules cards - nearest utility card moves the player without charging rent when the utility is unowned", (ctx) => {
+test("landingRules cards - nearest utility card moves the player and offers to buy the utility when unowned", (ctx) => {
   ctx.mock.method(console, "log", () => {});
 
   const utilityCard = {
@@ -422,7 +424,9 @@ test("landingRules cards - nearest utility card moves the player without chargin
 
   landingRules(game);
 
+  // From position 22, nearest utility going forward is Waterworks (28)
+  // Waterworks is unowned — player auto-buys for $150
   assert.strictEqual(game.currentPlayer().position, 28);
-  assert.strictEqual(game.players[0].money, 1500);
-  assert.strictEqual(game.players[1].money, 1500);
+  assert.strictEqual(game.players[0].money, 1350);
+  assert.deepStrictEqual(game.players[0].propertyIds, [28]);
 });

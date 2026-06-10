@@ -1,10 +1,12 @@
 export class Deck {
   #cards;
   #discardedCards;
+  #random;
 
-  constructor(cards) {
+  constructor(cards, random = Math.random) {
     this.#cards = [...cards];
     this.#discardedCards = [];
+    this.#random = random;
   }
 
   drawCard() {
@@ -19,7 +21,7 @@ export class Deck {
     this.#discardedCards.push(card);
   }
 
-  shuffle(random = Math.random) {
+  shuffle(random = this.#random) {
     for (let i = this.#cards.length - 1; i > 0; i--) {
       const j = Math.floor(random() * (i + 1));
       [this.#cards[i], this.#cards[j]] = [this.#cards[j], this.#cards[i]];

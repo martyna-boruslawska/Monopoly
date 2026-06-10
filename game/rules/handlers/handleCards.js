@@ -1,6 +1,7 @@
 import { transferMoney } from "../../utils/transferMoney.js";
 import { sendCurrentPlayerToJail } from "../jailRules.js";
 import { landingRules } from "../landingRules.js";
+import { handleBuyOrTrade } from "./handleBuyOrTrade.js";
 
 const BOARD_SIZE = 40;
 const RAILROAD_POSITIONS = [5, 15, 25, 35];
@@ -35,14 +36,14 @@ function resolveCard(game, card, deck) {
       return true;
 
     case "gift-from-players":
-      for (const other of game.players.filter((p) => p.id !== player.id)) {
+      for (const other of game.players.filter((p) => p.id !== player.id && !p.isBankrupt)) {
         transferMoney(other, player, card.value);
       }
       console.log(`${player.name} collects $${card.value} from each player. ${card.text}`);
       return true;
 
     case "pay-each-player":
-      for (const other of game.players.filter((p) => p.id !== player.id)) {
+      for (const other of game.players.filter((p) => p.id !== player.id && !p.isBankrupt)) {
         transferMoney(player, other, card.value);
       }
       console.log(`${player.name} pays $${card.value} to each player. ${card.text}`);
@@ -68,6 +69,7 @@ function resolveCard(game, card, deck) {
       }
       player.position = targetPosition;
       console.log(`${player.name} advances to ${card.location}.`);
+      landingRules(game);
       return true;
     }
 
@@ -76,7 +78,9 @@ function resolveCard(game, card, deck) {
       player.position = nearestRailroad;
       const railroadTile = game.board[nearestRailroad];
       console.log(`${player.name} advances to nearest railroad: ${railroadTile.name}.`);
-      if (railroadTile.ownerId && railroadTile.ownerId !== player.id) {
+      if (!railroadTile.ownerId) {
+        handleBuyOrTrade(game);
+      } else if (railroadTile.ownerId !== player.id) {
         const owner = game.players.find((p) => p.id === railroadTile.ownerId);
         const railroadsOwned = game.countOwnedTilesOfType(owner, "railroad");
         const rent = RAILROAD_RENT[railroadsOwned - 1] * 2;
@@ -91,7 +95,9 @@ function resolveCard(game, card, deck) {
       player.position = nearestUtility;
       const utilityTile = game.board[nearestUtility];
       console.log(`${player.name} advances to nearest utility: ${utilityTile.name}.`);
-      if (utilityTile.ownerId && utilityTile.ownerId !== player.id) {
+      if (!utilityTile.ownerId) {
+        handleBuyOrTrade(game);
+      } else if (utilityTile.ownerId !== player.id) {
         const owner = game.players.find((p) => p.id === utilityTile.ownerId);
         const rent = game.lastRoll.total * 10;
         transferMoney(player, owner, rent);
@@ -104,6 +110,26 @@ function resolveCard(game, card, deck) {
       player.position = (player.position - 3 + BOARD_SIZE) % BOARD_SIZE;
       console.log(`${player.name} goes back 3 spaces to ${game.board[player.position].name}.`);
       landingRules(game);
+      return true;
+    }
+
+    case "property-repairs": {
+      const ownedTiles = player.propertyIds.map((id) => game.board.find((t) => t.id === id));
+      const housesCount = ownedTiles.reduce((sum, t) => sum + (t?.houses || 0), 0);
+      const hotelsCount = ownedTiles.filter((t) => t?.hasHotel).length;
+      const repairCost = housesCount * 25 + hotelsCount * 100;
+      player.money -= repairCost;
+      console.log(`${player.name} pays $${repairCost} for property repairs (${housesCount} houses, ${hotelsCount} hotels). ${card.text}`);
+      return true;
+    }
+
+    case "street-repairs": {
+      const ownedTiles = player.propertyIds.map((id) => game.board.find((t) => t.id === id));
+      const housesCount = ownedTiles.reduce((sum, t) => sum + (t?.houses || 0), 0);
+      const hotelsCount = ownedTiles.filter((t) => t?.hasHotel).length;
+      const repairCost = housesCount * 40 + hotelsCount * 115;
+      player.money -= repairCost;
+      console.log(`${player.name} pays $${repairCost} for street repairs (${housesCount} houses, ${hotelsCount} hotels). ${card.text}`);
       return true;
     }
 

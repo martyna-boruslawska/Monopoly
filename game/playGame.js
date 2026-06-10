@@ -9,7 +9,7 @@ export function playGame(game) {
 
   showIntro(game.players);
 
-  let roundNumber = 1;
+  let round = 1;
   let turns = 1;
   let activePlayerCount = game.countActivePlayers();
 
@@ -19,8 +19,8 @@ export function playGame(game) {
     if (!player || player.isBankrupt) {
       continue;
     }
-    if (game.currentPlayerId < prevPlayerId) { roundNumber++; }
-    if (roundNumber > MAX_ROUNDS) {
+    if (game.currentPlayerId < prevPlayerId) { round++; }
+    if (round > MAX_ROUNDS) {
       console.log(`Reached maximum number of rounds: ${MAX_ROUNDS}. Ending game.`);
       break;
     }

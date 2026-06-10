@@ -2,6 +2,7 @@ import { movePlayer } from "./rules/movePlayer.js";
 import { jailRules } from "./rules/jailRules.js";
 import { landingRules } from './rules/landingRules.js';
 import { sendCurrentPlayerToJail } from "./rules/jailRules.js";
+import { buildingRules } from "./rules/buildingRules.js";
 
 export function playTurn(game) {
   let doublesCount = 0;
@@ -37,9 +38,12 @@ export function playTurn(game) {
     if (!player || player.isBankrupt || player.isInJail) {
       return;
     }
-
+    
     if (hasDouble) {
       console.log(`${player.name} rolled doubles: ${roll.dice1} & ${roll.dice2} and gets another turn!`);
     }  
   }
+
+  buildingRules(game);
+  
 }

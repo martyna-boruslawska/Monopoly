@@ -143,3 +143,28 @@ test("playTurn - uses the jail escape roll to move and does not grant an extra t
   assert.strictEqual(game.players[0].failedJailRolls, 0);
   assert.strictEqual(index, 2);
 });
+
+test("playTurn - buys according to building rules after moving", (context) => {
+  context.mock.method(console, "log", () => {});
+
+  const game = createTestGame([
+    { name: "Luke Skywalker", position: 0, money: 600, propertyIds: [1, 3, 18] }
+  ]);
+
+  const randomValues = [0, 0.2];
+  let index = 0;
+  context.mock.method(Math, "random", () => randomValues[index++] ?? 0);
+
+  // houseCost = 50, spend cap = 200  
+  game.board[1].houses = 1;
+  game.board[3].houses = 1;
+
+  playTurn(game);
+
+  assert.strictEqual(game.players[0].position, 3);
+  assert.strictEqual(game.players[0].money, 400);
+  assert.strictEqual(game.board[1].houses, 3);
+  assert.strictEqual(game.board[1].hasHotel, false);
+  assert.strictEqual(game.board[3].houses, 3);  
+  assert.strictEqual(game.board[3].hasHotel, false);  
+});

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createBoard } from "../../../game/factories/createBoard.js";
+import { createBoard, getHouseCostByColor, houseCostsByColor } from "../../../game/factories/createBoard.js";
 
 test("board has exactly 40 spaces", () => {
   const board = createBoard();
@@ -49,11 +49,21 @@ test("initializes purchasable and property-specific fields correctly", () => {
   assert.strictEqual(utility.ownerId, null);
   assert.strictEqual(property.ownerId, null);
 
+  assert.strictEqual(property.houseCost, 50);
+  assert.strictEqual(property.rent1House, 10);
+  assert.strictEqual(property.rent2Houses, 30);
+  assert.strictEqual(property.rent3Houses, 90);
+  assert.strictEqual(property.rent4Houses, 160);
+  assert.strictEqual(property.rentHotel, 250);
   assert.strictEqual(property.houses, 0);
   assert.strictEqual(property.hasHotel, false);
 
+  assert.strictEqual("houseCost" in railroad, false);
+  assert.strictEqual("rent1House" in railroad, false);
   assert.strictEqual("houses" in railroad, false);
   assert.strictEqual("hasHotel" in railroad, false);
+  assert.strictEqual("houseCost" in utility, false);
+  assert.strictEqual("rent1House" in utility, false);
   assert.strictEqual("houses" in utility, false);
   assert.strictEqual("hasHotel" in utility, false);
   assert.strictEqual("ownerId" in tax, false);
@@ -68,4 +78,20 @@ test("creates a fresh board on each call", () => {
 
   assert.strictEqual(boardB[1].ownerId, null);
   assert.strictEqual(boardB[1].houses, 0);
+});
+
+test("exports house costs by color for reuse outside board definitions", () => {
+  assert.deepStrictEqual(Object.keys(houseCostsByColor).sort(), [
+    "dark-blue",
+    "dark-purple",
+    "green",
+    "light-blue",
+    "orange",
+    "purple",
+    "red",
+    "yellow",
+  ]);
+  assert.strictEqual(houseCostsByColor["dark-purple"], 50);
+  assert.strictEqual(houseCostsByColor.green, 200);
+  assert.strictEqual(getHouseCostByColor("yellow"), 150);
 });

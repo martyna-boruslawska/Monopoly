@@ -31,3 +31,13 @@ function getOwner(game) {
   return owner;
 };
 
+export function checkIfHasFullStreetColorSet(game, tileColor, owner) {
+  const totalTilesOfColor = game.board.filter((t) => t.type === "property" && t.color === tileColor).length;
+  const ownedTilesOfColor = game.board.filter((t) => t.type === "property" && t.color === tileColor && t.ownerId === owner.id).length;
+
+  if (ownedTilesOfColor === totalTilesOfColor) {
+      return true;
+    }
+
+  return false;
+}

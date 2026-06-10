@@ -2,32 +2,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { landingRules } from "../../../game/rules/landingRules.js";
 import { createTestGame } from "../../helpers/createTestGame.js";
-
-function createDeck(cards) {
-  return {
-    cards: [...cards],
-    drawCardCalls: 0,
-    returnedCards: [],
-    drawCard() {
-      this.drawCardCalls += 1;
-
-      if (this.cards.length === 0) {
-        throw new Error("Deck is empty.");
-      }
-
-      return this.cards.shift();
-    },
-    returnCard(card) {
-      this.returnedCards.push(card);
-      this.cards.push(card);
-    },
-  };
-}
+import { Deck } from "../../../game/factories/Deck.js";
 
 function setupGame(testPlayers, { chanceCards = [], communityChestCards = [] } = {}) {
   const game = createTestGame(testPlayers);
-  const chanceDeck = createDeck(chanceCards);
-  const communityChestDeck = createDeck(communityChestCards);
+  const chanceDeck = new Deck(chanceCards);
+  const communityChestDeck = new Deck(communityChestCards);
 
   game.chanceDeck = chanceDeck;
   game.communityChestDeck = communityChestDeck;
@@ -51,10 +31,9 @@ test("landingRules cards - landing on Chance draws the top card, resolves it, an
   landingRules(game);
 
   assert.strictEqual(game.currentPlayer().money, 1550);
-  assert.strictEqual(chanceDeck.drawCardCalls, 1);
-  assert.deepStrictEqual(chanceDeck.returnedCards, [dividendCard]);
-  assert.deepStrictEqual(chanceDeck.cards, [bonusCard, dividendCard]);
-  assert.strictEqual(communityChestDeck.drawCardCalls, 0);
+  assert.deepStrictEqual(chanceDeck.getCards(), [bonusCard]);
+  assert.deepStrictEqual(chanceDeck.getDiscardedCards(), [dividendCard]);
+  assert.strictEqual(communityChestDeck.getCards().length, 0);
 });
 
 test("landingRules cards - landing on Community Chest draws the top Community Chest card and resolves it", (ctx) => {
@@ -79,9 +58,9 @@ test("landingRules cards - landing on Community Chest draws the top Community Ch
   assert.strictEqual(game.players[0].money, 1520);
   assert.strictEqual(game.players[1].money, 1490);
   assert.strictEqual(game.players[2].money, 1490);
-  assert.strictEqual(communityChestDeck.drawCardCalls, 1);
-  assert.deepStrictEqual(communityChestDeck.returnedCards, [birthdayCard]);
-  assert.strictEqual(chanceDeck.drawCardCalls, 0);
+  assert.deepStrictEqual(communityChestDeck.getCards(), []);
+  assert.deepStrictEqual(communityChestDeck.getDiscardedCards(), [birthdayCard]);
+  assert.deepStrictEqual(chanceDeck.getCards(), []);
 });
 
 test("landingRules cards - Get Out of Jail Free card stays with the player until used", (ctx) => {
@@ -100,8 +79,8 @@ test("landingRules cards - Get Out of Jail Free card stays with the player until
   landingRules(game);
 
   assert.strictEqual(game.currentPlayer().getOutOfJailCards.length, 1);
-  assert.deepStrictEqual(chanceDeck.returnedCards, []);
-  assert.deepStrictEqual(chanceDeck.cards, [nextCard]);
+  assert.deepStrictEqual(chanceDeck.getDiscardedCards(), []);
+  assert.deepStrictEqual(chanceDeck.getCards(), [nextCard]);
 });
 
 test("landingRules cards - advance cards correctly handle passing Start", (ctx) => {
@@ -338,8 +317,8 @@ test("landingRules cards - Get Out of Jail Free card from Community Chest stays 
   landingRules(game);
 
   assert.strictEqual(game.currentPlayer().getOutOfJailCards.length, 1);
-  assert.deepStrictEqual(communityChestDeck.returnedCards, []);
-  assert.deepStrictEqual(communityChestDeck.cards, [nextCard]);
+  assert.deepStrictEqual(communityChestDeck.getCards(), [nextCard]);
+  assert.deepStrictEqual(communityChestDeck.getDiscardedCards(), []);
 });
 
 test("landingRules cards - nearest railroad card wraps around the board to find the closest railroad", (ctx) => {
@@ -380,7 +359,8 @@ test("landingRules cards - Community Chest normal card returns to the bottom of 
 
   landingRules(game);
 
-  assert.deepStrictEqual(communityChestDeck.cards, [secondCard, firstCard]);
+  assert.deepStrictEqual(communityChestDeck.getCards(), [secondCard]);
+  assert.deepStrictEqual(communityChestDeck.getDiscardedCards(), [firstCard]);
 });
 
 test("landingRules cards - nearest railroad card moves the player and offers to buy the railroad when unowned", (ctx) => {

@@ -18,16 +18,39 @@ test("Deck reshuffles returned cards when refilling the draw pile", () => {
   const cardA = { name: "A" };
   const cardB = { name: "B" };
   const randomValues = [0, 0];
-  const random = () => randomValues.shift() ?? 0;
-  const deck = new Deck([cardA, cardB], random);
+  const deck = new Deck([cardA, cardB]);
+  let shuffleCounter = 0;
+  deck.shuffle = () => { shuffleCounter++; };
 
-  const firstDraw = deck.drawCard();
-  const secondDraw = deck.drawCard();
-  deck.returnCard(firstDraw);
-  deck.returnCard(secondDraw);
+  // Act
+  const card1 = deck.drawCard();
+  const shuffleCounter1 = shuffleCounter;
+  deck.returnCard(card1);
+  const card2 = deck.drawCard();
+  const shuffleCounter2 = shuffleCounter;
+  deck.returnCard(card2);
+  // -
+  const card3 = deck.drawCard();
+  const shuffleCounter3 = shuffleCounter;
+  deck.returnCard(card3);
+  const card4 = deck.drawCard();
+  const shuffleCounter4 = shuffleCounter;
+  deck.returnCard(card4);
+  // -
+  const card5 = deck.drawCard();
+  deck.returnCard(card5);
 
-  assert.strictEqual(deck.drawCard(), cardB);
-  assert.strictEqual(deck.drawCard(), cardA);
+  // Assert
+  assert.strictEqual(card1, cardA);
+  assert.strictEqual(shuffleCounter1, 0);
+  assert.strictEqual(card2, cardB);
+  assert.strictEqual(shuffleCounter2, 0);
+  assert.strictEqual(card3, cardA);
+  assert.strictEqual(shuffleCounter3, 1);
+  assert.strictEqual(card4, cardB);
+  assert.strictEqual(shuffleCounter4, 1);
+  assert.strictEqual(card5, cardA);
+  assert.strictEqual(shuffleCounter, 2);
 });
 
 test("Deck throws when both draw pile and discarded cards are empty", () => {

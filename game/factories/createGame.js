@@ -1,5 +1,6 @@
 import { createPlayers } from "./createPlayers.js";
 import { createBoard } from "./createBoard.js";
+import { createChanceDeck, createCommunityChestDeck } from "./createDecks.js";
 import { rollDice } from "../utils/rollDice.js";
 import { playGame } from "../playGame.js";
 import { getPlayerTile } from "../utils/gameUtils.js";
@@ -8,6 +9,8 @@ export function createGame(playerNames) {
   return {
     players: createPlayers(playerNames),
     board: createBoard(),
+    chanceDeck: createChanceDeck(),
+    communityChestDeck: createCommunityChestDeck(),
     rollDice: rollDice,
     currentPlayerId: null,
     lastRoll: null,

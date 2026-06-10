@@ -11,9 +11,9 @@ export function playGame(game) {
 
   let round = 1;
   let turns = 1;
-  let activePlayers = game.countActivePlayers();
+  let activePlayerCount = game.countActivePlayers();
 
-  while (activePlayers > 1) {
+  while (activePlayerCount > 1) {
     const prevPlayerId = game.currentPlayerId ?? 0;
     const player = game.nextActivePlayer();
     if (!player || player.isBankrupt) {
@@ -27,7 +27,7 @@ export function playGame(game) {
 
     playTurn(game);
     
-    activePlayers = game.countActivePlayers();
+    activePlayerCount = game.countActivePlayers();
     turns++;
   }
 

@@ -45,5 +45,6 @@ function createPlayer(name, id) {
     isBankrupt: false,
     isInJail: false,
     failedJailRolls: 0,
+    getOutOfJailCards: [],
   };
 }

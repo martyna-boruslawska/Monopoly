@@ -14,6 +14,14 @@ export function jailRules(game) {
     };
   }
 
+  if (player.getOutOfJailCards.length > 0) {
+    const jailCard = player.getOutOfJailCards.shift();
+    jailCard.deck.returnCard(jailCard.card);
+    releasePlayerFromJail(player);
+    console.log(`${player.name} uses a Get Out of Jail Free card.`);
+    return { canMove: true, roll: null, usedJailRoll: false };
+  }
+
   if (player.money >= JAIL_FINE) {
     releasePlayerFromJail(player);
     player.money -= JAIL_FINE;

@@ -20,7 +20,7 @@ export function showSummary(players) {
 
   const summaryRows = playersSortedByMoney.map(player => {
     const moneyLabel = player.money < 0 ? `-$${Math.abs(player.money)}` : `$${player.money}`;
-    const icon = player.money < 0 ? "💀" : player.money === maxMoney ? "🏆" : "💰";
+    const icon = player.isBankrupt ? "💀" : player.money === maxMoney ? "🏆" : "💰";
     const propertyIds = player.propertyIds || [];
     const propertiesLabel = `[${propertyIds.join(", ")}]`;
     const nameLabel = `${icon}  ${player.name}:`;

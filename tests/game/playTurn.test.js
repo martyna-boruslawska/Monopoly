@@ -99,7 +99,7 @@ test("playTurn - stops extra turns when player becomes bankrupt after a double",
 
   playTurn(game);
   assert.strictEqual(game.players[0].position, 38);
-  assert.strictEqual(game.players[0].money, -50);
+  assert.strictEqual(game.players[0].money, 0);
   assert.strictEqual(game.players[0].isBankrupt, true);
   assert.strictEqual(index, 2);
 });

@@ -432,6 +432,7 @@ function createLocation(locationDef) {
     const location = {
       ...locationDef,
       ownerId: null,
+      isMortgaged: false,
     };
 
     if (locationDef.type === "property") {
@@ -440,7 +441,6 @@ function createLocation(locationDef) {
         houseCost: getHouseCostByColor(locationDef.color),
         houses: 0,
         hasHotel: false,
-        isMortgaged: false,
       };
     }
 

@@ -1,4 +1,5 @@
 import { checkIfHasFullStreetColorSet } from "../utils/gameUtils.js";
+import { subtractMoneyFromPlayer } from "../utils/transferMoney.js";
 
 const MONEY_RESERVE = 300;
 const MINIMAL_MONEY_TO_BUILD = 350;
@@ -16,7 +17,7 @@ export function buildingRules(game) {
     const property = cheapestBuildableProperty(game);
     const houseCost = property.houseCost;
     spend += houseCost;
-    player.money -= houseCost;
+    subtractMoneyFromPlayer(player, houseCost, game);
     upgradeProperty(property);
   }
 }
@@ -123,8 +124,7 @@ function streetColorsNotFullyHotelled(game) {
   return notFullyHotelledColors;
 }
 
-function listFullStreetColorSetsOwnedByPlayer(game) {
-  const player = game.currentPlayer();
+export function listFullStreetColorSetsOwnedByPlayer(game, player = game.currentPlayer()) {
   const uniqueStreetColors = listUniqueStreetColors(game);
   const fullyOwnedStreetColors = uniqueStreetColors.filter((color) => checkIfHasFullStreetColorSet(game, color, player));
   

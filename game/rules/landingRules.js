@@ -1,5 +1,4 @@
 import { landingRulesPipeline } from "./patterns/landingRulesPipeline.js";
-import { markPlayerBankrupt } from '../utils/markPlayerBankrupt.js';
 
 /**
  * Handles the actions that occur when a player lands on a tile, including: 
@@ -13,10 +12,6 @@ export function landingRules(game) {
     
     if (landingRulePipelineStep.activator(tile, currentPlayer)) {
       landingRulePipelineStep.handler(game);
-    }
-
-    if (currentPlayer.money < 0) {
-      markPlayerBankrupt(currentPlayer, game.board);
     }
 
     if(currentPlayer.isInJail || currentPlayer.isBankrupt) {

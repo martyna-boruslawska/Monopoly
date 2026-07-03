@@ -1,4 +1,4 @@
-import { transferMoneyBetweenPlayers, subtractMoneyFromPlayer } from "../../utils/transferMoney.js";
+import { transferMoneyPlayerToPlayer, transferMoneyPlayerToBank } from "../../utils/transferMoney.js";
 import { sendCurrentPlayerToJail } from "../jailRules.js";
 import { landingRules } from "../landingRules.js";
 import { handleBuyOrTrade } from "./handleBuyOrTrade.js";
@@ -31,7 +31,7 @@ function resolveCard(game, card, deck) {
       return true;
 
     case "pay":
-      subtractMoneyFromPlayer(player, card.value, game);
+      transferMoneyPlayerToBank(player, card.value, game);
       if (!player.isBankrupt) {
         console.log(`${player.name} pays $${card.value}. ${card.text}`);
       }
@@ -39,14 +39,14 @@ function resolveCard(game, card, deck) {
 
     case "gift-from-players":
       for (const other of game.players.filter((p) => p.id !== player.id && !p.isBankrupt)) {
-        transferMoneyBetweenPlayers(other, player, card.value, game);
+        transferMoneyPlayerToPlayer(other, player, card.value, game);
       }
       console.log(`${player.name} collects $${card.value} from each player. ${card.text}`);
       return true;
 
     case "pay-each-player":
       for (const other of game.players.filter((p) => p.id !== player.id && !p.isBankrupt)) {
-        transferMoneyBetweenPlayers(player, other, card.value, game);
+        transferMoneyPlayerToPlayer(player, other, card.value, game);
         if (player.isBankrupt) break;
       }
       if (!player.isBankrupt) {
@@ -89,7 +89,7 @@ function resolveCard(game, card, deck) {
         const owner = game.players.find((p) => p.id === railroadTile.ownerId);
         const railroadsOwned = game.countOwnedTilesOfType(owner, "railroad");
         const rent = RAILROAD_RENT[railroadsOwned - 1] * 2;
-        transferMoneyBetweenPlayers(player, owner, rent, game);
+        transferMoneyPlayerToPlayer(player, owner, rent, game);
         if (!player.isBankrupt) {
           console.log(`${player.name} pays ${owner.name} $${rent} (doubled railroad rent).`);
         }
@@ -107,7 +107,7 @@ function resolveCard(game, card, deck) {
       } else if (utilityTile.ownerId !== player.id) {
         const owner = game.players.find((p) => p.id === utilityTile.ownerId);
         const rent = game.lastRoll.total * 10;
-        transferMoneyBetweenPlayers(player, owner, rent, game);
+        transferMoneyPlayerToPlayer(player, owner, rent, game);
         if (!player.isBankrupt) {
           console.log(`${player.name} pays ${owner.name} $${rent} (10x dice roll).`);
         }
@@ -127,7 +127,7 @@ function resolveCard(game, card, deck) {
       const housesCount = ownedTiles.reduce((sum, t) => sum + (t?.houses || 0), 0);
       const hotelsCount = ownedTiles.filter((t) => t?.hasHotel).length;
       const repairCost = housesCount * 25 + hotelsCount * 100;
-      subtractMoneyFromPlayer(player, repairCost, game);
+      transferMoneyPlayerToBank(player, repairCost, game);
       if (!player.isBankrupt) {
         console.log(`${player.name} pays $${repairCost} for property repairs (${housesCount} houses, ${hotelsCount} hotels). ${card.text}`);
       }
@@ -139,7 +139,7 @@ function resolveCard(game, card, deck) {
       const housesCount = ownedTiles.reduce((sum, t) => sum + (t?.houses || 0), 0);
       const hotelsCount = ownedTiles.filter((t) => t?.hasHotel).length;
       const repairCost = housesCount * 40 + hotelsCount * 115;
-      subtractMoneyFromPlayer(player, repairCost, game);
+      transferMoneyPlayerToBank(player, repairCost, game);
       if (!player.isBankrupt) {
         console.log(`${player.name} pays $${repairCost} for street repairs (${housesCount} houses, ${hotelsCount} hotels). ${card.text}`);
       }

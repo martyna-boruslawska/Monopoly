@@ -1,38 +1,40 @@
-import { listFullStreetColorSetsOwnedByPlayer } from "./buildingRules.js";
-import { checkIfHasFullStreetColorSet } from "../utils/gameUtils.js";
-import { subtractMoneyFromPlayer } from "../utils/transferMoney.js";
+import { checkIfHasFullStreetColorSet, listFullStreetColorSetsOwnedByPlayer } from "../utils/gameUtils.js";
+import { transferMoneyPlayerToBank } from "../utils/transferMoney.js";
+
+const MORTGAGE_INTEREST_RATE = 0.1;
+const MIN_CASH_RESERVE_AFTER_UNMORTGAGE = 500;
 
 export function mortgageRules(game, player, targetMoney) {
   
-  sellBuildingsFromOrphanStreets(game, player, targetMoney);
-  if (player.money >= targetMoney) return true;
+  const mortgageSteps = [
+    () => sellBuildingsFromOrphanStreets(game, player, targetMoney),
+    () => mortgageByType(game, player, targetMoney, "utility"),
+    () => mortgageByType(game, player, targetMoney, "railroad"),
+    () => mortgageOrphanStreets(game, player, targetMoney),
+    () => mortgageCompleteSets(game, player, targetMoney),
+  ];
 
-  mortgageByType(game, player, targetMoney, "utility");
-  if (player.money >= targetMoney) return true;
-
-  mortgageByType(game, player, targetMoney, "railroad");
-  if (player.money >= targetMoney) return true;
-
-  mortgageOrphanStreets(game, player, targetMoney);
-  if (player.money >= targetMoney) return true;
-
-  mortgageCompleteSets(game, player, targetMoney);
-  if (player.money >= targetMoney) return true;
+  for (const step of mortgageSteps) {
+    step();
+    if (player.money >= targetMoney) return true;
+  }
 
   return false;
 }
 
 
-function mortgageProperty(tile, player) {
-  tile.isMortgaged = true;
-  player.money += tile.price / 2;
-}
 
-
+// An orphan (incomplete-set) street should not carry buildings: they can't be built there.
+// This step exists as a guard against future edge cases.
+// Those buildings must be sold before the street can be mortgaged.
 function sellBuildingsFromOrphanStreets(game, player, targetMoney) {
   const board = game.board;
-  const ownedImprovedOrphanStreets = board.filter(t => t.type === "property" && t.ownerId === player.id && !t.isMortgaged && (t.houses > 0 || t.hasHotel) &&
-    !checkIfHasFullStreetColorSet(game, t.color, player)).sort((a, b) => buildingLevels(b) - buildingLevels(a) || a.id - b.id);
+  const ownedImprovedOrphanStreets = board
+    .filter(tile => tile.type === "property"
+    && isOwnedAndUnmortgaged(tile, player)
+    && streetHasBuildings(tile)
+    && isOrphan(tile, game, player))
+    .sort(sortFromMostImprovedThenAscId);
 
   for (const tile of ownedImprovedOrphanStreets) {
     while (tile.houses > 0 || tile.hasHotel) {
@@ -44,7 +46,10 @@ function sellBuildingsFromOrphanStreets(game, player, targetMoney) {
 
 function mortgageByType(game, player, targetMoney, type) {
   const board = game.board;
-  const ownedTilesOfTypeWithoutMortgage = board.filter(t => t.type === type && t.ownerId === player.id && !t.isMortgaged).sort((a, b) => a.price - b.price);
+  const ownedTilesOfTypeWithoutMortgage = board
+    .filter(tile => tile.type === type
+    && isOwnedAndUnmortgaged(tile, player))
+    .sort(sortFromCheapestThenAscId);
   for (const tile of ownedTilesOfTypeWithoutMortgage) {
     mortgageProperty(tile, player);
     if (player.money >= targetMoney) return;
@@ -53,8 +58,11 @@ function mortgageByType(game, player, targetMoney, type) {
 
 function mortgageOrphanStreets(game, player, targetMoney) {
   const board = game.board;
-  const ownedOrphanStreetsWithoutMortgage = board.filter(t =>t.type === "property" && t.ownerId === player.id && !t.isMortgaged &&
-    !checkIfHasFullStreetColorSet(game, t.color, player)).sort((a, b) => a.price - b.price);
+  const ownedOrphanStreetsWithoutMortgage = board
+    .filter(tile => tile.type === "property"
+    && isOwnedAndUnmortgaged(tile, player)
+    && isOrphan(tile, game, player))
+    .sort(sortFromCheapestThenAscId);
   for (const tile of ownedOrphanStreetsWithoutMortgage) {
     mortgageProperty(tile, player);
     if (player.money >= targetMoney) return;
@@ -62,51 +70,84 @@ function mortgageOrphanStreets(game, player, targetMoney) {
 }
 
 function mortgageCompleteSets(game, player, targetMoney) {
-  const board = game.board;
-
-  while (player.money < targetMoney) {
-    const completeColors = listFullStreetColorSetsOwnedByPlayer(game, player);
-    if (completeColors.length === 0) break;
-
-    const ownedUnimprovedColorsWithoutFullMortgage = completeColors.filter(color => !setHasBuildings(board, color) && board.some(t => t.color === color && t.ownerId === player.id && !t.isMortgaged));
-
-    if (ownedUnimprovedColorsWithoutFullMortgage.length > 0) {
-      ownedUnimprovedColorsWithoutFullMortgage.sort((a, b) => {
-        const totalStreetValueA = board.filter(t => t.color === a && t.ownerId === player.id).reduce((sum, t) => sum + t.price, 0);
-        const totalStreetValueB = board.filter(t => t.color === b && t.ownerId === player.id).reduce((sum, t) => sum + t.price, 0);
-        return totalStreetValueA - totalStreetValueB;
-      });
-      for (const color of ownedUnimprovedColorsWithoutFullMortgage) {
-        const tilesOfColorAscendingByPriceWithoutMortgage = board.filter(t => t.color === color && t.ownerId === player.id && !t.isMortgaged).sort((a, b) => a.price - b.price || a.id - b.id);
-        for (const tile of tilesOfColorAscendingByPriceWithoutMortgage) {
-          mortgageProperty(tile, player);
-          if (player.money >= targetMoney) return;
-        }
-      }
-      continue;
-    }
-
-    const ownedImprovedColors = completeColors.filter(color => setHasBuildings(board, color));
-    if (ownedImprovedColors.length === 0) break;
-
-    ownedImprovedColors.sort((a, b) => countColorBuildingLevel(board, a) - countColorBuildingLevel(board, b));
-    const leastImprovedColor = ownedImprovedColors[0];
-    const tilesOfColorDescendingByBuildingLevel = board.filter(t => t.color === leastImprovedColor && t.ownerId === player.id).sort((a, b) => buildingLevels(b) - buildingLevels(a) || a.id - b.id);
-    sellOneBuilding(tilesOfColorDescendingByBuildingLevel[0], player);
+  let canRaiseMoreFunds = true;
+  while (player.money < targetMoney && canRaiseMoreFunds) {
+    canRaiseMoreFunds = raiseFundsFromOneCompleteSet(game, player, targetMoney);
   }
 }
 
+function raiseFundsFromOneCompleteSet(game, player, targetMoney) {
+  const board = game.board;
 
-function setHasBuildings(board, color) {
-  return board.some(t => t.color === color && (t.houses > 0 || t.hasHotel));
+  const completeColors = listFullStreetColorSetsOwnedByPlayer(game, player);
+  if (completeColors.length === 0) return false;
+
+  const unimprovedColorsToMortgage = findUnimprovedCompleteSetColorsFromCheapest(board, player, completeColors);
+  if (unimprovedColorsToMortgage.length > 0) {
+    mortgageColorSetsUntilTargetReached(board, player, unimprovedColorsToMortgage, targetMoney);
+    return true;
+  }
+
+  const leastImprovedColor = findLeastImprovedCompleteSetColor(board, completeColors);
+  if (!leastImprovedColor) return false;
+
+  sellMostImprovedBuildingOfColor(board, player, leastImprovedColor);
+  return true;
 }
 
-function countColorBuildingLevel(board, color) {
-  return board.filter(t => t.color === color).reduce((sum, t) => sum + (t.hasHotel ? 5 : t.houses), 0);
+function findUnimprovedCompleteSetColorsFromCheapest(board, player, completeColors) {
+  return completeColors
+    .filter(color => !setHasBuildings(board, color)
+    && board.some(tile => tile.color === color
+    && isOwnedAndUnmortgaged(tile, player)))
+    .sort((a, b) => totalStreetPriceByColor(board, player, a) - totalStreetPriceByColor(board, player, b));
 }
 
-function buildingLevels(tile) {
-  return tile.hasHotel ? 5 : tile.houses;
+function mortgageColorSetsUntilTargetReached(board, player, colors, targetMoney) {
+  for (const color of colors) {
+    const targetReached = mortgageColorSet(board, player, color, targetMoney);
+    if (targetReached) return;
+  }
+}
+
+function mortgageColorSet(board, player, color, targetMoney) {
+  const tilesOfColorWithoutMortgageFromCheapest = board
+    .filter(tile => tile.color === color
+    && isOwnedAndUnmortgaged(tile, player))
+    .sort(sortFromCheapestThenAscId);
+
+  for (const tile of tilesOfColorWithoutMortgageFromCheapest) {
+    mortgageProperty(tile, player);
+    if (player.money >= targetMoney) return true;
+  }
+  return false;
+}
+
+function findLeastImprovedCompleteSetColor(board, completeColors) {
+  const ownedImprovedColors = completeColors.filter(color => setHasBuildings(board, color));
+  if (ownedImprovedColors.length === 0) return undefined;
+
+  ownedImprovedColors.sort((a, b) => countColorBuildingLevel(board, a) - countColorBuildingLevel(board, b));
+  return ownedImprovedColors[0];
+}
+
+function sellMostImprovedBuildingOfColor(board, player, color) {
+  const tilesOfColorFromMostImproved = board
+    .filter(tile => tile.color === color
+    && isOwnedBy(tile, player))
+    .sort(sortFromMostImprovedThenAscId);
+  sellOneBuilding(tilesOfColorFromMostImproved[0], player);
+}
+
+
+
+function mortgageValue(tile) {
+  return tile.price / 2;
+}
+
+function mortgageProperty(tile, player) {
+  tile.isMortgaged = true;
+  player.money += mortgageValue(tile);
 }
 
 function sellOneBuilding(tile, player) {
@@ -120,21 +161,77 @@ function sellOneBuilding(tile, player) {
   player.money += refund;
 }
 
+function streetHasBuildings(tile) {
+  return tile.houses > 0 || tile.hasHotel;
+}
+
+function setHasBuildings(board, color) {
+  return board
+    .some(tile => tile.color === color
+    && streetHasBuildings(tile));
+}
+
+function buildingLevel(tile) {
+  return tile.hasHotel ? 5 : tile.houses;
+}
+
+function countColorBuildingLevel(board, color) {
+  return board
+    .filter(tile => tile.color === color)
+    .reduce((sum, tile) => sum + buildingLevel(tile), 0);
+}
+
+function isOwnedBy(tile, player) {
+  return tile.ownerId === player.id;
+}
+
+function isUnmortgaged(tile) {
+  return !tile.isMortgaged;
+}
+
+function isOwnedAndUnmortgaged(tile, player) {
+  return isOwnedBy(tile, player) && isUnmortgaged(tile);
+}
+
+function totalStreetPriceByColor(board, player, color) {
+  return board
+    .filter(tile => tile.color === color && isOwnedBy(tile, player))
+    .reduce((sum, tile) => sum + tile.price, 0);
+}
+
+function isOrphan(tile, game, player) {
+  return !checkIfHasFullStreetColorSet(game, tile.color, player);
+}
+
+function sortFromCheapestThenAscId(a, b) {
+  return a.price - b.price || a.id - b.id;
+}
+
+function sortFromMostImprovedThenAscId(a, b) {
+  return buildingLevel(b) - buildingLevel(a) || a.id - b.id;
+}
+
+
 
 export function unmortgageTransferredProperties(toPlayer, transferredTiles, game) {
-  const mortgagedTiles = transferredTiles.filter(t => t.isMortgaged);
+  const mortgagedTiles = transferredTiles.filter(tile => tile.isMortgaged);
   if (mortgagedTiles.length === 0) return;
 
-  const totalBasicFees = mortgagedTiles.reduce((sum, t) => sum + 0.1 * (t.price / 2), 0);
+  // The 10% interest is due on transfer for every mortgaged property received,
+  // whether or not it is later redeemed. Paying it is mandatory and can by
+  // itself bankrupt the recipient.
+  const totalBasicFees = mortgagedTiles
+    .reduce((sum, tile) => sum + MORTGAGE_INTEREST_RATE * mortgageValue(tile), 0);
 
-  subtractMoneyFromPlayer(toPlayer, totalBasicFees, game);
+  transferMoneyPlayerToBank(toPlayer, totalBasicFees, game);
   if (toPlayer.isBankrupt) return;
 
-  const mortgagedTilesSortedByPrice = [...mortgagedTiles].sort((a, b) => a.price - b.price);
+  // Redeem mortgages cheapest-first, keeping a minimum cash reserve in hand.
+  const mortgagedTilesSortedByPrice = [...mortgagedTiles]
+    .sort((a, b) => a.price - b.price);
   for (const tile of mortgagedTilesSortedByPrice) {
-    const mortgageValue = tile.price / 2;
-    if (toPlayer.money - mortgageValue > 500) {
-      subtractMoneyFromPlayer(toPlayer, mortgageValue, game)
+    if (toPlayer.money - mortgageValue(tile) > MIN_CASH_RESERVE_AFTER_UNMORTGAGE) {
+      transferMoneyPlayerToBank(toPlayer, mortgageValue(tile), game);
       tile.isMortgaged = false;
     }
   }

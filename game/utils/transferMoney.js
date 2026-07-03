@@ -1,7 +1,7 @@
 import { markPlayerBankrupt, releasePlayerAssets, transferPlayerAssets } from "./markBankrupt.js";
 import { mortgageRules } from "../rules/mortgageRules.js";
 
-export function transferMoneyBetweenPlayers(fromPlayer, toPlayer, amount, game) {
+export function transferMoneyPlayerToPlayer(fromPlayer, toPlayer, amount, game) {
   if (amount <= 0) return;
 
   if (!fromPlayer) throw new Error("fromPlayer must be a valid player object.");
@@ -20,7 +20,7 @@ export function transferMoneyBetweenPlayers(fromPlayer, toPlayer, amount, game) 
   toPlayer.money += amount;
 }
 
-export function subtractMoneyFromPlayer(player, amount, game) {
+export function transferMoneyPlayerToBank(player, amount, game) {
   if (amount <= 0) return;
 
   if (!player) throw new Error("player must be a valid player object.");

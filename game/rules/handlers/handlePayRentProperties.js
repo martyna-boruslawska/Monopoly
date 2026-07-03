@@ -1,5 +1,5 @@
 import { gameUtils } from "../../utils/gameUtils.js";
-import { transferMoneyBetweenPlayers } from "../../utils/transferMoney.js";
+import { transferMoneyPlayerToPlayer } from "../../utils/transferMoney.js";
 import { checkIfHasFullStreetColorSet } from "../../utils/gameUtils.js";
 
 export function handlePayRentProperties(game) {
@@ -20,7 +20,7 @@ export function handlePayRentProperties(game) {
     rent *= 2;
   }
 
-  transferMoneyBetweenPlayers(player, owner, rent, game);
+  transferMoneyPlayerToPlayer(player, owner, rent, game);
   if (!player.isBankrupt) {
     console.log(`${player.name} pays $${rent} rent to ${owner.name}`);
   }

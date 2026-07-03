@@ -1,4 +1,4 @@
-import { subtractMoneyFromPlayer } from "../../utils/transferMoney.js";
+import { transferMoneyPlayerToBank } from "../../utils/transferMoney.js";
 
 /**
  * Handles tax locations - deducts money from player when landing on tax tiles.
@@ -8,7 +8,7 @@ export function handlePayTax(game){
   const player = game.currentPlayer();
   const tile = game.getPlayerTile(player);
   
-  subtractMoneyFromPlayer(player, tile.amount, game);
+  transferMoneyPlayerToBank(player, tile.amount, game);
   if (!player.isBankrupt) {
     console.log(`${game.currentPlayer().name} landed on ${tile.name} and lost $${tile.amount}`);
   }

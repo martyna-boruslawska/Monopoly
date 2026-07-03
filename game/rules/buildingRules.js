@@ -1,5 +1,5 @@
-import { checkIfHasFullStreetColorSet } from "../utils/gameUtils.js";
-import { subtractMoneyFromPlayer } from "../utils/transferMoney.js";
+import { listFullStreetColorSetsOwnedByPlayer } from "../utils/gameUtils.js";
+import { transferMoneyPlayerToBank } from "../utils/transferMoney.js";
 
 const MONEY_RESERVE = 300;
 const MINIMAL_MONEY_TO_BUILD = 350;
@@ -17,7 +17,7 @@ export function buildingRules(game) {
     const property = cheapestBuildableProperty(game);
     const houseCost = property.houseCost;
     spend += houseCost;
-    subtractMoneyFromPlayer(player, houseCost, game);
+    transferMoneyPlayerToBank(player, houseCost, game);
     upgradeProperty(property);
   }
 }
@@ -122,27 +122,4 @@ function streetColorsNotFullyHotelled(game) {
   }
 
   return notFullyHotelledColors;
-}
-
-export function listFullStreetColorSetsOwnedByPlayer(game, player = game.currentPlayer()) {
-  const uniqueStreetColors = listUniqueStreetColors(game);
-  const fullyOwnedStreetColors = uniqueStreetColors.filter((color) => checkIfHasFullStreetColorSet(game, color, player));
-  
-  return fullyOwnedStreetColors;
-}
-
-function listUniqueStreetColors(game) {
-  const colors = [];
-
-  for (const location of game.board) {
-    if (location.type !== "property") {
-      continue;
-    }
-
-    if (!colors.includes(location.color)) {
-      colors.push(location.color);
-    }
-  }
-
-  return colors;
 }

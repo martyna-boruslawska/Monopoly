@@ -1,4 +1,4 @@
-import { subtractMoneyFromPlayer } from "../../utils/transferMoney.js";
+import { transferMoneyPlayerToBank } from "../../utils/transferMoney.js";
 
 /**
  * Handles property purchasing when a player lands on an unowned property.
@@ -18,7 +18,7 @@ export function handleBuyOrTrade(game) {
     return;
   }
   
-  subtractMoneyFromPlayer(player, tile.price, game);
+  transferMoneyPlayerToBank(player, tile.price, game);
 
   tile.ownerId = player.id;
   player.propertyIds = player.propertyIds || [];

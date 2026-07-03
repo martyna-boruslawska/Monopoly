@@ -1,5 +1,5 @@
 import { markPlayerBankrupt, releasePlayerAssets } from "../utils/markBankrupt.js";
-import { subtractMoneyFromPlayer } from "../utils/transferMoney.js";
+import { transferMoneyPlayerToBank } from "../utils/transferMoney.js";
 import { mortgageRules } from "./mortgageRules.js";
 
 const JAIL_FINE = 50;
@@ -26,7 +26,7 @@ export function jailRules(game) {
 
   if (player.money >= JAIL_FINE) {
     releasePlayerFromJail(player);
-    subtractMoneyFromPlayer(player, JAIL_FINE, game);
+    transferMoneyPlayerToBank(player, JAIL_FINE, game);
     console.log(`${player.name} pays $50 to get out of jail.`);
 
     return {
@@ -74,7 +74,7 @@ export function jailRules(game) {
     }
   }
 
-  subtractMoneyFromPlayer(player, JAIL_FINE, game);
+  transferMoneyPlayerToBank(player, JAIL_FINE, game);
   console.log(`${player.name} pays $50 to get out of jail.`);
 
   return {

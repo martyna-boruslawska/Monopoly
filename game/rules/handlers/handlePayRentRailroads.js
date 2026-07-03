@@ -1,5 +1,5 @@
 import { gameUtils } from "../../utils/gameUtils.js";
-import { transferMoneyBetweenPlayers } from "../../utils/transferMoney.js";
+import { transferMoneyPlayerToPlayer } from "../../utils/transferMoney.js";
 
 const RAILROAD_RENT = [ 25, 50, 100, 200 ];
 
@@ -15,7 +15,7 @@ export function handlePayRentRailroads(game) {
   const rent = RAILROAD_RENT[railroadsOwned-1];
   const railroadsLabel = railroadsOwned === 1 ? "railroad" : "railroads";
 
-  transferMoneyBetweenPlayers(player, owner, rent, game);
+  transferMoneyPlayerToPlayer(player, owner, rent, game);
   if (!player.isBankrupt) {
     console.log(
       `${player.name} pays ${owner.name} $${rent} for landing on ${tile.name} (${railroadsOwned} ${railroadsLabel} owned).`

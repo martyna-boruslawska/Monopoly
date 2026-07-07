@@ -41,3 +41,26 @@ export function checkIfHasFullStreetColorSet(game, tileColor, owner) {
 
   return false;
 }
+
+export function listFullStreetColorSetsOwnedByPlayer(game, player = game.currentPlayer()) {
+  const uniqueStreetColors = listUniqueStreetColors(game);
+  const fullyOwnedStreetColors = uniqueStreetColors.filter((color) => checkIfHasFullStreetColorSet(game, color, player));
+
+  return fullyOwnedStreetColors;
+}
+
+function listUniqueStreetColors(game) {
+  const colors = [];
+
+  for (const location of game.board) {
+    if (location.type !== "property") {
+      continue;
+    }
+
+    if (!colors.includes(location.color)) {
+      colors.push(location.color);
+    }
+  }
+
+  return colors;
+}

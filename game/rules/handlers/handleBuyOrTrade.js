@@ -1,3 +1,5 @@
+import { transferMoneyPlayerToBank } from "../../utils/transferMoney.js";
+
 /**
  * Handles property purchasing when a player lands on an unowned property.
  * Trading functionality can be added here in the future.
@@ -16,7 +18,7 @@ export function handleBuyOrTrade(game) {
     return;
   }
   
-  player.money -= tile.price;
+  transferMoneyPlayerToBank(player, tile.price, game);
 
   tile.ownerId = player.id;
   player.propertyIds = player.propertyIds || [];

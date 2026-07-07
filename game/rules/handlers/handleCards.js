@@ -1,4 +1,4 @@
-import { transferMoney } from "../../utils/transferMoney.js";
+import { transferMoneyPlayerToPlayer, transferMoneyPlayerToBank } from "../../utils/transferMoney.js";
 import { sendCurrentPlayerToJail } from "../jailRules.js";
 import { landingRules } from "../landingRules.js";
 import { handleBuyOrTrade } from "./handleBuyOrTrade.js";
@@ -31,22 +31,27 @@ function resolveCard(game, card, deck) {
       return true;
 
     case "pay":
-      player.money -= card.value;
-      console.log(`${player.name} pays $${card.value}. ${card.text}`);
+      transferMoneyPlayerToBank(player, card.value, game);
+      if (!player.isBankrupt) {
+        console.log(`${player.name} pays $${card.value}. ${card.text}`);
+      }
       return true;
 
     case "gift-from-players":
       for (const other of game.players.filter((p) => p.id !== player.id && !p.isBankrupt)) {
-        transferMoney(other, player, card.value);
+        transferMoneyPlayerToPlayer(other, player, card.value, game);
       }
       console.log(`${player.name} collects $${card.value} from each player. ${card.text}`);
       return true;
 
     case "pay-each-player":
       for (const other of game.players.filter((p) => p.id !== player.id && !p.isBankrupt)) {
-        transferMoney(player, other, card.value);
+        transferMoneyPlayerToPlayer(player, other, card.value, game);
+        if (player.isBankrupt) break;
       }
-      console.log(`${player.name} pays $${card.value} to each player. ${card.text}`);
+      if (!player.isBankrupt) {
+        console.log(`${player.name} pays $${card.value} to each player. ${card.text}`);
+      }
       return true;
 
     case "get-out-jail":
@@ -84,8 +89,10 @@ function resolveCard(game, card, deck) {
         const owner = game.players.find((p) => p.id === railroadTile.ownerId);
         const railroadsOwned = game.countOwnedTilesOfType(owner, "railroad");
         const rent = RAILROAD_RENT[railroadsOwned - 1] * 2;
-        transferMoney(player, owner, rent);
-        console.log(`${player.name} pays ${owner.name} $${rent} (doubled railroad rent).`);
+        transferMoneyPlayerToPlayer(player, owner, rent, game);
+        if (!player.isBankrupt) {
+          console.log(`${player.name} pays ${owner.name} $${rent} (doubled railroad rent).`);
+        }
       }
       return true;
     }
@@ -100,8 +107,10 @@ function resolveCard(game, card, deck) {
       } else if (utilityTile.ownerId !== player.id) {
         const owner = game.players.find((p) => p.id === utilityTile.ownerId);
         const rent = game.lastRoll.total * 10;
-        transferMoney(player, owner, rent);
-        console.log(`${player.name} pays ${owner.name} $${rent} (10x dice roll).`);
+        transferMoneyPlayerToPlayer(player, owner, rent, game);
+        if (!player.isBankrupt) {
+          console.log(`${player.name} pays ${owner.name} $${rent} (10x dice roll).`);
+        }
       }
       return true;
     }
@@ -118,8 +127,10 @@ function resolveCard(game, card, deck) {
       const housesCount = ownedTiles.reduce((sum, t) => sum + (t?.houses || 0), 0);
       const hotelsCount = ownedTiles.filter((t) => t?.hasHotel).length;
       const repairCost = housesCount * 25 + hotelsCount * 100;
-      player.money -= repairCost;
-      console.log(`${player.name} pays $${repairCost} for property repairs (${housesCount} houses, ${hotelsCount} hotels). ${card.text}`);
+      transferMoneyPlayerToBank(player, repairCost, game);
+      if (!player.isBankrupt) {
+        console.log(`${player.name} pays $${repairCost} for property repairs (${housesCount} houses, ${hotelsCount} hotels). ${card.text}`);
+      }
       return true;
     }
 
@@ -128,8 +139,10 @@ function resolveCard(game, card, deck) {
       const housesCount = ownedTiles.reduce((sum, t) => sum + (t?.houses || 0), 0);
       const hotelsCount = ownedTiles.filter((t) => t?.hasHotel).length;
       const repairCost = housesCount * 40 + hotelsCount * 115;
-      player.money -= repairCost;
-      console.log(`${player.name} pays $${repairCost} for street repairs (${housesCount} houses, ${hotelsCount} hotels). ${card.text}`);
+      transferMoneyPlayerToBank(player, repairCost, game);
+      if (!player.isBankrupt) {
+        console.log(`${player.name} pays $${repairCost} for street repairs (${housesCount} houses, ${hotelsCount} hotels). ${card.text}`);
+      }
       return true;
     }
 

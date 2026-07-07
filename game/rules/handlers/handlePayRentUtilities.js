@@ -1,5 +1,5 @@
 import { gameUtils } from "../../utils/gameUtils.js";
-import { transferMoney } from "../../utils/transferMoney.js";
+import { transferMoneyPlayerToPlayer } from "../../utils/transferMoney.js";
 
 export function handlePayRentUtilities(game) {
   const player = game.currentPlayer();
@@ -18,9 +18,10 @@ export function handlePayRentUtilities(game) {
   const rent = utilitiesOwned === 2 ? diceRollTotal * 10 : diceRollTotal * 4;
   const utilitiesLabel = utilitiesOwned === 1 ? "utility" : "utilities";
 
-  transferMoney(player, owner, rent);
-
-  console.log(
+  transferMoneyPlayerToPlayer(player, owner, rent, game);
+  if (!player.isBankrupt) {
+    console.log(
     `${player.name} pays ${owner.name} $${rent} for landing on ${tile.name} (${utilitiesOwned} ${utilitiesLabel} owned).`,
-  );
+   );
+  }  
 }
